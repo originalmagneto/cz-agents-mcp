@@ -117,7 +117,8 @@ export class AresClient {
     ico?: string[];
     obchodniJmeno?: string;
     pravniForma?: string[];
-    sidlo?: { nazevObce?: string; psc?: number };
+    sidlo?: { nazevUlice?: string; nazevObce?: string; psc?: number; kodObce?: number };
+    czNace?: string[];
     start?: number;
     pocet?: number; // max 100
   }): Promise<AresSearchResult> {
@@ -126,6 +127,7 @@ export class AresClient {
     if (params.obchodniJmeno) body.obchodniJmeno = params.obchodniJmeno;
     if (params.pravniForma?.length) body.pravniForma = params.pravniForma;
     if (params.sidlo) body.sidlo = params.sidlo;
+    if (params.czNace?.length) body.czNace = params.czNace;
     if (params.query && !body.obchodniJmeno) body.obchodniJmeno = params.query;
 
     body.start = params.start ?? 0;

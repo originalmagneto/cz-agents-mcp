@@ -49,48 +49,100 @@ export function buildAresServer(): McpServer {
 
   server.tool(
     'search_companies',
-    'Full-text search ARES by company name or other filters. Useful when the user knows the name but not the IČO. Returns up to 100 results with IČO, name, and address.',
+    'Search ARES by company name, city, street, PSČ, or NACE code. Combines all filters with AND. Useful when user knows name but not IČO, looking for companies in a building, or all businesses in a sector.',
     {
       query: z.string().describe('Partial or full company name (obchodní jméno).').optional(),
-      city: z.string().describe('Filter by city (nazev obce).').optional(),
-      psc: z.number().int().describe('Filter by postal code (PSČ).').optional(),
-      pocet: z
-        .number()
-        .int()
-        .min(1)
-        .max(100)
-        .default(10)
-        .describe('Max results to return (1-100, default 10).'),
-      start: z
-        .number()
-        .int()
-        .min(0)
-        .default(0)
+      city: z.string().describe('Filter by city (nazev obce), e.g. "Praha".').optional(),
+      street: z.string().describe('Filter by street name (nazev ulice), e.g. "Radlická".').optional(),
+      psc: z.number().int().describe('Filter by postal code (PSČ), 5-digit number.').optional(),
+      nace: z
+        .array(z.string())
+        .describe('Filter by CZ-NACE activity codes, 2-6 digits. E.g., ["62"] for IT.')
+        .optional(),
+      pocet: z.number().int().min(1).max(100).default(10)
+        .describe('Max results (1-100, default 10).'),
+      start: z.number().int().min(0).default(0)
         .describe('Pagination offset (default 0).'),
     },
-    async ({ query, city, psc, pocet, start }) => {
+    async ({ query, city, street, psc, nace, pocet, start }) => {
+      const sidlo = city || street || psc
+        ? { nazevObce: city, nazevUlice: street, psc }
+        : undefined;
       const result = await ares.search({
-        query,
-        sidlo: city || psc ? { nazevObce: city, psc } : undefined,
-        pocet,
-        start,
+        query, sidlo, czNace: nace, pocet, start,
       });
       const summary = result.ekonomickeSubjekty
-        .map(
-          (s) =>
-            `${s.ico}  ${s.obchodniJmeno ?? '(bez jména)'} — ${
-              s.sidlo?.textovaAdresa ?? 'bez adresy'
-            }`,
+        .map((s) =>
+          `${s.ico}  ${s.obchodniJmeno ?? '(bez jména)'} — ${s.sidlo?.textovaAdresa ?? 'bez adresy'}`,
         )
         .join('\n');
       return {
         content: [
           {
             type: 'text',
-            text: `Nalezeno ${result.pocetCelkem} subjektů (zobrazeno ${result.ekonomickeSubjekty.length}):\n\n${summary}\n\nFull JSON:\n${JSON.stringify(result, null, 2)}`,
+            text: `Nalezeno ${result.pocetCelkem} subjektů (zobrazeno ${result.ekonomickeSubjekty.length}):\n\n${summary}`,
           },
         ],
       };
+    },
+  );
+
+  server.tool(
+    'search_by_address',
+    'Find all companies registered at a given Czech address. Useful for due diligence (virtual offices, shell companies), real estate research, or competitor mapping in a building.',
+    {
+      street: z.string().describe('Street name (nazev ulice), e.g. "Radlická".'),
+      city: z.string().describe('City name, e.g. "Praha".'),
+      psc: z.number().int().describe('Postal code (PSČ), optional.').optional(),
+      pocet: z.number().int().min(1).max(100).default(20)
+        .describe('Max results (default 20).'),
+    },
+    async ({ street, city, psc, pocet }) => {
+      const result = await ares.search({
+        sidlo: { nazevUlice: street, nazevObce: city, psc },
+        pocet,
+      });
+      if (result.pocetCelkem === 0) {
+        return { content: [{ type: 'text', text: `Na adrese "${street}, ${city}" není v ARES žádný subjekt.` }] };
+      }
+      const lines = [
+        `Firmy na adrese ${street}, ${city}${psc ? ` (${psc})` : ''}:`,
+        `Celkem ${result.pocetCelkem}, zobrazeno ${result.ekonomickeSubjekty.length}.`,
+        '',
+      ];
+      for (const s of result.ekonomickeSubjekty) {
+        lines.push(`  ${s.ico} — ${s.obchodniJmeno ?? '(bez jména)'}`);
+      }
+      return { content: [{ type: 'text', text: lines.join('\n') }] };
+    },
+  );
+
+  server.tool(
+    'search_by_nace',
+    'Find Czech companies by CZ-NACE activity code (economic sector classification). Example: "62" = IT, "47" = retail, "86" = healthcare. Optional city filter. Useful for market research.',
+    {
+      nace: z.string().describe('CZ-NACE code, 2-6 digits (e.g., "62" for IT, "62010" for programming services).'),
+      city: z.string().describe('Optional city filter.').optional(),
+      pocet: z.number().int().min(1).max(100).default(20).describe('Max results.'),
+    },
+    async ({ nace, city, pocet }) => {
+      const result = await ares.search({
+        czNace: [nace],
+        sidlo: city ? { nazevObce: city } : undefined,
+        pocet,
+      });
+      if (result.pocetCelkem === 0) {
+        return { content: [{ type: 'text', text: `Žádné firmy s CZ-NACE ${nace}${city ? ` v ${city}` : ''}.` }] };
+      }
+      const lines = [
+        `CZ-NACE ${nace}${city ? `, město ${city}` : ''}:`,
+        `Celkem ${result.pocetCelkem}, zobrazeno ${result.ekonomickeSubjekty.length}.`,
+        '',
+      ];
+      for (const s of result.ekonomickeSubjekty) {
+        lines.push(`  ${s.ico} — ${s.obchodniJmeno ?? '(bez jména)'} — ${s.sidlo?.textovaAdresa ?? '-'}`);
+      }
+      return { content: [{ type: 'text', text: lines.join('\n') }] };
     },
   );
 
