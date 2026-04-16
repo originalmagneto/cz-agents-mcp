@@ -1,6 +1,6 @@
 {
   "name": "@czagents/ares",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "description": "MCP server for ARES (Czech Business Register) \u2014 company lookup by I\u010cO, full-text search, history",
   "type": "module",
   "main": "./dist/index.js",
@@ -35,7 +35,7 @@
     "start:http": "node dist/http.js"
   },
   "dependencies": {
-    "@czagents/shared": "^0.1.1",
+    "@czagents/shared": "^0.1.3",
     "@modelcontextprotocol/sdk": "^1.10.0",
     "zod": "^3.23.0"
   },

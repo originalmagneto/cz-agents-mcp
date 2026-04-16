@@ -7,6 +7,7 @@ import { HttpClient, TtlCache } from '@czagents/shared';
  */
 
 const ARES_BASE = 'https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty';
+const ARES_VR_BASE = 'https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty-vr';
 
 // ---- Response types (subset of ARES v3) ----
 
@@ -45,6 +46,37 @@ export interface AresBankAccount {
   kodBanky: string;
   menaUctu?: string;
   datumZverejneni?: string;
+}
+
+export interface AresVrRecord {
+  ico: string;
+  obchodniJmeno?: string;
+  spisovaZnacka?: string;
+  rejstrik?: string;
+  stavSubjektu?: string;
+  datumZapisu?: string;
+  zakladniKapital?: unknown;
+  statutarniOrgany?: Array<{
+    nazevOrganu?: string;
+    datumZapisu?: string;
+    datumVymazu?: string;
+    clenoveOrganu?: Array<{
+      fyzickaOsoba?: {
+        jmeno?: string;
+        prijmeni?: string;
+        titulPredJmenem?: string;
+        titulZaJmenem?: string;
+        datumNarozeni?: string;
+      };
+      pravnickaOsoba?: {
+        obchodniJmeno?: string;
+        ico?: string;
+      };
+      funkce?: { nazev?: string };
+      datumZapisu?: string;
+      datumVymazu?: string;
+    }>;
+  }>;
 }
 
 export class AresClient {
@@ -131,6 +163,23 @@ export class AresClient {
   async getHistory(ico: string): Promise<unknown> {
     try {
       return await this.http.getJson(`/${ico}/historie`);
+    } catch (e: any) {
+      if (e?.status === 404) return null;
+      throw e;
+    }
+  }
+
+  /**
+   * Get Veřejný rejstřík record (active only, currently-valid statutory bodies).
+   * Filters out historical entries (datumVymazu != null) by default.
+   */
+  async getVrRecord(ico: string): Promise<AresVrRecord | null> {
+    try {
+      // VR is sibling endpoint, use absolute URL to escape base path
+      const data = await this.http.getJson<{ zaznamy: AresVrRecord[] }>(
+        `${ARES_VR_BASE}/${ico}`,
+      );
+      return data.zaznamy?.[0] ?? null;
     } catch (e: any) {
       if (e?.status === 404) return null;
       throw e;
