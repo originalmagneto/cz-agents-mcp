@@ -1,0 +1,27 @@
+{
+  "name": "cz-agents-mcp",
+  "version": "0.1.0",
+  "description": "Model Context Protocol servers for Czech government & business data",
+  "private": true,
+  "license": "MIT",
+  "author": "Martin Havel <martin.havel@gmail.com>",
+  "homepage": "https://cz-agents.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/martinhavel/cz-agents-mcp.git"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace=@cz-agents/shared && npm run build --workspace=@cz-agents/ares && npm run build --workspace=@cz-agents/cnb",
+    "dev:ares": "npm run dev --workspace=@cz-agents/ares",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "eslint packages/*/src --ext .ts"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.5.0",
+    "tsx": "^4.7.0"
+  }
+}
