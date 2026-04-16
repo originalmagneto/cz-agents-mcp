@@ -1,15 +1,25 @@
 {
   "name": "@czagents/cnb",
-  "version": "0.1.1",
-  "description": "MCP server for ČNB (Czech National Bank) — daily FX rates, currency conversion",
+  "version": "0.1.2",
+  "description": "MCP server for \u010cNB (Czech National Bank) \u2014 daily FX rates, currency conversion",
   "type": "module",
   "main": "./dist/index.js",
   "bin": {
     "cz-agents-cnb": "./dist/index.js"
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "keywords": [
-    "mcp", "model-context-protocol", "cnb", "czech", "fx", "currency", "exchange-rate", "claude"
+    "mcp",
+    "model-context-protocol",
+    "cnb",
+    "czech",
+    "fx",
+    "currency",
+    "exchange-rate",
+    "claude"
   ],
   "license": "MIT",
   "author": "Martin Havel <martin.havel@gmail.com>",
@@ -34,5 +44,6 @@
     "@types/node": "^20.11.0",
     "tsx": "^4.7.0",
     "typescript": "^5.5.0"
-  }
+  },
+  "mcpName": "dev.cz-agents/cnb"
 }

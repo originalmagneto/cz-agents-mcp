@@ -1,22 +1,24 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
   "name": "dev.cz-agents/cnb",
-  "description": "Czech National Bank (ČNB) daily FX rates: fetch official CZK exchange rates, convert between currencies, get historical rates for accounting and invoicing.",
+  "description": "Czech National Bank daily FX rates: CZK exchange rates, currency conversion, history",
   "status": "active",
   "repository": {
     "url": "https://github.com/martinhavel/cz-agents-mcp",
     "source": "github",
     "subfolder": "packages/cnb"
   },
-  "version": "0.1.0",
+  "version": "0.1.2",
   "websiteUrl": "https://cz-agents.dev",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@czagents/cnb",
-      "version": "0.1.0",
+      "version": "0.1.2",
       "runtimeHint": "npx",
-      "transport": { "type": "stdio" }
+      "transport": {
+        "type": "stdio"
+      }
     }
   ],
   "remotes": [
