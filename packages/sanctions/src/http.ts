@@ -2,18 +2,29 @@
 /**
  * Streamable HTTP entry for sanctions MCP server.
  * Listens on PORT (default 3030) at /mcp. Health probe at /health.
+ * Stripe webhook at /webhook/stripe (POST). Bearer-token quota enforcement on /mcp.
  *
  * Env:
  *   SANCTIONS_DB
+ *   TOKEN_DB              — path to billing token SQLite (default ./tokens.db)
+ *   STRIPE_WEBHOOK_SECRET — required to enable /webhook/stripe; if unset, endpoint returns 503
  *   PORT, MCP_PATH, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS, MAX_BODY_BYTES
  */
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
-import { createRateLimiter, checkBodySize } from '@czagents/shared';
+import {
+  createRateLimiter,
+  checkBodySize,
+  TokenStore,
+  createQuotaGuard,
+  handleStripeWebhook,
+  WebhookError,
+} from '@czagents/shared';
 import { SanctionsDb } from './db.js';
 import { SanctionsSearch } from './search.js';
 import { buildSanctionsServer } from './server.js';
+import { SANCTIONS_BILLING } from './billing.js';
 
 const PORT = Number(process.env.PORT ?? 3030);
 const MCP_PATH = process.env.MCP_PATH ?? '/mcp';
@@ -26,15 +37,18 @@ async function main() {
   const db = new SanctionsDb(dbPath);
   const search = new SanctionsSearch(db);
 
+  const tokenDbPath = process.env.TOKEN_DB ?? './tokens.db';
+  const tokenStore = new TokenStore(tokenDbPath);
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const quota = createQuotaGuard({ store: tokenStore, service: 'sanctions', allowAnonymous: true });
+
   const transports = new Map<string, StreamableHTTPServerTransport>();
-  const limiter = createRateLimiter({
-    windowMs: RATE_LIMIT_WINDOW_MS,
-    max: RATE_LIMIT_MAX,
-  });
+  const limiter = createRateLimiter({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX });
 
   const http = createServer(async (req, res) => {
     if (req.url === '/health' || req.url === '/healthz') {
       const stats = db.stats();
+      const tokens = tokenStore.stats('sanctions');
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({
         status: 'ok',
@@ -42,7 +56,35 @@ async function main() {
         version: '0.1.0',
         active_records: stats.total_active,
         sources: stats.by_source,
+        tokens,
       }));
+      return;
+    }
+
+    if (req.url === '/webhook/stripe' && req.method === 'POST') {
+      if (!webhookSecret) {
+        res.writeHead(503, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'webhook_disabled', message: 'STRIPE_WEBHOOK_SECRET not configured.' }));
+        return;
+      }
+      try {
+        const rawBody = await readRawBody(req, MAX_BODY_BYTES);
+        const sig = req.headers['stripe-signature'];
+        const result = handleStripeWebhook({
+          rawBody,
+          signatureHeader: Array.isArray(sig) ? sig[0] : sig,
+          webhookSecret,
+          store: tokenStore,
+          config: SANCTIONS_BILLING,
+        });
+        res.writeHead(result.status, { 'Content-Type': 'application/json' });
+        res.end(result.body);
+      } catch (e) {
+        const status = e instanceof WebhookError ? e.status : 500;
+        const message = e instanceof Error ? e.message : 'webhook_error';
+        res.writeHead(status, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'webhook_failed', message }));
+      }
       return;
     }
 
@@ -65,6 +107,9 @@ async function main() {
     if (!limiter(req, res)) return;
     if (!checkBodySize(req, res, MAX_BODY_BYTES)) return;
 
+    const auth = quota(req, res);
+    if (!auth.ok) return;
+
     const sessionHeader = req.headers['mcp-session-id'];
     const sessionId = Array.isArray(sessionHeader) ? sessionHeader[0] : sessionHeader;
 
@@ -77,7 +122,7 @@ async function main() {
       transport = new StreamableHTTPServerTransport({
         sessionIdGenerator: () => newSessionId,
         onsessioninitialized: (id) => {
-          console.error(`[cz-agents/sanctions] new session: ${id}`);
+          console.error(`[cz-agents/sanctions] new session: ${id} (tier=${auth.token.tier})`);
           transports.set(id, transport);
         },
       });
@@ -95,8 +140,26 @@ async function main() {
 
   http.listen(PORT, () => {
     console.error(
-      `[cz-agents/sanctions] Streamable HTTP MCP server listening on :${PORT}${MCP_PATH} (db: ${dbPath})`,
+      `[cz-agents/sanctions] listening on :${PORT}${MCP_PATH} (db: ${dbPath}, tokens: ${tokenDbPath}, webhook: ${webhookSecret ? 'enabled' : 'disabled'})`,
     );
+  });
+}
+
+function readRawBody(req: import('node:http').IncomingMessage, maxBytes: number): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    let size = 0;
+    req.on('data', (chunk: Buffer) => {
+      size += chunk.length;
+      if (size > maxBytes) {
+        reject(new WebhookError('Body too large', 413));
+        req.destroy();
+        return;
+      }
+      chunks.push(chunk);
+    });
+    req.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')));
+    req.on('error', reject);
   });
 }
 
