@@ -1,32 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>cz-agents — MCP servers for Czech gov & business data</title>
-  <meta name="description" content="Model Context Protocol servers for ARES, ČNB and the Czech ecosystem. Give your AI agent native access to Czech business and government data.">
+  <title>cz-agents — MCP servery pro české gov & business data</title>
+  <meta name="description" content="Model Context Protocol servers pro ARES, ČNB, ISIR. Dejte svému AI agentovi nativní přístup k českému ekosystému.">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://cz-agents.dev/">
-  <link rel="alternate" hreflang="en" href="https://cz-agents.dev/">
+  <link rel="canonical" href="https://cz-agents.dev/cs/">
   <link rel="alternate" hreflang="cs" href="https://cz-agents.dev/cs/">
+  <link rel="alternate" hreflang="en" href="https://cz-agents.dev/">
   <link rel="alternate" hreflang="x-default" href="https://cz-agents.dev/">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="cz-agents — MCP servers for the Czech ecosystem">
+  <meta property="og:title" content="cz-agents — MCP servery pro český ekosystém">
   <meta property="og:description" content="Open-source Model Context Protocol servers for Czech government & business data.">
-  <meta property="og:url" content="https://cz-agents.dev/">
-
-  <script>
-    (function () {
-      try {
-        var stored = localStorage.getItem('lang');
-        if (stored === 'cs') { location.replace('/cs/'); return; }
-        if (stored === 'en') { return; }
-        var nav = (navigator.language || navigator.userLanguage || '').toLowerCase();
-        if (nav.indexOf('cs') === 0 || nav.indexOf('sk') === 0) { location.replace('/cs/'); }
-      } catch (e) {}
-    })();
-  </script>
+  <meta property="og:url" content="https://cz-agents.dev/cs/">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -197,53 +185,53 @@
 </head>
 <body>
   <div class="container">
-    <nav class="lang" aria-label="Language">
-      <a href="/" class="active" data-lang="en" aria-current="page">EN</a>
-      <a href="/cs/" data-lang="cs">CS</a>
+    <nav class="lang" aria-label="Jazyk">
+      <a href="/" data-lang="en">EN</a>
+      <a href="/cs/" class="active" data-lang="cs" aria-current="page">CS</a>
     </nav>
     <header>
       <div class="logo">
         <h1>cz-agents<span class="tld">.dev</span></h1>
       </div>
       <p class="tagline">
-        Model Context Protocol servers for the Czech ecosystem —
+        Model Context Protocol servery pro český ekosystém —
         <span class="hl">ARES</span>, <span class="hl">ČNB</span>, <span class="hl">ISIR</span>.
-        Give your AI agent native access to Czech business and government data.
+        Dejte svému AI agentovi nativní přístup k firemním a státním datům v ČR.
       </p>
       <div class="badges">
         <span class="badge">MCP 1.10</span>
         <span class="badge">TypeScript</span>
         <span class="badge">MIT</span>
-        <span class="badge live">● 2 servers live</span>
+        <span class="badge live">● 2 servery live</span>
       </div>
     </header>
 
-    <h2>Available servers</h2>
+    <h2>Dostupné servery</h2>
     <div class="servers">
       <div class="server">
         <h3>@czagents/ares</h3>
-        <p>Czech Business Register — IČO lookup, full-text search, transparent bank accounts, history</p>
+        <p>Obchodní rejstřík — lookup podle IČO, fulltext, transparentní účty, historie</p>
         <div class="tools">lookup_by_ico · search_companies · get_statutaries · check_vat_payer · validate_dic · get_bank_accounts · get_history</div>
       </div>
       <div class="server">
         <h3>@czagents/cnb</h3>
-        <p>Czech National Bank — daily FX rates, conversion, historical rates</p>
+        <p>ČNB kurzy — denní kurzovní lístek, konverze, historie</p>
         <div class="tools">get_rates · convert · get_rate</div>
       </div>
       <div class="server soon">
         <h3>@czagents/hlidac</h3>
-        <p>Hlídač státu — public contracts, subsidies, transparency (planned)</p>
+        <p>Hlídač státu — smlouvy, dotace, transparentnost (plánováno)</p>
         <div class="tools">search_contracts · check_subject · …</div>
       </div>
       <div class="server soon">
         <h3>@czagents/isir</h3>
-        <p>Insolvency register — debtor checks (planned)</p>
+        <p>Insolvenční rejstřík — kontrola dlužníků (plánováno)</p>
         <div class="tools">check_ico_insolvency · …</div>
       </div>
     </div>
 
     <h2>Claude Desktop / Cursor</h2>
-    <p style="color:var(--fg-dim); font-size: 14px;">Add to <code>claude_desktop_config.json</code>:</p>
+    <p style="color:var(--fg-dim); font-size: 14px;">Přidej do <code>claude_desktop_config.json</code>:</p>
     <pre class="code"><span class="k">{</span>
   <span class="s">"mcpServers"</span><span class="k">:</span> <span class="k">{</span>
     <span class="s">"ares"</span><span class="k">:</span> <span class="k">{</span> <span class="s">"command"</span><span class="k">:</span> <span class="s">"npx"</span><span class="k">,</span> <span class="s">"args"</span><span class="k">:</span> [<span class="s">"-y"</span><span class="k">,</span> <span class="s">"@czagents/ares"</span>] <span class="k">},</span>
@@ -251,25 +239,25 @@
   <span class="k">}</span>
 <span class="k">}</span></pre>
 
-    <h2>Remote HTTP (no npm)</h2>
+    <h2>Remote HTTP (bez npm)</h2>
     <pre class="code"><span class="k">{</span> <span class="s">"mcpServers"</span><span class="k">:</span> <span class="k">{</span>
     <span class="s">"ares"</span><span class="k">:</span> <span class="k">{</span> <span class="s">"url"</span><span class="k">:</span> <span class="s">"https://ares.cz-agents.dev/mcp"</span> <span class="k">},</span>
     <span class="s">"cnb"</span><span class="k">:</span>  <span class="k">{</span> <span class="s">"url"</span><span class="k">:</span> <span class="s">"https://cnb.cz-agents.dev/mcp"</span> <span class="k">}</span>
 <span class="k">}}</span></pre>
 
-    <h2>Example</h2>
-    <pre class="code">User: <span class="s">What is the VAT ID and address of Seznam.cz? Convert 100 EUR to CZK.</span>
+    <h2>Příklad</h2>
+    <pre class="code">User: <span class="s">Jaká je DIČ a sídlo firmy Seznam.cz? Přepočti 100 EUR na CZK.</span>
 
 Agent → <span class="k">lookup_by_ico</span>(ico=<span class="s">"26168685"</span>)
 Agent → <span class="k">convert</span>(amount=100, from=<span class="s">"EUR"</span>, to=<span class="s">"CZK"</span>)
 
-Seznam.cz, a.s., VAT ID CZ26168685, Radlická 3294/10, Prague 5 – Smíchov.
-100 EUR = 2436.00 CZK (ČNB rate, 2026-04-15).</pre>
+Seznam.cz, a.s., DIČ CZ26168685, Radlická 3294/10, Praha 5 Smíchov.
+100 EUR = 2436.00 CZK (kurz ČNB 2026-04-15).</pre>
 
     <h2>Further reading</h2>
     <p style="color:var(--fg-dim); font-size: 14px; line-height: 1.7;">
       <a class="url" href="https://dev.to/martinhavel/building-mcp-servers-for-a-country-that-isnt-in-the-dataset-czech-gov-apis-1lo8" target="_blank" rel="noopener">Building MCP servers for a country that isn't in the dataset</a>
-      — design rationale, the MOD11 gotcha, ARES Swagger bugs, and how this pattern adapts MCP to non-English locales.
+      — design rationale, MOD11 gotcha, ARES Swagger bugs, and how this pattern adapts MCP to non-English locales.
     </p>
 
     <footer>
