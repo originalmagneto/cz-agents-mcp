@@ -22,6 +22,7 @@ import {
 } from '@czagents/shared';
 import { AresClient } from '@czagents/ares';
 import { SanctionsDb, SanctionsSearch } from '@czagents/sanctions';
+import { IsirClient } from '@czagents/isir';
 import { buildDdServer } from './server.js';
 import type { DdClients } from './clients.js';
 import { DD_BILLING } from './billing.js';
@@ -41,7 +42,9 @@ async function main() {
     sanctions = new SanctionsSearch(db);
   }
 
-  const clients: DdClients = { ares, sanctions };
+  const isir = new IsirClient();
+
+  const clients: DdClients = { ares, sanctions, isir };
 
   const tokenDbPath = process.env.TOKEN_DB ?? './tokens.db';
   const tokenStore = new TokenStore(tokenDbPath);
