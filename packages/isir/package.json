@@ -1,11 +1,11 @@
 {
-  "name": "@czagents/dd",
-  "version": "0.1.2",
-  "description": "MCP server for Czech company due diligence — aggregates ARES, sanctions, ISIR, statutory chain into a single risk-scored report",
+  "name": "@czagents/isir",
+  "version": "0.1.0",
+  "description": "MCP server for ISIR (Czech Insolvency Register) — active proceeding checks by IČO. Alpha; SOAP integration in progress.",
   "type": "module",
   "main": "./dist/index.js",
   "bin": {
-    "cz-agents-dd": "./dist/index.js"
+    "cz-agents-isir": "./dist/index.js"
   },
   "files": [
     "dist",
@@ -14,12 +14,10 @@
   "keywords": [
     "mcp",
     "model-context-protocol",
-    "due-diligence",
-    "kyc",
-    "ares",
-    "ico",
+    "isir",
     "czech",
-    "compliance",
+    "insolvency",
+    "kyc",
     "claude"
   ],
   "license": "MIT",
@@ -28,7 +26,7 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/martinhavel/cz-agents-mcp.git",
-    "directory": "packages/dd"
+    "directory": "packages/isir"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -40,11 +38,9 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@czagents/ares": "^0.1.5",
-    "@czagents/isir": "^0.1.0",
-    "@czagents/sanctions": "^0.1.1",
     "@czagents/shared": "^0.1.5",
     "@modelcontextprotocol/sdk": "^1.10.0",
+    "fast-xml-parser": "^4.5.0",
     "zod": "^3.23.0"
   },
   "devDependencies": {
@@ -54,5 +50,5 @@
     "typescript": "^5.5.0",
     "vitest": "^4.1.4"
   },
-  "mcpName": "dev.cz-agents/dd"
+  "mcpName": "dev.cz-agents/isir"
 }
