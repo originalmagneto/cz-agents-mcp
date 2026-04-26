@@ -65,30 +65,50 @@ export async function buildReport(
   }
 
   // Fáze 2: historical bankrupt-company check per statutory person.
-  // For each surname, search ARES for other companies → check ISIR per company.
-  // Conservative: only flag when an OTHER company (not the current ICO) had/has insolvency.
+  // Heuristic: search ARES for companies whose obchodniJmeno contains the
+  // statutory's FULL NAME (not just surname — surname-only matches are too
+  // noisy on common Czech surnames; e.g. Michal Peřina ≠ Radek Peřina).
+  // We then verify via ARES VR that this person actually sits in that
+  // company's statutory body before flagging.
+  // True precision requires ESM (evidence skutečných majitelů) — future package.
   const priorBankruptcyHits: Array<{ name: string; ico: string; company_name?: string; spisova_znacka?: string }> = [];
   if (!basicOnly && clients.isir) {
     await Promise.all(
       members.map(async (m, i) => {
         if (!m.is_person) return;
         const surname = m.surname;
-        if (!surname || surname.length < 5) return; // Skip short common surnames
-        const otherIcos = await findOtherCompaniesBySurname(clients.ares, surname, ico);
+        // Need both first name + surname to do a precise full-name match
+        const firstName = m.name.replace(new RegExp(`\\s*${surname ?? ''}\\s*$`), '').trim();
+        if (!surname || surname.length < 4 || !firstName) return;
+        const otherIcos = await findOtherCompaniesByFullName(
+          clients.ares,
+          firstName,
+          surname,
+          ico,
+        );
         for (const co of otherIcos.slice(0, 5)) {
           const status = await safe(() => clients.isir!.checkActiveInsolvency(co.ico));
-          if (status?.has_active) {
-            const sm = screenedMembers[i];
-            if (sm) {
-              if (!sm.prior_bankrupt_companies) sm.prior_bankrupt_companies = [];
-              sm.prior_bankrupt_companies.push({
-                ico: co.ico,
-                name: co.name,
-                spisova_znacka: status.spisova_znacka,
-              });
-            }
-            priorBankruptcyHits.push({ name: m.name, ico: co.ico, company_name: co.name, spisova_znacka: status.spisova_znacka });
+          if (!status?.has_active) continue;
+          // Verify this person is ACTUALLY in the bankrupt company's statutory
+          // body, not just a name collision (Pavel Novák s.r.o. vs Pavel Novák
+          // the LUGI jednatel are different people).
+          const isReallyStatutory = await verifyPersonIsStatutory(
+            clients.ares,
+            co.ico,
+            firstName,
+            surname,
+          );
+          if (!isReallyStatutory) continue;
+          const sm = screenedMembers[i];
+          if (sm) {
+            if (!sm.prior_bankrupt_companies) sm.prior_bankrupt_companies = [];
+            sm.prior_bankrupt_companies.push({
+              ico: co.ico,
+              name: co.name,
+              spisova_znacka: status.spisova_znacka,
+            });
           }
+          priorBankruptcyHits.push({ name: m.name, ico: co.ico, company_name: co.name, spisova_znacka: status.spisova_znacka });
         }
       }),
     );
@@ -327,6 +347,7 @@ function rebuildSanctionsMatch(s: SanctionMatchSummary): SanctionsMatch {
   };
 }
 
+/** Older surname-only match — kept for compat with chain.ts callers. */
 async function findOtherCompaniesBySurname(
   ares: AresLike,
   surname: string,
@@ -339,6 +360,63 @@ async function findOtherCompaniesBySurname(
       .map((s) => ({ ico: s.ico, name: s.obchodniJmeno }));
   } catch {
     return [];
+  }
+}
+
+/**
+ * Tighter than surname-only: searches ARES for companies whose obchodniJmeno
+ * contains BOTH first name and surname (typical for self-named s.r.o. like
+ * "Radek Peřina"). Eliminates the false-positive class of "different person,
+ * same surname" that surname-only search produced.
+ */
+async function findOtherCompaniesByFullName(
+  ares: AresLike,
+  firstName: string,
+  surname: string,
+  excludeIco: string,
+): Promise<Array<{ ico: string; name?: string }>> {
+  try {
+    const r = await ares.search({ obchodniJmeno: `${firstName} ${surname}`, pocet: 20 });
+    return r.ekonomickeSubjekty
+      .filter((s) => s.ico && s.ico !== excludeIco)
+      .map((s) => ({ ico: s.ico, name: s.obchodniJmeno }));
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Confirms a candidate person is actually in the target company's statutory
+ * body. Used to filter out remaining false positives where ARES name search
+ * returned a company that happens to have someone-with-similar-name in name
+ * (or unrelated company). Returns true only if first-name + surname match
+ * an active statutory member of the bankrupt company.
+ */
+async function verifyPersonIsStatutory(
+  ares: AresLike,
+  ico: string,
+  firstName: string,
+  surname: string,
+): Promise<boolean> {
+  try {
+    const vr = await ares.getVrRecord(ico);
+    if (!vr?.statutarniOrgany) return false;
+    const fnLower = firstName.toLowerCase();
+    const snLower = surname.toLowerCase();
+    for (const organ of vr.statutarniOrgany) {
+      if (organ.datumVymazu) continue;
+      for (const m of organ.clenoveOrganu ?? []) {
+        if (m.datumVymazu) continue;
+        const fo = m.fyzickaOsoba;
+        if (!fo) continue;
+        const fn = (fo.jmeno ?? '').toLowerCase();
+        const sn = (fo.prijmeni ?? '').toLowerCase();
+        if (fn === fnLower && sn === snLower) return true;
+      }
+    }
+    return false;
+  } catch {
+    return false;
   }
 }
 

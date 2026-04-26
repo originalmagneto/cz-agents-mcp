@@ -42,7 +42,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@czagents/shared": "^0.1.6",
+    "@czagents/shared": "^0.1.7",
     "@modelcontextprotocol/sdk": "^1.10.0",
     "better-sqlite3": "^11.5.0",
     "fast-xml-parser": "^5.7.2",
