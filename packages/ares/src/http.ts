@@ -8,7 +8,7 @@
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
-import { createRateLimiter, checkBodySize } from '@czagents/shared';
+import { createRateLimiter, checkBodySize, checkOrigin } from '@czagents/shared';
 import { buildAresServer } from './server.js';
 
 const PORT = Number(process.env.PORT ?? 3030);
@@ -55,6 +55,7 @@ async function main() {
 
     // Rate limit + body size check (writes 429/413 if exceeded)
     if (!limiter(req, res)) return;
+    if (!checkOrigin(req, res)) return;
     if (!checkBodySize(req, res, MAX_BODY_BYTES)) return;
 
     const sessionHeader = req.headers['mcp-session-id'];

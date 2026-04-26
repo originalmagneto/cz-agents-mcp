@@ -39,6 +39,7 @@ export function buildSanctionsServer(deps: ServerDeps): McpServer {
       threshold: z.number().int().min(0).max(100).default(80).describe('Min confidence to include in results (default 80).'),
       limit: z.number().int().min(1).max(100).default(20).describe('Max results (default 20).'),
     },
+    { title: 'Search Sanctioned Person', readOnlyHint: true, openWorldHint: true },
     async ({ name, dob, nationality, threshold, limit }) => {
       const matches = search.searchByName(name, { dob, nationality, threshold, limit, typeFilter: 'person' });
       return wrap(matches.length === 0
@@ -56,6 +57,7 @@ export function buildSanctionsServer(deps: ServerDeps): McpServer {
       threshold: z.number().int().min(0).max(100).default(80).describe('Min confidence (default 80).'),
       limit: z.number().int().min(1).max(100).default(20).describe('Max results (default 20).'),
     },
+    { title: 'Search Sanctioned Entity', readOnlyHint: true, openWorldHint: true },
     async ({ name, country, threshold, limit }) => {
       const matches = search.searchByName(name, { nationality: country, threshold, limit, typeFilter: 'entity' });
       return wrap(matches.length === 0
@@ -71,6 +73,7 @@ export function buildSanctionsServer(deps: ServerDeps): McpServer {
       ico: z.string().describe('Czech IČO (7-8 digits) or comparable national company ID.'),
       name: z.string().describe('Optional company name for fuzzy fallback if IČO not directly listed.').optional(),
     },
+    { title: 'Check IČO Against Sanctions', readOnlyHint: true, openWorldHint: true },
     async ({ ico, name }) => {
       const matches = search.searchByIco(ico, name);
       return wrap(matches.length === 0
@@ -85,6 +88,7 @@ export function buildSanctionsServer(deps: ServerDeps): McpServer {
     {
       id: z.string().describe('Internal listing ID, e.g. "ofac:12345".'),
     },
+    { title: 'Get Sanctions Listing Detail', readOnlyHint: true, openWorldHint: true },
     async ({ id }) => {
       const entity = db.getById(id);
       if (!entity) return wrap(`Listing ${id} nenalezen.`);
@@ -99,6 +103,7 @@ export function buildSanctionsServer(deps: ServerDeps): McpServer {
       since: z.string().describe('ISO date or datetime, e.g. "2026-04-01" or "2026-04-01T00:00:00Z".'),
       source: z.enum(['eu', 'ofac', 'un', 'ofsi', 'fau']).optional().describe('Optional source filter.'),
     },
+    { title: 'List Recent Sanctions Updates', readOnlyHint: true, openWorldHint: true },
     async ({ since, source }) => {
       const sinceMs = new Date(since).getTime();
       if (Number.isNaN(sinceMs)) {

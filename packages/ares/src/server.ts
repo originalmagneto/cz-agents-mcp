@@ -31,6 +31,7 @@ export function buildAresServer(): McpServer {
         .string()
         .describe('Czech IČO — 7 or 8 digits. Examples: "27074358", "61388581". Auto-validated with MOD11 checksum.'),
     },
+    { title: 'Look Up Czech Company by IČO', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
       const clean = validateIcoInput(ico);
       const subject = await ares.getByIco(clean);
@@ -64,6 +65,7 @@ export function buildAresServer(): McpServer {
       start: z.number().int().min(0).default(0)
         .describe('Pagination offset (default 0).'),
     },
+    { title: 'Search Czech Companies', readOnlyHint: true, openWorldHint: true },
     async ({ query, city, street, psc, nace, pocet, start }) => {
       const sidlo = city || street || psc
         ? { nazevObce: city, nazevUlice: street, psc }
@@ -97,6 +99,7 @@ export function buildAresServer(): McpServer {
       pocet: z.number().int().min(1).max(100).default(20)
         .describe('Max results (default 20).'),
     },
+    { title: 'Search Companies by Address', readOnlyHint: true, openWorldHint: true },
     async ({ street, city, psc, pocet }) => {
       const result = await ares.search({
         sidlo: { nazevUlice: street, nazevObce: city, psc },
@@ -125,6 +128,7 @@ export function buildAresServer(): McpServer {
       city: z.string().describe('Optional city filter.').optional(),
       pocet: z.number().int().min(1).max(100).default(20).describe('Max results.'),
     },
+    { title: 'Search Companies by NACE Code', readOnlyHint: true, openWorldHint: true },
     async ({ nace, city, pocet }) => {
       const result = await ares.search({
         czNace: [nace],
@@ -152,6 +156,7 @@ export function buildAresServer(): McpServer {
     {
       ico: z.string().describe('Czech IČO (7-8 digits).'),
     },
+    { title: 'Get Transparent Bank Accounts', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
       const clean = validateIcoInput(ico);
       const accounts = await ares.getBankAccounts(clean);
@@ -188,6 +193,7 @@ export function buildAresServer(): McpServer {
     {
       ico: z.string().describe('Czech IČO (7-8 digits).'),
     },
+    { title: 'Get Statutory Body', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
       const clean = validateIcoInput(ico);
       const vr = await ares.getVrRecord(clean);
@@ -236,6 +242,7 @@ export function buildAresServer(): McpServer {
     {
       dic: z.string().describe('Czech DIČ — e.g., "CZ26168685". Whitespace and case tolerated.'),
     },
+    { title: 'Validate Czech DIČ', readOnlyHint: true },
     async ({ dic }) => {
       const formatted = formatDic(dic);
       const valid = isValidDic(dic);
@@ -261,6 +268,7 @@ export function buildAresServer(): McpServer {
     {
       ico: z.string().describe('Czech IČO (7-8 digits).'),
     },
+    { title: 'Check VAT Payer Status', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
       const clean = validateIcoInput(ico);
       const subject = await ares.getByIco(clean);
@@ -300,6 +308,7 @@ export function buildAresServer(): McpServer {
     {
       ico: z.string().describe('Czech IČO (7-8 digits).'),
     },
+    { title: 'Get Company History', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
       const clean = validateIcoInput(ico);
       const history = await ares.getHistory(clean);

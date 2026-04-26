@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Terms of Service — cz-agents</title>
+<meta name="robots" content="index,follow">
+<style>
+  body { font-family: ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+         max-width: 760px; margin: 60px auto; padding: 0 20px; color: #1f2937; line-height: 1.7; }
+  h1 { font-size: 28px; margin-bottom: 6px; }
+  h2 { font-size: 20px; margin-top: 32px; margin-bottom: 8px; }
+  .updated { color: #6b7280; font-size: 13px; margin-bottom: 24px; }
+  p, li { font-size: 15px; }
+  code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+  a { color: #2563eb; }
+  ul { margin: 8px 0 16px 24px; }
+</style>
+</head>
+<body>
+<h1>Terms of Service</h1>
+<p class="updated">Last updated: 2026-04-26 · <a href="/">cz-agents.dev</a></p>
+
+<p>
+  By using the cz-agents MCP servers (<em>the service</em>), whether via the npm
+  packages, the hosted endpoints at <code>*.cz-agents.dev</code>, or the
+  Anthropic Connectors Directory, you agree to these terms. The service is
+  operated by Martin Havel (IČO 02175614, registered in the Czech Republic).
+</p>
+
+<h2>What the service is</h2>
+
+<p>
+  An open-source Model Context Protocol (MCP) toolset for Czech business and
+  government data. It looks up information from public registries (ARES, ČNB,
+  ISIR, EU sanctions, OFAC) and aggregates it into structured responses for
+  AI agents and developers.
+</p>
+
+<h2>What the service is not</h2>
+
+<ul>
+  <li>
+    <strong>Not legal advice.</strong> Reports are informational summaries of
+    public-registry data, not authoritative legal opinions. For binding legal
+    or compliance decisions, consult a qualified Czech attorney or a licensed
+    AML/KYC provider.
+  </li>
+  <li>
+    <strong>Not a credit rating.</strong> Risk scores are deterministic
+    rule-based summaries with explicit weights. Not regulated under the Credit
+    Rating Agency framework.
+  </li>
+  <li>
+    <strong>Not real-time.</strong> Cache TTLs (≤24 h for ARES, daily for
+    sanctions, near-real-time for ISIR) mean responses may lag the upstream
+    registry. Always re-verify time-critical decisions against the original source.
+  </li>
+</ul>
+
+<h2>Acceptable use</h2>
+
+<p>You agree not to use the service for:</p>
+<ul>
+  <li>Bulk scraping that bypasses rate limits or quota allocations.</li>
+  <li>Re-publishing the cached datasets (sanctions snapshots, ISIR event feed) as your own product.</li>
+  <li>Identification or tracking of individuals beyond the public-registry purposes for which the data was originally published.</li>
+  <li>Any unlawful purpose under Czech law or the laws of your jurisdiction.</li>
+</ul>
+
+<h2>Free vs paid tiers</h2>
+
+<p>
+  The service offers a free tier subject to per-IP daily limits, and paid tiers
+  with monthly quotas. Pricing and limits are listed on
+  <a href="/">cz-agents.dev</a>. Paid subscriptions are billed via Stripe;
+  cancellation takes effect at the end of the current billing period. There are
+  no refunds for partial months unless required by Czech consumer law (zákon
+  č. 89/2012 Sb., občanský zákoník).
+</p>
+
+<h2>Limitation of liability</h2>
+
+<p>
+  The service is provided <strong>"as is"</strong>. We make no warranty that
+  responses are accurate, complete, current, or fit for any particular purpose.
+  To the maximum extent permitted by Czech law, total liability for any claim
+  arising from your use of the service is limited to the amount you paid for
+  the service in the 12 months preceding the claim. We are not liable for
+  consequential, indirect, or special damages.
+</p>
+
+<p>
+  This limitation does not affect statutory rights of consumers under Czech
+  law that cannot be waived.
+</p>
+
+<h2>Termination</h2>
+
+<p>
+  We may suspend access for breach of these terms (especially the Acceptable
+  Use section) or for non-payment of a paid tier. You may terminate at any
+  time by ceasing use and, for paid tiers, cancelling via Stripe.
+</p>
+
+<h2>Changes to these terms</h2>
+
+<p>
+  Material changes will be announced on the project's GitHub repository
+  (<a href="https://github.com/martinhavel/cz-agents-mcp">github.com/martinhavel/cz-agents-mcp</a>)
+  at least 14 days before they take effect. Continued use after that date
+  constitutes acceptance.
+</p>
+
+<h2>Governing law and dispute resolution</h2>
+
+<p>
+  These terms are governed by Czech law. Disputes that cannot be resolved by
+  agreement are subject to the exclusive jurisdiction of the courts of the
+  Czech Republic. Consumers retain their rights under EU consumer-protection
+  rules.
+</p>
+
+<h2>Contact</h2>
+
+<p>
+  Martin Havel ·
+  <a href="mailto:martin.havel@gmail.com">martin.havel@gmail.com</a> ·
+  <a href="https://martinhavel.cz">martinhavel.cz</a>
+</p>
+
+<p style="margin-top: 40px; color: #6b7280; font-size: 13px;">
+  ← <a href="/">Back to cz-agents.dev</a>
+</p>
+
+</body>
+</html>
