@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <title>cz-agents brand mark</title>
+
+  <rect width="256" height="256" rx="40" ry="40" fill="#0a0e14"/>
+
+  <g fill="#ff6b35">
+    <rect x="24" y="24" width="32" height="6"/>
+    <rect x="24" y="24" width="6" height="32"/>
+    <rect x="200" y="24" width="32" height="6"/>
+    <rect x="226" y="24" width="6" height="32"/>
+    <rect x="24" y="226" width="32" height="6"/>
+    <rect x="24" y="200" width="6" height="32"/>
+    <rect x="200" y="226" width="32" height="6"/>
+    <rect x="226" y="200" width="6" height="32"/>
+  </g>
+
+  <text x="128" y="170"
+        font-family="DejaVu Sans Mono, monospace"
+        font-size="140" font-weight="700"
+        text-anchor="middle"
+        fill="#ff6b35">cz</text>
+
+  <text x="128" y="210"
+        font-family="DejaVu Sans Mono, monospace"
+        font-size="22" font-weight="500"
+        text-anchor="middle"
+        fill="#6a7488"
+        letter-spacing="2">.dev</text>
+</svg>
