@@ -132,11 +132,24 @@ async function main() {
     if (!checkOrigin(req, res)) return;
     if (!checkBodySize(req, res, MAX_BODY_BYTES)) return;
 
-    const auth = quota(req, res);
-    if (!auth.ok) return;
-
+    // Streamable HTTP spec: a bare GET to /mcp without a session id is a
+    // probe for a server-initiated SSE stream. We don't push server→client
+    // messages, so per spec respond with 405 (instead of letting the SDK
+    // return 400, which Anthropic's Connector reachability check misreads
+    // as "server unreachable").
     const sessionHeader = req.headers['mcp-session-id'];
     const sessionId = Array.isArray(sessionHeader) ? sessionHeader[0] : sessionHeader;
+    if (req.method === 'GET' && !sessionId) {
+      res.writeHead(405, { 'Content-Type': 'application/json', Allow: 'POST, OPTIONS' });
+      res.end(JSON.stringify({
+        error: 'method_not_allowed',
+        message: 'Use POST for MCP requests. Server-initiated SSE streams are not supported.',
+      }));
+      return;
+    }
+
+    const auth = quota(req, res);
+    if (!auth.ok) return;
 
     let transport: StreamableHTTPServerTransport;
     if (sessionId && transports.has(sessionId)) {

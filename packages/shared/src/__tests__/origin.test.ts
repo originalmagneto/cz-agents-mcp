@@ -49,6 +49,24 @@ describe('checkOrigin', () => {
     expect(JSON.parse(res.body).origin).toBe('https://evil.example.com');
   });
 
+  it('allows app:// Electron origins (Claude Desktop)', () => {
+    expect(checkOrigin(mockReq({ origin: 'app://obsidian.md' }), mockRes())).toBe(true);
+    expect(checkOrigin(mockReq({ origin: 'app://-' }), mockRes())).toBe(true);
+  });
+
+  it('allows browser-extension Origins', () => {
+    expect(checkOrigin(mockReq({ origin: 'chrome-extension://abc123' }), mockRes())).toBe(true);
+  });
+
+  it('allows claude.ai subdomains via pattern', () => {
+    expect(checkOrigin(mockReq({ origin: 'https://api.claude.ai' }), mockRes())).toBe(true);
+    expect(checkOrigin(mockReq({ origin: 'https://app.claude.com' }), mockRes())).toBe(true);
+  });
+
+  it('allows literal null Origin string (Electron/file://)', () => {
+    expect(checkOrigin(mockReq({ origin: 'null' }), mockRes())).toBe(true);
+  });
+
   it('respects ALLOWED_ORIGINS env override', () => {
     process.env.ALLOWED_ORIGINS = 'https://my.app,https://other.io';
     _resetOriginAllowlistCache();
