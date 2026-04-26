@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Privacy Policy — cz-agents</title>
+<meta name="robots" content="index,follow">
+<style>
+  body { font-family: ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+         max-width: 760px; margin: 60px auto; padding: 0 20px; color: #1f2937; line-height: 1.7; }
+  h1 { font-size: 28px; margin-bottom: 6px; }
+  h2 { font-size: 20px; margin-top: 32px; margin-bottom: 8px; }
+  .updated { color: #6b7280; font-size: 13px; margin-bottom: 24px; }
+  p, li { font-size: 15px; }
+  code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+  a { color: #2563eb; }
+  ul { margin: 8px 0 16px 24px; }
+</style>
+</head>
+<body>
+<h1>Privacy Policy</h1>
+<p class="updated">Last updated: 2026-04-26 · <a href="/">cz-agents.dev</a></p>
+
+<p>
+  cz-agents (<em>the service</em>) is operated by Martin Havel, IČO 02175614,
+  registered in the Czech Republic. This policy describes what data the service
+  processes, why, and how long.
+</p>
+
+<h2>What data we process</h2>
+
+<p>
+  The service consists of MCP (Model Context Protocol) servers that look up
+  publicly-available data from Czech and EU government registries. We process
+  three categories of data:
+</p>
+
+<ul>
+  <li>
+    <strong>Public registry data</strong> — IČO, company names, statutory bodies,
+    sanction list entries, insolvency proceedings, FX rates. Sourced in real time
+    or with short cache (≤24 h) from ARES (Ministry of Finance), ČNB,
+    ISIR (Ministry of Justice), EU Financial Sanctions Files, and OFAC SDN.
+    We do not store this data beyond cache TTL except for sanctions snapshots
+    (kept for change-detection) and the ISIR event feed (append-only log).
+  </li>
+  <li>
+    <strong>Request metadata</strong> — IP address (for rate limiting), Bearer
+    API tokens (for paid tiers), HTTP headers, request/response timing.
+    Retained for up to 30 days in server logs, then deleted.
+  </li>
+  <li>
+    <strong>Billing data</strong> — for paid tiers we use Stripe as a payment
+    processor. Stripe holds card data and customer email; we hold the Stripe
+    customer/subscription IDs linked to an opaque API token (no card data).
+  </li>
+</ul>
+
+<h2>Legal basis (GDPR Art. 6)</h2>
+
+<ul>
+  <li>
+    <strong>Public registry data</strong> — Art. 6(1)(f) <em>legitimate
+    interest</em>. Czech business registers are public-by-law (zákon č. 304/2013
+    Sb. on public registers; § 125 zákona č. 120/2001 Sb. for ISIR). Republishing
+    them via API does not change the data's public character.
+  </li>
+  <li>
+    <strong>Request metadata</strong> — Art. 6(1)(f) legitimate interest in
+    operating, securing, and rate-limiting the service.
+  </li>
+  <li>
+    <strong>Billing data</strong> — Art. 6(1)(b) <em>contract performance</em>.
+  </li>
+</ul>
+
+<h2>What we do not do</h2>
+
+<ul>
+  <li>We do not sell or share data with third parties for marketing.</li>
+  <li>We do not use data subjects' information for profiling beyond rate limits.</li>
+  <li>We do not store credit card data — Stripe handles all card processing.</li>
+  <li>We do not transfer data outside the EU. Servers are hosted in Falkenstein, DE (Hetzner).</li>
+</ul>
+
+<h2>Data subject rights</h2>
+
+<p>
+  If you are an identifiable individual whose data appears in our service
+  (typically as a statutory body member or sanctioned person from a public
+  registry), you have the rights under GDPR Art. 15–22 (access, rectification,
+  erasure, restriction, portability, objection). For data that originates from a
+  public registry, the appropriate erasure path is to address the original
+  registry (e.g. ARES). We can confirm what we cache about you and refresh from
+  source on request.
+</p>
+
+<p>Contact: <a href="mailto:martin.havel@gmail.com">martin.havel@gmail.com</a>.</p>
+
+<h2>Children</h2>
+
+<p>The service is not directed at, and does not knowingly collect data from, children under 16.</p>
+
+<h2>Changes to this policy</h2>
+
+<p>
+  Material changes will be announced on the project's GitHub repository
+  (<a href="https://github.com/martinhavel/cz-agents-mcp">github.com/martinhavel/cz-agents-mcp</a>)
+  at least 14 days before they take effect. The current version is always
+  authoritative at <code>cz-agents.dev/privacy</code>.
+</p>
+
+<h2>Supervisory authority</h2>
+
+<p>
+  If you believe your rights are being violated, you may lodge a complaint with
+  the Czech Office for Personal Data Protection (Úřad pro ochranu osobních
+  údajů, <a href="https://uoou.gov.cz">uoou.gov.cz</a>).
+</p>
+
+<p style="margin-top: 40px; color: #6b7280; font-size: 13px;">
+  ← <a href="/">Back to cz-agents.dev</a>
+</p>
+
+</body>
+</html>

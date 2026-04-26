@@ -15,6 +15,7 @@ import { randomUUID } from 'node:crypto';
 import {
   createRateLimiter,
   checkBodySize,
+  checkOrigin,
   TokenStore,
   createQuotaGuard,
   handleStripeWebhook,
@@ -128,6 +129,7 @@ async function main() {
     }
 
     if (!limiter(req, res)) return;
+    if (!checkOrigin(req, res)) return;
     if (!checkBodySize(req, res, MAX_BODY_BYTES)) return;
 
     const auth = quota(req, res);

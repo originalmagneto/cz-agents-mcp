@@ -30,6 +30,7 @@ export function buildDdServer(clients: DdClients): McpServer {
         .default('basic')
         .describe('basic = ARES + sanctions only; full = + ISIR insolvency + virtual-address probe.'),
     },
+    { title: 'Get Czech Company Due-Diligence Report', readOnlyHint: true, openWorldHint: true },
     async ({ ico, depth }) => {
       const clean = validateIcoInput(ico);
       const report = await buildReport(clean, clients, { depth });
@@ -43,6 +44,7 @@ export function buildDdServer(clients: DdClients): McpServer {
     {
       ico: z.string().describe('Czech IČO — 7 or 8 digits.'),
     },
+    { title: 'Get Risk Score', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
       const clean = validateIcoInput(ico);
       const report = await buildReport(clean, clients, { depth: 'basic' });
@@ -64,6 +66,7 @@ export function buildDdServer(clients: DdClients): McpServer {
       ico: z.string().describe('Czech IČO — 7 or 8 digits.'),
       max_depth: z.number().int().min(1).max(5).default(3).describe('Max recursion depth (default 3, hard cap 5).'),
     },
+    { title: 'Get Statutory Chain (UBO Walk)', readOnlyHint: true, openWorldHint: true },
     async ({ ico, max_depth }) => {
       const clean = validateIcoInput(ico);
       const result = await buildChain(clean, clients.ares, { maxDepth: max_depth });

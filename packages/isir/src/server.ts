@@ -25,6 +25,7 @@ export function buildIsirServer(client: IsirClient = new IsirClient()): McpServe
     {
       ico: z.string().describe('Czech IČO — 7 or 8 digits.'),
     },
+    { title: 'Check IČO Insolvency in ISIR', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
       const clean = validateIcoInput(ico);
       try {
@@ -51,6 +52,7 @@ export function buildIsirServer(client: IsirClient = new IsirClient()): McpServe
       dob: z.string().optional().describe('Date of birth, YYYY-MM-DD. Optional but strongly recommended — common names produce many false positives without DOB.'),
       only_active: z.boolean().default(true).describe('When true (default), return only currently active proceedings. False also returns closed/dismissed.'),
     },
+    { title: 'Search Person Insolvency in ISIR', readOnlyHint: true, openWorldHint: true },
     async ({ name, dob, only_active }) => {
       try {
         const matches = await client.searchPersonInsolvency({ name, dob, onlyActive: only_active });
@@ -76,6 +78,7 @@ export function buildIsirServer(client: IsirClient = new IsirClient()): McpServe
         .default(0)
         .describe('Last seen event id. Use 0 to start from the beginning of recorded ISIR history (~2008).'),
     },
+    { title: 'Poll ISIR Event Feed', readOnlyHint: true, openWorldHint: true },
     async ({ since_id }) => {
       try {
         const result = await client.pollEvents(since_id);

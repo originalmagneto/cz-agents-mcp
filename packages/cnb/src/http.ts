@@ -2,7 +2,7 @@
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
-import { createRateLimiter, checkBodySize } from '@czagents/shared';
+import { createRateLimiter, checkBodySize, checkOrigin } from '@czagents/shared';
 import { buildCnbServer } from './server.js';
 
 const PORT = Number(process.env.PORT ?? 3031);
@@ -39,6 +39,7 @@ async function main() {
     }
 
     if (!limiter(req, res)) return;
+    if (!checkOrigin(req, res)) return;
     if (!checkBodySize(req, res, MAX_BODY_BYTES)) return;
 
     const sessionHeader = req.headers['mcp-session-id'];

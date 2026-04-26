@@ -28,6 +28,7 @@ export function buildCnbServer(): McpServer {
         .optional()
         .describe('Optional ISO date (YYYY-MM-DD) for historical rates. Omit for latest.'),
     },
+    { title: 'Get ČNB Daily FX Rates', readOnlyHint: true, openWorldHint: true },
     async ({ date }) => {
       const sheet = await cnb.getDailyRates(date);
       const summary = sheet.rates
@@ -60,6 +61,7 @@ export function buildCnbServer(): McpServer {
         .optional()
         .describe('Optional ISO date for historical rates. Omit for latest.'),
     },
+    { title: 'Convert Currency via ČNB Rates', readOnlyHint: true, openWorldHint: true },
     async ({ amount, from, to, date }) => {
       const result = await cnb.convert(amount, from, to, date);
       return {
@@ -87,6 +89,7 @@ export function buildCnbServer(): McpServer {
         .optional()
         .describe('Optional ISO date for historical rate.'),
     },
+    { title: 'Get Single Currency ČNB Rate', readOnlyHint: true, openWorldHint: true },
     async ({ code, date }) => {
       const sheet = await cnb.getDailyRates(date);
       const r = sheet.rates.find((x) => x.code === code.toUpperCase());
