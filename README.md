@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 
 Model Context Protocol servers for Czech government & business data.
-Give your AI agent native access to ARES, ČNB, and more.
+Give your AI agent native access to ARES, ČNB, ISIR, sanctions screening, and a unified due-diligence aggregator.
 
 **Landing page:** [cz-agents.dev](https://cz-agents.dev)
 
@@ -14,9 +14,9 @@ Give your AI agent native access to ARES, ČNB, and more.
 |---|---|---|
 | [`@czagents/ares`](./packages/ares) | ARES — Czech Business Register | ✅ live |
 | [`@czagents/cnb`](./packages/cnb) | ČNB — daily FX rates | ✅ live |
-| [`@czagents/sanctions`](./packages/sanctions) | EU + OFAC sanctions screening (KYC/AML) | 🧪 beta |
-| [`@czagents/dd`](./packages/dd) | Due-diligence aggregator (ARES + sanctions + ISIR) | 🧪 beta |
-| `@czagents/isir` | ISIR — Czech insolvency register | 🚧 future |
+| [`@czagents/sanctions`](./packages/sanctions) | EU + OFAC sanctions screening (KYC/AML) | ✅ live |
+| [`@czagents/isir`](./packages/isir) | ISIR — Czech insolvency register | ✅ live |
+| [`@czagents/dd`](./packages/dd) | Due-diligence aggregator (ARES + sanctions + ISIR + statutory chain) | ✅ live |
 
 ## Quick start
 
@@ -28,6 +28,7 @@ Give your AI agent native access to ARES, ČNB, and more.
     "ares":      { "command": "npx", "args": ["-y", "@czagents/ares"] },
     "cnb":       { "command": "npx", "args": ["-y", "@czagents/cnb"] },
     "sanctions": { "command": "npx", "args": ["-y", "@czagents/sanctions"], "env": { "SANCTIONS_DB": "/path/to/sanctions.db" } },
+    "isir":      { "command": "npx", "args": ["-y", "@czagents/isir"], "env": { "ISIR_SOAP_ENABLED": "1" } },
     "dd":        { "command": "npx", "args": ["-y", "@czagents/dd"], "env": { "SANCTIONS_DB": "/path/to/sanctions.db" } }
   }
 }
@@ -41,6 +42,7 @@ Give your AI agent native access to ARES, ČNB, and more.
     "ares":      { "url": "https://ares.cz-agents.dev/mcp" },
     "cnb":       { "url": "https://cnb.cz-agents.dev/mcp" },
     "sanctions": { "url": "https://sanctions.cz-agents.dev/mcp" },
+    "isir":      { "url": "https://isir.cz-agents.dev/mcp" },
     "dd":        { "url": "https://dd.cz-agents.dev/mcp" }
   }
 }
@@ -73,6 +75,12 @@ Give your AI agent native access to ARES, ČNB, and more.
 - `check_ico({ ico, name? })` — direct lookup of a Czech IČO on sanctions lists
 - `get_listing({ id })` — full record by `${source}:${id}`
 - `list_recent_updates({ since, source? })` — daily monitoring (added/removed/modified)
+
+### `@czagents/isir` (3 tools)
+
+- `check_ico_insolvency({ ico })` — direct lookup of a Czech IČO in the insolvency register
+- `search_person_insolvency({ ico?, rc?, dob?, firstname?, surname? })` — find a person by IČO, birth number, or name + DOB
+- `poll_isir_events({ since })` — append-only event feed for daily monitoring
 
 ### `@czagents/dd` (3 tools)
 
