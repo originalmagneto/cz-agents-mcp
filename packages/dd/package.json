@@ -1,6 +1,6 @@
 {
   "name": "@czagents/dd",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "MCP server for Czech company due diligence — aggregates ARES, sanctions, ISIR, ADIS unreliable-VAT-payer, statutory chain into a single risk-scored report",
   "type": "module",
   "main": "./dist/index.js",
@@ -31,7 +31,7 @@
     "directory": "packages/dd"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && chmod +x dist/index.js",
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "start:http": "node dist/http.js",
