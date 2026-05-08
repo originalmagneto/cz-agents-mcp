@@ -1,0 +1,52 @@
+{
+  "name": "@czagents/realestate",
+  "version": "0.1.0",
+  "description": "MCP server for Czech distress real estate — aggregates insolvency sales (ISIR), public auctions (portál dražeb), and market context (sreality trends + okres aggregates)",
+  "type": "module",
+  "main": "./dist/index.js",
+  "bin": {
+    "cz-agents-realestate": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "real-estate",
+    "distress",
+    "insolvency",
+    "auctions",
+    "drazby",
+    "czech",
+    "isir",
+    "claude"
+  ],
+  "license": "MIT",
+  "author": "Martin Havel <martin.havel@gmail.com>",
+  "homepage": "https://cz-agents.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/martinhavel/cz-agents-mcp.git",
+    "directory": "packages/realestate"
+  },
+  "mcpName": "dev.cz-agents/realestate",
+  "scripts": {
+    "build": "tsc -p tsconfig.json && chmod +x dist/index.js",
+    "dev": "tsx src/index.ts",
+    "test": "echo 'no tests yet'"
+  },
+  "dependencies": {
+    "@czagents/shared": "*",
+    "@modelcontextprotocol/sdk": "^1.18.0",
+    "better-sqlite3": "^12.9.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^20.11.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.5.0"
+  }
+}

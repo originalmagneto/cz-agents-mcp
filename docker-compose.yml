@@ -161,6 +161,36 @@ services:
       - sanctions-data:/var/lib/czagents-sanctions
     command: ["node", "packages/sanctions/dist/cli-refresh.js"]
 
+  # 2026-05-08 — Reality MCP server (distress real estate intelligence).
+  # Read-only access to cz-agents-webapp SQLite database (mounted from
+  # webapp-data volume defined in cz-agents-webapp/docker-compose.yml).
+  realestate:
+    build:
+      context: .
+      dockerfile: packages/realestate/Dockerfile
+    image: cz-agents-realestate:latest
+    container_name: cz-agents-realestate
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3036:3036"
+    environment:
+      - PORT=3036
+      - NODE_ENV=production
+      - REALESTATE_DB_PATH=/data/webapp.db
+      - TOKEN_DB=/var/lib/czagents-tokens/tokens.db
+      - RATE_LIMIT_MAX=30
+    volumes:
+      - cz-agents-webapp_webapp-data:/data:ro
+      - tokens-data:/var/lib/czagents-tokens
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3036/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    networks:
+      - default
+      - apache
+
 networks:
   default:
   apache:
@@ -170,3 +200,5 @@ networks:
 volumes:
   sanctions-data:
   tokens-data:
+  cz-agents-webapp_webapp-data:
+    external: true
