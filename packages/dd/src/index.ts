@@ -17,6 +17,7 @@ import { buildDdServer } from './server.js';
 import type { DdClients } from './clients.js';
 
 export { buildDdServer } from './server.js';
+export type * from './types.js';
 
 async function main() {
   const ares = new AresClient();
