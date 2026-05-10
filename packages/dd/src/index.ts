@@ -55,3 +55,5 @@ export { buildTimeline } from './patterns/risk-timeline.js';
 export type { EventSeverity, TimelineEvent, TimelineResult } from './patterns/risk-timeline.js';
 export { detectPhoenix } from './patterns/phoenix.js';
 export type { PhoenixIndicatorCode, PhoenixIndicator, PhoenixReport } from './patterns/phoenix.js';
+export { detectAddressCrowding, RISK_LABELS as ADDRESS_CROWDING_RISK_LABELS, pickSample } from './patterns/address-crowding.js';
+export type { AddressCrowdingInput, AddressCrowdingReport, CrowdingRiskSignal, CrowdingThreshold } from './patterns/address-crowding.js';

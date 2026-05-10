@@ -6,6 +6,7 @@ import { buildChain } from './chain.js';
 import { detectNomineeDirector } from './patterns/nominee-director.js';
 import { buildTimeline } from './patterns/risk-timeline.js';
 import { detectPhoenix } from './patterns/phoenix.js';
+import { detectAddressCrowding } from './patterns/address-crowding.js';
 import type { DdClients } from './clients.js';
 
 /**
@@ -161,6 +162,38 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
       const report = await buildReport(clean, clients, { depth: 'full' });
       const result = buildTimeline(report);
       return wrap(JSON.stringify({ ico: clean, ...result }, null, 2));
+    },
+  );
+
+  server.tool(
+    'detect_address_crowding',
+    'Detects "shell-firm hotel" patterns — counts how many companies share the same registered address. ' +
+    'Threshold-based risk: 1-9 normal (multi-tenant office), 10-49 mild (legitimate coworking), ' +
+    '50-199 medium (virtual office provider), 200+ high (shell-firm hotel). Compliance tier or higher.',
+    { ico: z.string().describe('Czech IČO 7-8 digits') },
+    { title: 'Detect Address Crowding', readOnlyHint: true, openWorldHint: true },
+    async ({ ico }) => {
+      const gate = requireTier(tier, 'compliance', 'detect_address_crowding');
+      if (gate) return gate;
+      const clean = validateIcoInput(ico);
+      const company = await clients.ares.getByIco(clean);
+      if (!company) {
+        return wrap(JSON.stringify({ error: 'ico_not_found', ico: clean }));
+      }
+      const searchResult = await clients.ares.search({
+        sidlo: {
+          nazevUlice: company.sidlo?.nazevUlice,
+          nazevObce: company.sidlo?.nazevObce,
+          psc: company.sidlo?.psc,
+        },
+        pocet: 200,
+      });
+      const report = detectAddressCrowding({
+        company,
+        companiesAtAddress: searchResult.ekonomickeSubjekty,
+        totalCountAtAddress: searchResult.pocetCelkem,
+      });
+      return wrap(JSON.stringify(report, null, 2));
     },
   );
 
