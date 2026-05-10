@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing — cz-agents</title>
+  <meta name="description" content="cz-agents pricing: Free open-source tier, Compliance API (€99/mo), Agency (€199/mo), Reality (1 990–5 990 Kč/mo), and pay-per-report (€0.50).">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://cz-agents.dev/pricing.html">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="icon" type="image/png" sizes="256x256" href="/logo.png">
+  <link rel="icon" type="image/svg+xml" href="/logo.svg">
+  <link rel="apple-touch-icon" sizes="256x256" href="/logo.png">
+  <link rel="alternate" hreflang="en" href="https://cz-agents.dev/pricing.html">
+  <link rel="alternate" hreflang="cs" href="https://cz-agents.dev/cs/pricing.html">
+  <link rel="alternate" hreflang="x-default" href="https://cz-agents.dev/pricing.html">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Pricing — cz-agents">
+  <meta property="og:description" content="Free open-source MCP servers + hosted paid tiers for compliance, due-diligence, and Czech distress real estate.">
+  <meta property="og:url" content="https://cz-agents.dev/pricing.html">
+  <meta property="og:image" content="https://cz-agents.dev/logo.png">
+  <meta property="og:site_name" content="cz-agents">
+  <meta property="og:locale" content="en_US">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0e14;
+      --bg-elev: #131820;
+      --fg: #e6e9ef;
+      --fg-dim: #8a93a6;
+      --fg-ghost: #4a5365;
+      --accent: #ff6b35;
+      --accent-dim: #c94a1a;
+      --border: #1f2630;
+      --green: #6ece58;
+      --yellow: #e4d050;
+      --blue: #5eaeff;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    pre, code {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.85em;
+    }
+    .container {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      position: relative;
+    }
+    .lang {
+      position: absolute;
+      top: 40px;
+      right: 20px;
+      display: flex;
+      gap: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+    .lang a {
+      color: var(--fg-ghost);
+      text-decoration: none;
+      padding: 4px 8px;
+      border: 1px solid transparent;
+      border-radius: 4px;
+    }
+    .lang a:hover { color: var(--fg-dim); border-color: var(--border); }
+    .lang a.active { color: var(--accent); border-color: var(--border); background: var(--bg-elev); }
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 32px;
+      margin-bottom: 48px;
+    }
+    .logo {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .logo a { text-decoration: none; color: inherit; }
+    .logo h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+    .logo .tld {
+      color: var(--accent);
+      font-size: 32px;
+      font-weight: 800;
+    }
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      margin-top: 16px;
+      flex-wrap: wrap;
+    }
+    .nav-links a {
+      color: var(--fg-dim);
+      text-decoration: none;
+      font-size: 14px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a.active { color: var(--accent); }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      margin-top: 48px;
+    }
+    h3.section-sub {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--fg-dim);
+      margin-top: 32px;
+      margin-bottom: 12px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Pricing grid */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .pricing-grid.three-col {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (max-width: 700px) {
+      .pricing-grid, .pricing-grid.three-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .tier {
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      position: relative;
+    }
+    .tier.featured {
+      border-color: var(--accent-dim);
+      box-shadow: 0 0 0 1px var(--accent-dim);
+    }
+    .tier .featured-label {
+      position: absolute;
+      top: -11px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: var(--bg);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 10px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    .tier h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: var(--accent);
+      margin-top: 4px;
+    }
+    .tier .price {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.1;
+    }
+    .tier .price small {
+      font-size: 13px;
+      color: var(--fg-dim);
+      font-weight: 400;
+    }
+    .tier ul {
+      list-style: none;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 4px 0;
+    }
+    .tier ul li {
+      font-size: 13px;
+      color: var(--fg-dim);
+      padding-left: 16px;
+      position: relative;
+    }
+    .tier ul li::before {
+      content: '·';
+      position: absolute;
+      left: 4px;
+      color: var(--fg-ghost);
+    }
+    .tier .buy {
+      display: inline-block;
+      text-align: center;
+      background: var(--accent);
+      color: var(--bg);
+      text-decoration: none;
+      padding: 9px 16px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .tier .buy:hover { background: var(--accent-dim); color: var(--fg); }
+    .tier.free .buy {
+      background: transparent;
+      color: var(--fg-dim);
+      border: 1px solid var(--border);
+    }
+    .tier.free .buy:hover { color: var(--accent); border-color: var(--accent-dim); }
+    .tier .fine-print {
+      font-size: 11px;
+      color: var(--fg-ghost);
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 2px;
+    }
+
+    /* Pay-per-report block */
+    .ppr-block {
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      align-items: center;
+    }
+    .ppr-block .ppr-left { flex: 1; min-width: 200px; }
+    .ppr-block .ppr-price {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+    .ppr-block .ppr-price small {
+      font-size: 14px;
+      color: var(--fg-dim);
+      font-weight: 400;
+    }
+    .ppr-block p {
+      font-size: 14px;
+      color: var(--fg-dim);
+      margin-top: 6px;
+    }
+    .ppr-block .ppr-right {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 180px;
+    }
+    .ppr-block .buy {
+      display: inline-block;
+      text-align: center;
+      background: var(--accent);
+      color: var(--bg);
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .ppr-block .buy:hover { background: var(--accent-dim); color: var(--fg); }
+    .ppr-block .fine-print {
+      font-size: 11px;
+      color: var(--fg-ghost);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* FAQ */
+    .faq { margin-top: 16px; }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0;
+    }
+    .faq-item:first-child { border-top: 1px solid var(--border); }
+    .faq-item dt {
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--fg);
+      padding-right: 24px;
+      position: relative;
+    }
+    .faq-item dt::after {
+      content: '+';
+      position: absolute;
+      right: 0;
+      color: var(--fg-ghost);
+      font-weight: 400;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .faq-item.open dt::after { content: '−'; }
+    .faq-item dd {
+      font-size: 13px;
+      color: var(--fg-dim);
+      margin-top: 10px;
+      padding-left: 0;
+      display: none;
+      line-height: 1.7;
+    }
+    .faq-item.open dd { display: block; }
+
+    .url { color: var(--accent); text-decoration: none; font-family: 'JetBrains Mono', monospace; }
+    .url:hover { text-decoration: underline; }
+
+    footer {
+      margin-top: 64px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      color: var(--fg-ghost);
+      font-size: 13px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    footer a { color: var(--fg-dim); text-decoration: none; }
+    footer a:hover { color: var(--accent); }
+    .hl { color: var(--accent); }
+
+    .pill {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin-left: 6px;
+      vertical-align: middle;
+      letter-spacing: 0.5px;
+    }
+    .pill.live { color: var(--green); border: 1px solid rgba(110,206,88,0.4); }
+
+    .section-note {
+      font-size: 13px;
+      color: var(--fg-dim);
+      margin-bottom: 8px;
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 40px 0 0;
+    }
+  </style>
+  <!-- Privacy-friendly analytics (self-hosted Umami) -->
+  <script async defer src="https://analytics.mhai.app/script.js" data-website-id="5a96aa8b-7575-4667-8ac6-267287849cf3"></script>
+</head>
+<body>
+  <div class="container">
+    <nav class="lang" aria-label="Language">
+      <a href="/pricing.html" class="active" data-lang="en" aria-current="page">EN</a>
+      <a href="/cs/pricing.html" data-lang="cs">CS</a>
+    </nav>
+
+    <header>
+      <div class="logo">
+        <a href="/"><h1>cz-agents<span class="tld">.dev</span></h1></a>
+      </div>
+      <nav class="nav-links" aria-label="Site navigation">
+        <a href="/">Home</a>
+        <a href="/pricing.html" class="active">Pricing</a>
+        <a href="/onboard.html">Onboard</a>
+        <a href="/terms.html">Terms</a>
+        <a href="/privacy.html">Privacy</a>
+      </nav>
+    </header>
+
+    <!-- Hero -->
+    <section>
+      <h2 style="margin-top:0;">Pricing</h2>
+      <p class="section-note">
+        ARES and ČNB are <span class="hl">free, unlimited</span> for everyone — open-source MIT, self-host or use the hosted endpoints.
+        Sanctions, DD, and the ddplus enrichment tools have rate-limited free access;
+        paid tiers remove the limit and unlock additional tools.
+        Cancel anytime.
+      </p>
+    </section>
+
+    <!-- Main compliance tiers -->
+    <section>
+      <h3 class="section-sub">Compliance (KYC / AML / due-diligence)</h3>
+      <div class="pricing-grid three-col">
+
+        <!-- Free -->
+        <div class="tier free">
+          <h4>Free</h4>
+          <div class="price">€0<small>/mo</small></div>
+          <ul>
+            <li>6 open-source MCP servers (ARES, ČNB, sanctions, ISIR, ADIS, DD basic)</li>
+            <li>Self-host MIT, no signup</li>
+            <li>Hosted endpoints rate-limited (~30 req/min/IP)</li>
+            <li>DD basic: ARES + sanctions, no statutory chain</li>
+            <li>No token required</li>
+          </ul>
+          <a class="buy" href="https://github.com/martinhavel/cz-agents-mcp" target="_blank" rel="noopener">Self-host on GitHub</a>
+          <span class="fine-print">MIT license · navždy zdarma</span>
+        </div>
+
+        <!-- Compliance -->
+        <div class="tier featured">
+          <span class="featured-label">most popular</span>
+          <h4>Compliance</h4>
+          <div class="price">€99<small>/mo</small></div>
+          <ul>
+            <li>Web Compliance UI — report dashboard (read-only)</li>
+            <li>API: <code>dd.cz-agents.dev/mcp</code> + <code>ddplus.cz-agents.dev/mcp</code></li>
+            <li>Nominee director detection (rich output)</li>
+            <li>Phoenix company detection</li>
+            <li>Risk timeline (rich, historical)</li>
+            <li>Linked entities depth=1</li>
+            <li>Address crowding check (rich)</li>
+            <li>5 000 API calls/month</li>
+          </ul>
+          <a class="buy" href="https://app.cz-agents.dev/api/stripe/checkout?price=price_1TUl5VRwLTHt42lJaQfOZsHx" target="_blank" rel="noopener">Subscribe</a>
+          <span class="fine-print">excl. VAT · 429 on overage · cancel anytime</span>
+        </div>
+
+        <!-- Agency -->
+        <div class="tier">
+          <h4>Agency</h4>
+          <div class="price">€199<small>/mo</small></div>
+          <ul>
+            <li>Everything in Compliance, plus:</li>
+            <li>Linked entities deep recursive (depth=2–3)</li>
+            <li>Watchlist scan (4 tools: add/remove/list/scan)</li>
+            <li>Daily email digest on watchlist changes</li>
+            <li>25 000 API calls/month</li>
+          </ul>
+          <a class="buy" href="https://app.cz-agents.dev/api/stripe/checkout?price=price_1TUl5WRwLTHt42lJqCdE4pnB" target="_blank" rel="noopener">Subscribe</a>
+          <span class="fine-print">excl. VAT · 429 on overage · cancel anytime</span>
+        </div>
+
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Reality tiers -->
+    <section>
+      <h2>Reality — Czech distress real estate <span class="pill live">live</span></h2>
+      <p class="section-note">
+        Access to <a class="url" href="https://reality.cz-agents.dev" target="_blank" rel="noopener">reality.cz-agents.dev</a> MCP server
+        (<code>realestate.cz-agents.dev/mcp</code>). Priced in CZK, VAT included.
+        Separate subscription from Compliance — the two do not combine into a single plan.
+      </p>
+      <div class="pricing-grid">
+
+        <div class="tier">
+          <h4>Reality Professional</h4>
+          <div class="price">1 990 Kč<small>/mo</small></div>
+          <ul>
+            <li>Reality MCP server access</li>
+            <li><code>search_distress_properties</code> — up to 50 results</li>
+            <li><code>get_property_detail</code> — parcel, scoring, map data</li>
+            <li>No owner name / IČO in output</li>
+          </ul>
+          <a class="buy" href="https://app.cz-agents.dev/api/stripe/checkout?price=price_1TUluxRwLTHt42lJIdoYZuXW" target="_blank" rel="noopener">Subscribe</a>
+          <span class="fine-print">cena vč. DPH · zrušíš kdykoli</span>
+        </div>
+
+        <div class="tier featured">
+          <h4>Reality Business</h4>
+          <div class="price">5 990 Kč<small>/mo</small></div>
+          <ul>
+            <li>Everything in Professional, plus:</li>
+            <li><code>search_distress_properties</code> — 100+ results</li>
+            <li><code>get_property_detail</code> — incl. <code>owner_name</code> + <code>owner_ico</code></li>
+            <li>Full owner data for due-diligence integration</li>
+          </ul>
+          <a class="buy" href="https://app.cz-agents.dev/api/stripe/checkout?price=price_1TUluxRwLTHt42lJ48dNTcAD" target="_blank" rel="noopener">Subscribe</a>
+          <span class="fine-print">cena vč. DPH · zrušíš kdykoli</span>
+        </div>
+
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- Pay-per-report -->
+    <section>
+      <h2>Don't want a subscription?</h2>
+      <div class="ppr-block">
+        <div class="ppr-left">
+          <div class="ppr-price">€0.50<small>/report</small></div>
+          <p>
+            Single full DD report across all Compliance tools — nominee check, risk timeline,
+            linked entities, address crowding. No monthly fee, no quota. Pay only when you need it.
+          </p>
+        </div>
+        <div class="ppr-right">
+          <a class="buy" href="https://app.cz-agents.dev/api/stripe/checkout?price=price_1TUl5WRwLTHt42lJMSCL6Rzl&mode=payment" target="_blank" rel="noopener">Buy a report — €0.50</a>
+          <span class="fine-print">one-time payment · max 5 reports/user lifetime</span>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- FAQ -->
+    <section>
+      <h2>FAQ</h2>
+      <dl class="faq">
+
+        <div class="faq-item">
+          <dt>Can I combine tiers?</dt>
+          <dd>Compliance/Agency and Reality are separate subscriptions and can run in parallel. You cannot hold both a Compliance and an Agency subscription at the same time — max 1 active Compliance-track subscription per account.</dd>
+        </div>
+
+        <div class="faq-item">
+          <dt>What happens when I exceed my monthly quota?</dt>
+          <dd>The API returns HTTP 429 with a JSON body that includes a link to the upgrade page. Existing calls in-flight finish normally. Quota resets on your billing anniversary.</dd>
+        </div>
+
+        <div class="faq-item">
+          <dt>Self-host vs hosted — what's the difference?</dt>
+          <dd>Self-hosted (MIT, GitHub) gives you the same open-source 6 servers with the same public API rate limits. Hosted paid tiers add higher quotas, the ddplus enrichment endpoints (nominee, phoenix, risk timeline, watchlist), a stable token-authenticated connection, and email digest for watchlist changes.</dd>
+        </div>
+
+        <div class="faq-item">
+          <dt>Can I use Reality and Compliance together?</dt>
+          <dd>Yes, as two separate subscriptions. They bill independently. There is no bundle discount at this time.</dd>
+        </div>
+
+        <div class="faq-item">
+          <dt>VAT treatment?</dt>
+          <dd>EUR prices (Compliance, Agency, Pay-per-report) are shown excluding VAT. CZK prices (Reality) are shown including VAT. Stripe handles VAT collection for EU customers automatically.</dd>
+        </div>
+
+        <div class="faq-item">
+          <dt>Refund policy?</dt>
+          <dd>14-day money-back guarantee on first payment for any subscription tier. Full terms at <a class="url" href="/terms.html">terms.html</a>.</dd>
+        </div>
+
+        <div class="faq-item">
+          <dt>GDPR / data residency?</dt>
+          <dd>All processing on EU servers (Hetzner, Frankfurt). No data transferred to third countries. Queries to Czech public registries (ARES, ISIR, ČNB) are read-only — we do not store the content of your queries beyond request logs (30-day retention).</dd>
+        </div>
+
+        <div class="faq-item">
+          <dt>Is there a free trial?</dt>
+          <dd>There is no time-limited trial. The Free tier (open-source, rate-limited hosted endpoints) is available permanently and serves as evaluation access. For a specific evaluation use case, email <a class="url" href="mailto:martin.havel@gmail.com">martin.havel@gmail.com</a>.</dd>
+        </div>
+
+        <div class="faq-item">
+          <dt>Where does the data come from? Do you buy from CEE or Bisnode?</dt>
+          <dd>No. cz-agents uses only state-guaranteed public registries: ARES (MoF), ČNB, ISIR (Justice), EU FSF, OFAC SDN. We do not buy from professional-chamber paywalls (Centrální evidence exekucí) or commercial resellers. Your subscription pays for maintenance, not for re-selling data the state already publishes.</dd>
+        </div>
+
+        <div class="faq-item">
+          <dt>Custom plan, on-premise, or CZ company invoicing?</dt>
+          <dd>Email <a class="url" href="mailto:martin.havel@gmail.com">martin.havel@gmail.com</a> with your use case. On-premise deployment of the open-source stack is always possible under MIT.</dd>
+        </div>
+
+      </dl>
+    </section>
+
+    <footer>
+      <div>
+        <a href="https://github.com/martinhavel/cz-agents-mcp">GitHub</a> ·
+        <a href="https://dev.to/martinhavel/building-mcp-servers-for-a-country-that-isnt-in-the-dataset-czech-gov-apis-1lo8">dev.to</a> ·
+        <a href="https://modelcontextprotocol.io">MCP spec</a> ·
+        <a href="https://registry.modelcontextprotocol.io">MCP registry</a> ·
+        <a href="/privacy.html">Privacy</a> ·
+        <a href="/terms.html">Terms</a>
+      </div>
+      <div>
+        by <a href="https://martinhavel.cz">Martin Havel</a> · MIT
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    document.querySelectorAll('nav.lang a').forEach(function (a) {
+      a.addEventListener('click', function () {
+        try { localStorage.setItem('lang', a.dataset.lang); } catch (e) {}
+      });
+    });
+    // FAQ accordion
+    document.querySelectorAll('.faq-item dt').forEach(function (dt) {
+      dt.addEventListener('click', function () {
+        var item = dt.parentElement;
+        item.classList.toggle('open');
+      });
+    });
+  </script>
+</body>
+</html>
