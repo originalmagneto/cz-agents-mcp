@@ -1,11 +1,11 @@
 /**
- * "Časová osa rizika" — extracts a chronologically sorted list of
- * lifecycle events for a Czech company from the existing DD report
- * payload.
+ * "Časová osa rizika" — basic (public) variant.
  *
- * Sprint 2 #3 scope: pull what's already in the payload (no new
- * backend calls). Events come from:
+ * Extracts a chronologically sorted list of lifecycle events from the
+ * existing DD report payload. No new backend calls; all data comes from
+ * a single DdReport (ARES VR + ISIR).
  *
+ * Basic events (this file):
  *   - company.registered_on        → vznik firmy
  *   - company.dissolved_on         → zánik firmy
  *   - statutory_body[].since       → jmenování statutáře
@@ -15,9 +15,12 @@
  *   - vat.unreliable_since          → ADIS unreliable since
  *   - retrieved_at                  → "today" anchor
  *
- * Sprint 3+ may add ARES historie events (changes of address, name,
- * legal form) once we plumb that into @czagents/ares' get_history tool
- * end-to-end. For now what we have is a useful narrative skeleton.
+ * Rich variant (@czagents/ddplus) adds:
+ *   - ISIR insolvency lifecycle (each filing, status transitions, hearing dates)
+ *   - VAT reliability flip history (proxy via existing flag)
+ *   - Address change history (ARES historie)
+ *   - Cross-linked entity events (same statutory member, other companies)
+ *   - AI-generated narrative summary (Gemini Flash-Lite)
  */
 import type { DdReport } from '../types.js';
 
@@ -35,7 +38,15 @@ export interface TimelineEvent {
   source: string;
 }
 
-export function buildTimeline(r: DdReport): TimelineEvent[] {
+export interface TimelineResult {
+  events: TimelineEvent[];
+  /** Basic risk score 0-100 derived from timeline event severities.
+   *  alert=3pts, warn=1pt, capped at 100. Narrative and deep scoring
+   *  available in rich variant (@czagents/ddplus). */
+  riskScore: number;
+}
+
+export function buildTimeline(r: DdReport): TimelineResult {
   const out: TimelineEvent[] = [];
 
   if (r.company.registered_on) {
@@ -140,7 +151,17 @@ export function buildTimeline(r: DdReport): TimelineEvent[] {
     return da.localeCompare(db);
   });
 
-  return out;
+  // Basic riskScore: alert events contribute 3pts, warn 1pt, cap at 100.
+  const riskScore = Math.min(
+    100,
+    out.reduce((sum, e) => {
+      if (e.severity === 'alert') return sum + 3;
+      if (e.severity === 'warn') return sum + 1;
+      return sum;
+    }, 0),
+  );
+
+  return { events: out, riskScore };
 }
 
 function fmt(iso: string): string {

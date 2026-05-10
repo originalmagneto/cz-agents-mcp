@@ -5,6 +5,7 @@ import { buildReport } from './report.js';
 import { buildChain } from './chain.js';
 import { detectNomineeDirector } from './patterns/nominee-director.js';
 import { buildTimeline } from './patterns/risk-timeline.js';
+import { detectPhoenix } from './patterns/phoenix.js';
 import type { DdClients } from './clients.js';
 
 /**
@@ -130,8 +131,25 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
   );
 
   server.tool(
+    'detect_phoenix',
+    'Detect phoenix company pattern — 3 surface indicators (surname match with prior insolvent director, founding proximity < 12 months to insolvency, NACE sector presence) computable from ARES + ISIR data alone. Returns PhoenixReport with riskScore 0-100. Pro Compliance tier or higher. For 4 additional deep indicators (founder identity, asset transfer, multi-cycle, address continuity) see detect_phoenix_rich in @czagents/ddplus.',
+    {
+      ico: z.string().describe('Czech IČO — 7 or 8 digits.'),
+    },
+    { title: 'Detect Phoenix Company Pattern', readOnlyHint: true, openWorldHint: true },
+    async ({ ico }) => {
+      const gate = requireTier(tier, 'compliance', 'detect_phoenix');
+      if (gate) return gate;
+      const clean = validateIcoInput(ico);
+      const report = await buildReport(clean, clients, { depth: 'full' });
+      const findings = detectPhoenix(report);
+      return wrap(JSON.stringify(findings, null, 2));
+    },
+  );
+
+  server.tool(
     'get_risk_timeline',
-    'Build a chronologically sorted lifecycle timeline for a Czech company — events include company formation, statutory member appointments, insolvency proceedings, sanctions matches, VAT reliability flips, etc. For audit narrative and "story so far" reports. Pro Compliance tier or higher.',
+    'Build a chronologically sorted lifecycle timeline for a Czech company — basic events include company formation, statutory appointments, active insolvency, sanctions matches, VAT reliability flips. Returns events[] with riskScore 0-100. Pro Compliance tier or higher. For enriched timeline with ISIR lifecycle, address history, cross-entity events, and AI narrative summary, see get_risk_timeline_rich in @czagents/ddplus.',
     {
       ico: z.string().describe('Czech IČO — 7 or 8 digits.'),
     },
@@ -141,8 +159,8 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
       if (gate) return gate;
       const clean = validateIcoInput(ico);
       const report = await buildReport(clean, clients, { depth: 'full' });
-      const events = buildTimeline(report);
-      return wrap(JSON.stringify({ ico: clean, events }, null, 2));
+      const result = buildTimeline(report);
+      return wrap(JSON.stringify({ ico: clean, ...result }, null, 2));
     },
   );
 

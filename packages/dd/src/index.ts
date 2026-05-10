@@ -52,4 +52,6 @@ if (isDirectRun) {
 export { detectNomineeDirector, INDICATOR_LABELS } from './patterns/nominee-director.js';
 export type { IndicatorCode, NomineeIndicator, NomineeReport } from './patterns/nominee-director.js';
 export { buildTimeline } from './patterns/risk-timeline.js';
-export type { EventSeverity, TimelineEvent } from './patterns/risk-timeline.js';
+export type { EventSeverity, TimelineEvent, TimelineResult } from './patterns/risk-timeline.js';
+export { detectPhoenix } from './patterns/phoenix.js';
+export type { PhoenixIndicatorCode, PhoenixIndicator, PhoenixReport } from './patterns/phoenix.js';
