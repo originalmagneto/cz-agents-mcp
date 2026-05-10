@@ -114,7 +114,7 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
   // 2026-05-08 — Pro Compliance tier exclusive (= compliance + agency).
   server.tool(
     'detect_nominee_director',
-    'Detect "white horse" / nominee director patterns — 8 independent indicators including residence at municipal office, multi-board membership, personal insolvency, prior bankrupt companies, recent appointment, shared flagged address, and HQ matching residence. Returns indicator-by-indicator breakdown with descriptions for compliance audit. Pro Compliance tier or higher.',
+    'Detect "white horse" / nominee director patterns — 3 surface indicators (age outlier, multi-board membership, recent appointment) computable from ARES data alone. Returns indicator breakdown with riskScore 0-100. Pro Compliance tier or higher. For 8-indicator deep analysis including ISIR cross-reference, sanctions, address crowding and phoenix pattern, see detect_nominee_director_rich in @czagents/ddplus.',
     {
       ico: z.string().describe('Czech IČO — 7 or 8 digits.'),
     },
