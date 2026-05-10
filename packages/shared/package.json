@@ -1,18 +1,35 @@
 {
   "name": "@czagents/shared",
-  "version": "0.1.7",
-  "description": "Shared utilities for cz-agents MCP servers",
+  "version": "0.1.8",
+  "description": "Shared utilities for cz-agents MCP servers — IČO/DIČ validation, HTTP helpers, rate limiter, billing primitives",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "README.md"
   ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "czagents",
+    "czech",
+    "internal",
+    "shared"
+  ],
+  "license": "MIT",
+  "author": "Martin Havel <martin.havel@gmail.com>",
+  "homepage": "https://cz-agents.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/martinhavel/cz-agents-mcp.git",
+    "directory": "packages/shared"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

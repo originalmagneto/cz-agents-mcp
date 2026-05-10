@@ -1,6 +1,6 @@
 {
   "name": "@czagents/adis",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "MCP server for ADIS — Czech VAT-payer reliability check (nespolehlivý plátce DPH) via the official MFČR SOAP service. Returns reliability status, published bank accounts, subject name + address.",
   "type": "module",
   "main": "./dist/index.js",
@@ -39,7 +39,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@czagents/shared": "^0.1.7",
+    "@czagents/shared": "^0.1.8",
     "@modelcontextprotocol/sdk": "^1.10.0",
     "fast-xml-parser": "^5.7.2",
     "zod": "^3.23.0"

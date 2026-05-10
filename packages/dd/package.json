@@ -1,6 +1,6 @@
 {
   "name": "@czagents/dd",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "MCP server for Czech company due diligence — aggregates ARES, sanctions, ISIR, ADIS unreliable-VAT-payer, statutory chain into a single risk-scored report",
   "type": "module",
   "main": "./dist/index.js",
@@ -40,11 +40,11 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@czagents/adis": "^0.1.0",
-    "@czagents/ares": "^0.1.6",
-    "@czagents/isir": "^0.2.2",
-    "@czagents/sanctions": "^0.1.3",
-    "@czagents/shared": "^0.1.7",
+    "@czagents/adis": "^0.1.2",
+    "@czagents/ares": "^0.1.7",
+    "@czagents/isir": "^0.2.3",
+    "@czagents/sanctions": "^0.1.4",
+    "@czagents/shared": "^0.1.8",
     "@modelcontextprotocol/sdk": "^1.10.0",
     "zod": "^3.23.0"
   },

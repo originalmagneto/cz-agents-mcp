@@ -1,20 +1,20 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
   "name": "dev.cz-agents/isir",
-  "description": "Czech insolvency register (ISIR) — active proceeding checks by IČO. Alpha.",
+  "description": "Czech insolvency register (ISIR) — bankruptcy and debt restructuring checks by IČO. Active proceeding lookup, spisová značka, court phase. Real estate auction discovery via insolvency proceedings. KYC red flag for Czech compliance and AML. v0.x alpha — direct SOAP integration in progress.",
   "status": "active",
   "repository": {
     "url": "https://github.com/martinhavel/cz-agents-mcp",
     "source": "github",
     "subfolder": "packages/isir"
   },
-  "version": "0.2.2",
+  "version": "0.2.3",
   "websiteUrl": "https://cz-agents.dev",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@czagents/isir",
-      "version": "0.2.2",
+      "version": "0.2.3",
       "runtimeHint": "npx",
       "transport": {
         "type": "stdio"

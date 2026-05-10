@@ -1,20 +1,20 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
   "name": "dev.cz-agents/ares",
-  "description": "Czech Business Register (ARES): company lookup by I\u010cO, full-text, transparent accounts",
+  "description": "Czech Business Register (ARES) \u2014 company lookup by I\u010cO (8-digit ID), DI\u010c (VAT number), full-text search. Returns name, registered address, legal form, statutory body, founding date, trade license activities. Transparent accounts under \u00a7 96a ZDPH. Czech business intelligence and KYC compliance ready.",
   "status": "active",
   "repository": {
     "url": "https://github.com/martinhavel/cz-agents-mcp",
     "source": "github",
     "subfolder": "packages/ares"
   },
-  "version": "0.1.6",
+  "version": "0.1.7",
   "websiteUrl": "https://cz-agents.dev",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "@czagents/ares",
-      "version": "0.1.6",
+      "version": "0.1.7",
       "runtimeHint": "npx",
       "transport": {
         "type": "stdio"

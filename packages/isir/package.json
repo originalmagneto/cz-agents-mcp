@@ -1,6 +1,6 @@
 {
   "name": "@czagents/isir",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "MCP server for ISIR (Czech Insolvency Register) — IČO and person insolvency check via official SOAP web services (PublicWS event feed + CuzkWS for lookups).",
   "type": "module",
   "main": "./dist/index.js",
@@ -38,7 +38,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@czagents/shared": "^0.1.7",
+    "@czagents/shared": "^0.1.8",
     "@modelcontextprotocol/sdk": "^1.10.0",
     "fast-xml-parser": "^5.7.2",
     "zod": "^3.23.0"
