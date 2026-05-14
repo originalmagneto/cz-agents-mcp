@@ -59,7 +59,7 @@ async function main() {
       res.end(JSON.stringify({
         status: 'ok',
         service: 'cz-agents/realestate',
-        version: '0.2.0',
+        version: '0.3.0',
         db_path: process.env.REALESTATE_DB_PATH ?? '/data/webapp.db',
       }));
       return;
