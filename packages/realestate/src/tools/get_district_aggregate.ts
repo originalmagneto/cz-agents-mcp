@@ -5,7 +5,7 @@
  * no specific properties), so safe to expose without rate limit beyond
  * the basic IP-level free tier limit applied at HTTP layer.
  *
- * k-anonymity: if a count for the okres + window combination is < 5, return
+ * k-anonymity: if a count for the okres + window combination is < 3, return
  * `null` for that count + set `low_activity: true`. Prevents identifying
  * a specific debtor in low-activity districts.
  */
@@ -13,7 +13,7 @@
 import { getDb } from '../db.js';
 import type { DistrictAggregate } from '../types.js';
 
-const K_ANONYMITY_THRESHOLD = 5;
+const K_ANONYMITY_THRESHOLD = 3;
 
 export function getDistrictAggregate(params: {
   okres: string;

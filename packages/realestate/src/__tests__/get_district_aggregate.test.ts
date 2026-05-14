@@ -1,6 +1,6 @@
 /**
  * Unit tests for getDistrictAggregate — the only free-tier tool remaining in
- * @czagents/realestate@0.2.0. Paid tools (search_distress_properties,
+ * @czagents/realestate@0.3.0. Paid tools (search_distress_properties,
  * get_property_detail) moved to private realestate-pro package.
  */
 
@@ -71,11 +71,11 @@ describe('getDistrictAggregate', () => {
     const result = getDistrictAggregate({ okres: 'Praha', window_days: 90 });
     expect(result.okres).toBe('Praha');
     expect(result.window_days).toBe(90);
-    expect(result.distress_lead_count).toBeNull(); // below k=5
+    expect(result.distress_lead_count).toBeNull(); // below k=3
     expect(result.low_activity).toBe(true);
   });
 
-  it('returns counts when >= k=5 leads in district', () => {
+  it('returns counts when >= k=3 leads in district', () => {
     for (let i = 0; i < 6; i++) {
       insertLead({ id: `isir-${i}`, sourceType: 'isir', kuMatchedName: 'Praha' });
     }
@@ -101,7 +101,7 @@ describe('getDistrictAggregate', () => {
     insertLead({ id: 'arch-1', sourceType: 'isir', kuMatchedName: 'Praha', status: 'archived' });
 
     const result = getDistrictAggregate({ okres: 'Praha', window_days: 90 });
-    // active 6 >= k=5 → not suppressed
+    // active 6 >= k=3 → not suppressed
     expect(result.distress_lead_count).toBe(6);
   });
 });

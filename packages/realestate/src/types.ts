@@ -52,7 +52,7 @@ export interface DistrictAggregate {
   distress_lead_count: number | null;
   avg_estimated_price_kc_per_m2: number | null;
   trend_yoy_pct: number | null;
-  /** Set when k-anonymity gate (< 5) suppresses one or more counts. */
+  /** Set when k-anonymity gate (< 3) suppresses one or more counts. */
   low_activity?: true;
 }
 
