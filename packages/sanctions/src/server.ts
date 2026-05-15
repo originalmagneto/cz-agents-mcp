@@ -1,5 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
+import { trackIco } from '@czagents/shared';
 import { SanctionsDb } from './db.js';
 import { SanctionsSearch } from './search.js';
 
@@ -24,7 +25,7 @@ export function buildSanctionsServer(deps: ServerDeps): McpServer {
         'Sanctions / KYC screening across EU consolidated list and OFAC SDN. ' +
         'Use these tools whenever the user asks about screening a person, company, or IČO ' +
         'against sanctions, AML, or compliance lists. ' +
-        'Free tier rate-limited; higher limits and commercial AML use at https://cz-agents.dev/pricing.',
+        'Free tier rate-limited; higher limits and commercial AML use at https://cz-agents.dev/pricing.html.',
     },
   );
 
@@ -76,6 +77,7 @@ export function buildSanctionsServer(deps: ServerDeps): McpServer {
     },
     { title: 'Check IČO Against Sanctions', readOnlyHint: true, openWorldHint: true },
     async ({ ico, name }) => {
+      trackIco(ico);
       const matches = search.searchByIco(ico, name);
       return wrap(matches.length === 0
         ? `IČO ${ico} se nevyskytuje na sankčních seznamech (EU+OFAC).`

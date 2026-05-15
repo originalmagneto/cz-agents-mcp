@@ -63,9 +63,9 @@ export function createRateLimiter(opts: RateLimiterOptions = {}) {
       res.end(
         JSON.stringify({
           error: 'rate_limit_exceeded',
-          message: `Too many requests. Retry after ${retryAfter}s. Higher limits at https://cz-agents.dev/pricing`,
+          message: `Too many requests. Retry after ${retryAfter}s. Higher limits at https://cz-agents.dev/pricing.html`,
           retry_after_seconds: retryAfter,
-          upgrade_url: 'https://cz-agents.dev/pricing?utm_source=mcp&utm_medium=ratelimit',
+          upgrade_url: 'https://cz-agents.dev/pricing.html?utm_source=mcp&utm_medium=ratelimit',
         }),
       );
       return false;

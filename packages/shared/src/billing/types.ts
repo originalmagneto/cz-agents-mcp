@@ -40,6 +40,7 @@ export interface TokenRecord {
   counter: number;
   /** Remaining credits for pay-per-report tokens. Null for subscriptions. */
   credits: number | null;
+  expires_at?: number | null;
   /** Start of current counter period (epoch ms). */
   period_started_at: number;
   created_at: number;

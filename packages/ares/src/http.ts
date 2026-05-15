@@ -8,7 +8,21 @@
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
-import { createRateLimiter, checkBodySize, checkOrigin } from '@czagents/shared';
+import {
+  createRateLimiter,
+  createRestRateLimiter,
+  checkBodySize,
+  checkOrigin,
+  getMetrics,
+  getRestIp,
+  jsonErr,
+  jsonOk,
+  parseIco,
+  runWithIp,
+  setRequestIp,
+  clearRequestIp,
+} from '@czagents/shared';
+import { AresClient } from './client.js';
 import { buildAresServer } from './server.js';
 
 const PORT = Number(process.env.PORT ?? 3030);
@@ -16,16 +30,46 @@ const MCP_PATH = process.env.MCP_PATH ?? '/mcp';
 const RATE_LIMIT_MAX = Number(process.env.RATE_LIMIT_MAX ?? 60);
 const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS ?? 60_000);
 const MAX_BODY_BYTES = Number(process.env.MAX_BODY_BYTES ?? 100_000);
+const SESSION_LIMIT_MAX = Number(process.env.SESSION_LIMIT_MAX ?? 3);
+// Comma-separated IPs to block entirely: BLOCKED_IPS=1.2.3.4,2a02:c207:...
+const BLOCKED_IPS = new Set(
+  (process.env.BLOCKED_IPS ?? '').split(',').map((s) => s.trim()).filter(Boolean),
+);
+const SESSION_LIMIT_WINDOW_MS = 60_000;
+
+// Session-creation rate limit per IP (sliding window)
+const sessionTimes = new Map<string, number[]>();
+function checkSessionLimit(ip: string): boolean {
+  const now = Date.now();
+  const cutoff = now - SESSION_LIMIT_WINDOW_MS;
+  const times = (sessionTimes.get(ip) ?? []).filter((t) => t > cutoff);
+  if (times.length >= SESSION_LIMIT_MAX) return false;
+  times.push(now);
+  sessionTimes.set(ip, times);
+  return true;
+}
+// Prune stale entries every 5 min
+setInterval(() => {
+  const cutoff = Date.now() - SESSION_LIMIT_WINDOW_MS;
+  for (const [ip, times] of sessionTimes) {
+    const fresh = times.filter((t) => t > cutoff);
+    if (fresh.length === 0) sessionTimes.delete(ip);
+    else sessionTimes.set(ip, fresh);
+  }
+}, 5 * 60_000).unref();
 
 async function main() {
+  const client = new AresClient();
   // Per-session McpServer instance (SDK forbids connecting the same
   // McpServer to multiple transports).
   const transports = new Map<string, StreamableHTTPServerTransport>();
+  const restLimiter = createRestRateLimiter();
 
   // Rate limiter (60 req/min per IP via CF-Connecting-IP or X-Forwarded-For)
   const limiter = createRateLimiter({
     windowMs: RATE_LIMIT_WINDOW_MS,
     max: RATE_LIMIT_MAX,
+    getIp: getClientIp,
   });
 
   const http = createServer(async (req, res) => {
@@ -42,9 +86,19 @@ async function main() {
       }
     }
     // Health check (no rate limit — used by Docker/monitoring)
-    if (req.url === '/health' || req.url === '/healthz') {
+    if (req.url === '/v1/health' || req.url === '/health' || req.url === '/healthz') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ status: 'ok', service: 'cz-agents/ares', version: '0.1.0' }));
+      res.end(JSON.stringify({ status: 'ok', service: 'ares', version: '0.1.0', transport: ['mcp', 'rest'] }));
+      return;
+    }
+
+    if (req.url === '/metrics') {
+      res.writeHead(200, { 'Content-Type': 'text/plain; version=0.0.4' });
+      res.end(getMetrics());
+      return;
+    }
+
+    if (await handleAresRest(req, res, client, restLimiter)) {
       return;
     }
 
@@ -52,6 +106,17 @@ async function main() {
       res.writeHead(404);
       res.end('Not found. MCP endpoint at ' + MCP_PATH);
       return;
+    }
+
+    // IP blocklist — checked before everything else for /mcp
+    if (BLOCKED_IPS.size > 0) {
+      const earlyIp = getClientIp(req);
+      if (BLOCKED_IPS.has(earlyIp)) {
+        console.error(`[cz-agents/ares] blocked ip=${earlyIp}`);
+        res.writeHead(403, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'blocked', message: 'Your IP has been temporarily blocked due to unusual traffic patterns.' }));
+        return;
+      }
     }
 
     // CORS preflight (no rate limit)
@@ -82,6 +147,14 @@ async function main() {
     if (sessionId && transports.has(sessionId)) {
       transport = transports.get(sessionId)!;
     } else {
+      // New session — check session-creation rate limit before allocating
+      const clientIpEarly = getClientIp(req);
+      if (!checkSessionLimit(clientIpEarly)) {
+        console.error(`[cz-agents/ares] session limit exceeded ip=${clientIpEarly}`);
+        res.writeHead(429, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'session_limit_exceeded', message: `Max ${SESSION_LIMIT_MAX} new sessions/min per IP.` }));
+        return;
+      }
       // New session — fresh McpServer instance (SDK limitation)
       const newSessionId = randomUUID();
       const server = buildAresServer();
@@ -89,7 +162,7 @@ async function main() {
         sessionIdGenerator: () => newSessionId,
         enableJsonResponse: true,
         onsessioninitialized: (id) => {
-          console.error(`[cz-agents/ares] new session: ${id}`);
+          console.error(`[cz-agents/ares] new session: ${id} ip=${clientIpEarly}`);
           transports.set(id, transport);
         },
       });
@@ -102,7 +175,13 @@ async function main() {
       await server.connect(transport);
     }
 
-    await transport.handleRequest(req, res);
+    const clientIp = getClientIp(req);
+    setRequestIp(clientIp);
+    try {
+      await runWithIp(clientIp, () => transport.handleRequest(req, res));
+    } finally {
+      clearRequestIp();
+    }
   });
 
   http.listen(PORT, () => {
@@ -110,6 +189,91 @@ async function main() {
       `[cz-agents/ares] Streamable HTTP MCP server listening on :${PORT}${MCP_PATH}`,
     );
   });
+}
+
+async function handleAresRest(
+  req: import('node:http').IncomingMessage,
+  res: import('node:http').ServerResponse,
+  client: AresClient,
+  limiter: ReturnType<typeof createRestRateLimiter>,
+): Promise<boolean> {
+  if (!req.url) return false;
+  const url = new URL(req.url, 'http://localhost');
+  if (!url.pathname.startsWith('/v1/')) return false;
+
+  if (req.method !== 'GET') {
+    jsonErr(res, 405, 'method_not_allowed', 'Use GET for REST requests.');
+    return true;
+  }
+
+  if (!limiter(req, res)) return true;
+  const clientIp = getRestIp(req);
+
+  await runWithIp(clientIp, async () => {
+    try {
+      if (url.pathname === '/v1/companies') {
+        const query = url.searchParams.get('q') ?? undefined;
+        const city = url.searchParams.get('city') ?? undefined;
+        const rawLimit = Number(url.searchParams.get('limit') ?? 10);
+        const limit = Number.isFinite(rawLimit) ? Math.min(Math.max(Math.floor(rawLimit), 1), 50) : 10;
+        const result = await client.search({
+          query,
+          sidlo: city ? { nazevObce: city } : undefined,
+          pocet: limit,
+        });
+        jsonOk(res, result, 'ares');
+        return;
+      }
+
+      if (/^\/v1\/companies\/[0-9]{7,8}\/bank-accounts$/.test(url.pathname)) {
+        const ico = parseIco(req, res);
+        if (!ico) return;
+        const result = await client.getBankAccounts(ico);
+        jsonOk(res, result, 'ares');
+        return;
+      }
+
+      if (/^\/v1\/companies\/[0-9]{7,8}\/statutaries$/.test(url.pathname)) {
+        const ico = parseIco(req, res);
+        if (!ico) return;
+        const record = await client.getVrRecord(ico);
+        jsonOk(res, record?.statutarniOrgany ?? [], 'ares');
+        return;
+      }
+
+      const companyMatch = url.pathname.match(/^\/v1\/companies\/([0-9]{7,8})(\/.*)?$/);
+      if (companyMatch) {
+        const ico = parseIco(req, res);
+        if (!ico) return;
+        const result = await client.getByIco(ico);
+        if (!result) {
+          jsonErr(res, 404, 'not_found', `Company ${ico} was not found.`);
+          return;
+        }
+        jsonOk(res, result, 'ares');
+        return;
+      }
+
+      jsonErr(res, 404, 'not_found', 'REST endpoint not found.');
+    } catch (e) {
+      jsonErr(res, 500, 'upstream_error', e instanceof Error ? e.message : 'Unexpected REST error');
+    }
+  });
+
+  return true;
+}
+
+function getClientIp(req: import('node:http').IncomingMessage): string {
+  const cf = req.headers['cf-connecting-ip'];
+  if (typeof cf === 'string' && cf.length > 0) return cf;
+  const xff = req.headers['x-forwarded-for'];
+  if (typeof xff === 'string' && xff.length > 0) {
+    const first = xff.split(',')[0]?.trim();
+    if (first) return first;
+  }
+  const xr = req.headers['x-real-ip'];
+  if (typeof xr === 'string' && xr.length > 0) return xr;
+  return req.socket.remoteAddress ?? 'unknown';
 }
 
 main().catch((err) => {

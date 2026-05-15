@@ -14,6 +14,10 @@ import { randomUUID } from 'node:crypto';
 import {
   createRateLimiter,
   checkBodySize,
+  runWithIp,
+  setRequestIp,
+  clearRequestIp,
+  getMetrics,
   TokenStore,
   createQuotaGuard,
 } from '@czagents/shared';
@@ -35,7 +39,7 @@ async function main() {
   });
 
   const transports = new Map<string, StreamableHTTPServerTransport>();
-  const limiter = createRateLimiter({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX });
+  const limiter = createRateLimiter({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX, getIp: getClientIp });
 
   const http = createServer(async (req, res) => {
     // Permissive Accept-header rewrite for Anthropic Connector probe-tester
@@ -62,6 +66,12 @@ async function main() {
         version: '0.3.0',
         db_path: process.env.REALESTATE_DB_PATH ?? '/data/webapp.db',
       }));
+      return;
+    }
+
+    if (req.url === '/metrics') {
+      res.writeHead(200, { 'Content-Type': 'text/plain; version=0.0.4' });
+      res.end(getMetrics());
       return;
     }
 
@@ -115,12 +125,31 @@ async function main() {
       return;
     }
 
-    await transport.handleRequest(req, res, body);
+    const clientIp = getClientIp(req);
+    setRequestIp(clientIp);
+    try {
+      await runWithIp(clientIp, () => transport.handleRequest(req, res, body));
+    } finally {
+      clearRequestIp();
+    }
   });
 
   http.listen(PORT, () => {
     console.error(`[cz-agents/realestate] listening on :${PORT}${MCP_PATH} (db: ${process.env.REALESTATE_DB_PATH ?? '/data/webapp.db'})`);
   });
+}
+
+function getClientIp(req: import('node:http').IncomingMessage): string {
+  const cf = req.headers['cf-connecting-ip'];
+  if (typeof cf === 'string' && cf.length > 0) return cf;
+  const xff = req.headers['x-forwarded-for'];
+  if (typeof xff === 'string' && xff.length > 0) {
+    const first = xff.split(',')[0]?.trim();
+    if (first) return first;
+  }
+  const xr = req.headers['x-real-ip'];
+  if (typeof xr === 'string' && xr.length > 0) return xr;
+  return req.socket.remoteAddress ?? 'unknown';
 }
 
 main().catch((err) => {

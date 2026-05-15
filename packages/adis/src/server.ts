@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { validateIcoInput } from '@czagents/shared';
+import { validateIcoInput, trackIco } from '@czagents/shared';
 import { AdisClient, MAX_DIC_PER_REQUEST } from './client.js';
 
 export function buildAdisServer(client: AdisClient = new AdisClient()): McpServer {
@@ -17,7 +17,7 @@ export function buildAdisServer(client: AdisClient = new AdisClient()): McpServe
         'reliable VAT payer?". Backed by the official MFČR ADIS SOAP service. Status meanings: ' +
         'NE = reliable (good), ANO = unreliable (red flag, must use a published account to avoid ' +
         'joint-liability under § 109 ZDPH), NENALEZEN = subject is not in the VAT registry. ' +
-        'Free tier rate-limited; higher limits at https://cz-agents.dev/pricing.',
+        'Free tier rate-limited; higher limits at https://cz-agents.dev/pricing.html.',
     },
   );
 
@@ -39,6 +39,7 @@ export function buildAdisServer(client: AdisClient = new AdisClient()): McpServe
           return error('Either `ico` or `dic` is required.');
         }
         const cleanIco = ico ? validateIcoInput(ico) : undefined;
+        if (cleanIco) trackIco(cleanIco);
         const result = await client.checkPayer({ ico: cleanIco, dic });
         if (!result) {
           const subject = dic ?? `CZ${cleanIco}`;
@@ -68,7 +69,11 @@ export function buildAdisServer(client: AdisClient = new AdisClient()): McpServe
         if ((!icos || icos.length === 0) && (!dics || dics.length === 0)) {
           return error('Provide at least one IČO or DIČ.');
         }
-        const cleanIcos = icos?.map((ico) => validateIcoInput(ico));
+        const cleanIcos = icos?.map((ico) => {
+          const clean = validateIcoInput(ico);
+          trackIco(clean);
+          return clean;
+        });
         const result = await client.checkBulk({ icos: cleanIcos, dics });
         return wrap(JSON.stringify(result, null, 2));
       } catch (e) {

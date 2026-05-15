@@ -15,8 +15,17 @@ import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
 import {
   createRateLimiter,
+  createRestRateLimiter,
   checkBodySize,
   checkOrigin,
+  runWithIp,
+  setRequestIp,
+  clearRequestIp,
+  getMetrics,
+  getRestIp,
+  jsonErr,
+  jsonOk,
+  parseIco,
   TokenStore,
   createQuotaGuard,
   handleStripeWebhook,
@@ -44,7 +53,8 @@ async function main() {
   const quota = createQuotaGuard({ store: tokenStore, service: 'sanctions', allowAnonymous: true });
 
   const transports = new Map<string, StreamableHTTPServerTransport>();
-  const limiter = createRateLimiter({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX });
+  const restLimiter = createRestRateLimiter();
+  const limiter = createRateLimiter({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX, getIp: getClientIp });
 
   const http = createServer(async (req, res) => {
     // Permissive Accept rewrite — clients (Anthropic probe) sending */* otherwise hit MCP SDK strict 406.
@@ -59,17 +69,13 @@ async function main() {
         }
       }
     }
-    if (req.url === '/health' || req.url === '/healthz') {
-      const stats = db.stats();
-      const tokens = tokenStore.stats('sanctions');
+    if (req.url === '/v1/health' || req.url === '/health' || req.url === '/healthz') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({
         status: 'ok',
-        service: 'cz-agents/sanctions',
+        service: 'sanctions',
         version: '0.1.0',
-        active_records: stats.total_active,
-        sources: stats.by_source,
-        tokens,
+        transport: ['mcp', 'rest'],
       }));
       return;
     }
@@ -87,6 +93,12 @@ async function main() {
       res.end(JSON.stringify(t
         ? { token: t.token, tier: t.tier, monthly_quota: t.monthly_quota, credits: t.credits }
         : { error: 'not_found', message: 'Session unknown or token already retrieved.' }));
+      return;
+    }
+
+    if (req.url === '/metrics') {
+      res.writeHead(200, { 'Content-Type': 'text/plain; version=0.0.4' });
+      res.end(getMetrics());
       return;
     }
 
@@ -114,6 +126,10 @@ async function main() {
         res.writeHead(status, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ error: 'webhook_failed', message }));
       }
+      return;
+    }
+
+    if (await handleSanctionsRest(req, res, search, restLimiter, quota)) {
       return;
     }
 
@@ -171,7 +187,13 @@ async function main() {
       await server.connect(transport);
     }
 
-    await transport.handleRequest(req, res);
+    const clientIp = getClientIp(req);
+    setRequestIp(clientIp);
+    try {
+      await runWithIp(clientIp, () => transport.handleRequest(req, res));
+    } finally {
+      clearRequestIp();
+    }
   });
 
   http.listen(PORT, () => {
@@ -179,6 +201,62 @@ async function main() {
       `[cz-agents/sanctions] listening on :${PORT}${MCP_PATH} (db: ${dbPath}, tokens: ${tokenDbPath}, webhook: ${webhookSecret ? 'enabled' : 'disabled'})`,
     );
   });
+}
+
+async function handleSanctionsRest(
+  req: import('node:http').IncomingMessage,
+  res: import('node:http').ServerResponse,
+  search: SanctionsSearch,
+  limiter: ReturnType<typeof createRestRateLimiter>,
+  quota: ReturnType<typeof createQuotaGuard>,
+): Promise<boolean> {
+  if (!req.url) return false;
+  const url = new URL(req.url, 'http://localhost');
+  if (!url.pathname.startsWith('/v1/')) return false;
+
+  if (req.method !== 'GET') {
+    jsonErr(res, 405, 'method_not_allowed', 'Use GET for REST requests.');
+    return true;
+  }
+
+  if (!limiter(req, res)) return true;
+
+  const auth = quota(req, res);
+  if (!auth.ok) return true;
+
+  const clientIp = getRestIp(req);
+
+  await runWithIp(clientIp, async () => {
+    try {
+      if (url.pathname === '/v1/sanctions/check') {
+        const ico = parseIco(req, res);
+        if (!ico) return;
+        const name = url.searchParams.get('name') ?? undefined;
+        const result = search.searchByIco(ico, name);
+        jsonOk(res, result, 'sanctions');
+        return;
+      }
+
+      jsonErr(res, 404, 'not_found', 'REST endpoint not found.');
+    } catch (e) {
+      jsonErr(res, 500, 'upstream_error', e instanceof Error ? e.message : 'Unexpected REST error');
+    }
+  });
+
+  return true;
+}
+
+function getClientIp(req: import('node:http').IncomingMessage): string {
+  const cf = req.headers['cf-connecting-ip'];
+  if (typeof cf === 'string' && cf.length > 0) return cf;
+  const xff = req.headers['x-forwarded-for'];
+  if (typeof xff === 'string' && xff.length > 0) {
+    const first = xff.split(',')[0]?.trim();
+    if (first) return first;
+  }
+  const xr = req.headers['x-real-ip'];
+  if (typeof xr === 'string' && xr.length > 0) return xr;
+  return req.socket.remoteAddress ?? 'unknown';
 }
 
 function readRawBody(req: import('node:http').IncomingMessage, maxBytes: number): Promise<string> {

@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>cz-agents — MCP servers for Czech gov & business data</title>
-  <meta name="description" content="Model Context Protocol servers for ARES, ČNB and the Czech ecosystem. Give your AI agent native access to Czech business and government data.">
+  <title>Czech MCP servers — ARES, due-diligence, sanctions, ISIR, real estate</title>
+  <meta name="description" content="MCP servers for Czech business & government data — ARES company registry (KYC/AML), due-diligence, EU+OFAC sanctions screening, ISIR insolvency, real estate. AI agent native access.">
+  <meta name="keywords" content="czech mcp server, ares mcp, czech compliance api, due diligence czech ico, mcp czech business data, czech kyc api, czech aml mcp, isir mcp, sanctions screening czech, mcp ares, czech real estate api, czech vat checker">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://cz-agents.dev/">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -17,8 +18,8 @@
   <link rel="alternate" hreflang="x-default" href="https://cz-agents.dev/">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="cz-agents — MCP servers for the Czech ecosystem">
-  <meta property="og:description" content="Open-source Model Context Protocol servers for Czech government & business data.">
+  <meta property="og:title" content="Czech MCP servers — ARES, due-diligence, sanctions, ISIR, real estate">
+  <meta property="og:description" content="Open-source MCP servers for Czech business & government data — ARES, due-diligence (KYC/AML), sanctions, ISIR, real estate. AI agent native access.">
   <meta property="og:url" content="https://cz-agents.dev/">
   <meta property="og:image" content="https://cz-agents.dev/logo.png">
   <meta property="og:image:width" content="256">
@@ -28,8 +29,8 @@
   <meta property="og:locale:alternate" content="cs_CZ">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="cz-agents — MCP servers for Czech gov & business data">
-  <meta name="twitter:description" content="Open-source Model Context Protocol servers for ARES, ČNB, sanctions, ISIR, ADIS unreliable-VAT-payer. Native AI access to Czech business and government data.">
+  <meta name="twitter:title" content="Czech MCP servers — ARES, due-diligence, sanctions, ISIR, real estate">
+  <meta name="twitter:description" content="MCP servers for Czech business & government data — ARES (KYC/AML), due-diligence, EU+OFAC sanctions, ISIR insolvency, real estate. AI agent native access.">
   <meta name="twitter:image" content="https://cz-agents.dev/logo.png">
 
   <script type="application/ld+json">
@@ -317,6 +318,40 @@
     .url { color: var(--accent); text-decoration: none; font-family: 'JetBrains Mono', monospace; }
     .url:hover { text-decoration: underline; }
 
+    .lang a.cta {
+      color: var(--accent);
+      border-color: var(--accent-dim);
+      background: rgba(255, 107, 53, 0.06);
+    }
+    .lang a.cta:hover {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+    .lang .sep { color: var(--fg-ghost); padding: 4px 2px; }
+
+    .hero-cta {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 11px 22px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 15px;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .hero-cta:hover { background: var(--accent-dim); transform: translateY(-1px); }
+    .hero-cta + .hero-cta-secondary {
+      margin-left: 12px;
+      color: var(--fg-dim);
+      font-size: 14px;
+      text-decoration: none;
+    }
+    .hero-cta + .hero-cta-secondary:hover { color: var(--accent); }
+
     footer {
       margin-top: 64px;
       padding-top: 24px;
@@ -338,6 +373,8 @@
 <body>
   <div class="container">
     <nav class="lang" aria-label="Language">
+      <a href="/pricing.html" class="cta">Pricing →</a>
+      <span class="sep">·</span>
       <a href="/" class="active" data-lang="en" aria-current="page">EN</a>
       <a href="/cs/" data-lang="cs">CS</a>
     </nav>
@@ -350,6 +387,8 @@
         <span class="hl">ARES</span>, <span class="hl">ČNB</span>, <span class="hl">sanctions</span>, <span class="hl">due-diligence</span>.
         Give your AI agent native access to Czech business and government data.
       </p>
+      <a href="/pricing.html" class="hero-cta">View pricing →</a>
+      <a href="https://github.com/martinhavel/cz-agents-mcp" class="hero-cta-secondary">Free tier on GitHub</a>
       <div class="badges">
         <span class="badge">MCP 1.10</span>
         <span class="badge">TypeScript</span>
@@ -413,6 +452,11 @@
     <h2 id="built-with">Built with cz-agents</h2>
     <p style="color:var(--fg-dim); font-size: 14px;">Production application built on top of the same MCP servers — proves the data plane works end-to-end and shows what an "AI agent for Czech data" can do.</p>
     <div class="servers">
+      <div class="server">
+        <h3><a class="url" href="https://app.cz-agents.dev" target="_blank" rel="noopener">app.cz-agents.dev</a> <span class="pill live">live</span></h3>
+        <p>Compliance dashboard for KYC / AML due-diligence. Web UI over the same DD, ddplus, and sanctions MCP servers — nominee detection, risk timeline, phoenix check, address crowding, watchlist monitoring. Subscription or 14-day free trial.</p>
+        <div class="tools">@czagents/dd · @czagents/ddplus · @czagents/sanctions</div>
+      </div>
       <div class="server">
         <h3><a class="url" href="https://reality.cz-agents.dev" target="_blank" rel="noopener">reality.cz-agents.dev</a> <span class="pill live">live</span></h3>
         <p>Distressed real-estate scout. Daily crawl of ISIR insolvency auctions and portaldrazeb.cz, Vision AI extracts parcel + cadastral district + m² from auction PDFs, 16-component scoring, per-region price context (ČSÚ realized prices extrapolated by Eurostat HPI Q4 2025). Map view, mobile-first, lead pipeline.</p>
@@ -481,20 +525,20 @@
       <div class="tier free">
         <h4>Free</h4>
         <div class="price">€0<small>/mo</small></div>
-        <div class="desc">Anonymous use, daily IP-based limit. EU + OFAC datasets.</div>
+        <div class="desc">Anonymous use, ~30 lookups/day per IP. EU FSF + OFAC datasets.</div>
         <a class="buy" href="#claude-desktop--cursor">Use without signup</a>
       </div>
       <div class="tier">
-        <h4>Starter</h4>
-        <div class="price">€19<small>/mo</small></div>
-        <div class="desc">5,000 lookups / month. Hosted MCP, daily refresh, change feed.</div>
-        <a class="buy" href="https://buy.stripe.com/aFa5kF1Oy0CU8Tl6IfeAg00" target="_blank" rel="noopener">Subscribe</a>
+        <h4>Compliance</h4>
+        <div class="price">€99<small>/mo</small></div>
+        <div class="desc">Unlimited sanctions screening included in API Compliance — bundled with DD and ddplus tools.</div>
+        <a class="buy" href="/pricing.html">Subscribe</a>
       </div>
       <div class="tier">
-        <h4>Pro</h4>
-        <div class="price">€99<small>/mo</small></div>
-        <div class="desc">50,000 lookups / month. All sources, batch endpoint, webhook alerts on watched IČOs.</div>
-        <a class="buy" href="https://buy.stripe.com/bJebJ3bp8dpGglN4A7eAg01" target="_blank" rel="noopener">Subscribe</a>
+        <h4>Agency</h4>
+        <div class="price">€199<small>/mo</small></div>
+        <div class="desc">All Compliance tools + batch CSV, webhook alerts, priority support.</div>
+        <a class="buy" href="/pricing.html">Subscribe</a>
       </div>
     </div>
 
@@ -503,26 +547,26 @@
       <div class="tier free">
         <h4>Free</h4>
         <div class="price">€0<small>/mo</small></div>
-        <div class="desc">5 reports / day, basic depth (ARES + sanctions, no statutory chain).</div>
+        <div class="desc">~30 reports/day, basic depth (ARES + sanctions only).</div>
         <a class="buy" href="#claude-desktop--cursor">Use without signup</a>
       </div>
       <div class="tier">
-        <h4>Pay-per-report</h4>
-        <div class="price">€0.50<small>/report</small></div>
-        <div class="desc">Buy a credit pack (min 100 reports = €50). Full depth, no subscription. Credits don't expire.</div>
-        <a class="buy" href="https://buy.stripe.com/cNi14p3WG5Xed9BaYveAg02" target="_blank" rel="noopener">Buy credits</a>
+        <h4>Credit packs</h4>
+        <div class="price">€1.00<small>/report</small></div>
+        <div class="desc">From €0.50/report at volume. Packs: 20×€20 · 50×€35 · 100×€60 · 250×€125. Full depth, no subscription.</div>
+        <a class="buy" href="/pricing.html#credit-packs">Buy credits</a>
       </div>
       <div class="tier">
-        <h4>Pro</h4>
-        <div class="price">€49<small>/mo</small></div>
-        <div class="desc">200 reports/month, full depth + statutory chain, monitoring on 1 IČO.</div>
-        <a class="buy" href="https://buy.stripe.com/fZu8wRbp8adu6Ldd6DeAg03" target="_blank" rel="noopener">Subscribe</a>
+        <h4>Compliance</h4>
+        <div class="price">€99<small>/mo</small></div>
+        <div class="desc">Unlimited reports/month. Full ddplus toolset — nominee detection, statutory chain, risk timeline.</div>
+        <a class="buy" href="/pricing.html">Subscribe</a>
       </div>
       <div class="tier">
         <h4>Agency</h4>
         <div class="price">€199<small>/mo</small></div>
-        <div class="desc">1,500 reports/month, bulk CSV in/out, webhook alerts, priority support.</div>
-        <a class="buy" href="https://buy.stripe.com/7sY5kFbp81GY2uXgiPeAg04" target="_blank" rel="noopener">Subscribe</a>
+        <div class="desc">All Compliance tools + bulk CSV, webhook alerts, reality-pro tools, priority support.</div>
+        <a class="buy" href="/pricing.html">Subscribe</a>
       </div>
     </div>
     <p style="color:var(--fg-ghost); font-size: 12px;">
@@ -563,6 +607,8 @@ Risk score: 12/100 (low) — flagged: missing transparent VAT account.</pre>
         <a href="https://modelcontextprotocol.io">MCP spec</a> ·
         <a href="https://registry.modelcontextprotocol.io">MCP registry</a> ·
         <a href="/pricing.html">Pricing</a> ·
+        <a href="/onboard.html">Onboarding</a> ·
+        <a href="/dpa.html">DPA</a> ·
         <a href="/privacy.html">Privacy</a> ·
         <a href="/terms.html">Terms</a>
       </div>

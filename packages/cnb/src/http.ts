@@ -2,7 +2,7 @@
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
-import { createRateLimiter, checkBodySize, checkOrigin } from '@czagents/shared';
+import { createRateLimiter, checkBodySize, checkOrigin, runWithIp, setRequestIp, clearRequestIp, getMetrics } from '@czagents/shared';
 import { buildCnbServer } from './server.js';
 
 const PORT = Number(process.env.PORT ?? 3031);
@@ -13,7 +13,7 @@ const MAX_BODY_BYTES = Number(process.env.MAX_BODY_BYTES ?? 100_000);
 
 async function main() {
   const transports = new Map<string, StreamableHTTPServerTransport>();
-  const limiter = createRateLimiter({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX });
+  const limiter = createRateLimiter({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX, getIp: getClientIp });
 
   const http = createServer(async (req, res) => {
     // Permissive Accept rewrite — clients (Anthropic probe) sending */* otherwise hit MCP SDK strict 406.
@@ -31,6 +31,12 @@ async function main() {
     if (req.url === '/health' || req.url === '/healthz') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ status: 'ok', service: 'cz-agents/cnb', version: '0.1.0' }));
+      return;
+    }
+
+    if (req.url === '/metrics') {
+      res.writeHead(200, { 'Content-Type': 'text/plain; version=0.0.4' });
+      res.end(getMetrics());
       return;
     }
 
@@ -80,12 +86,31 @@ async function main() {
       await server.connect(transport);
     }
 
-    await transport.handleRequest(req, res);
+    const clientIp = getClientIp(req);
+    setRequestIp(clientIp);
+    try {
+      await runWithIp(clientIp, () => transport.handleRequest(req, res));
+    } finally {
+      clearRequestIp();
+    }
   });
 
   http.listen(PORT, () => {
     console.error(`[cz-agents/cnb] Streamable HTTP MCP on :${PORT}${MCP_PATH}`);
   });
+}
+
+function getClientIp(req: import('node:http').IncomingMessage): string {
+  const cf = req.headers['cf-connecting-ip'];
+  if (typeof cf === 'string' && cf.length > 0) return cf;
+  const xff = req.headers['x-forwarded-for'];
+  if (typeof xff === 'string' && xff.length > 0) {
+    const first = xff.split(',')[0]?.trim();
+    if (first) return first;
+  }
+  const xr = req.headers['x-real-ip'];
+  if (typeof xr === 'string' && xr.length > 0) return xr;
+  return req.socket.remoteAddress ?? 'unknown';
 }
 
 main().catch((err) => {

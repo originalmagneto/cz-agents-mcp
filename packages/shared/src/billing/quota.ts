@@ -32,6 +32,7 @@ export function createQuotaGuard(opts: QuotaOptions) {
     if (!token) {
       if (allowAnonymous) {
         res.setHeader('X-Tier', 'free');
+        res.setHeader('X-RateLimit-Remaining', '-1');
         return { ok: true, token: anonymousFreeToken(service) };
       }
       writeJson(res, 401, { error: 'unauthorized', message: 'Authorization: Bearer <token> required.' });
@@ -48,17 +49,29 @@ export function createQuotaGuard(opts: QuotaOptions) {
       const updated = store.consume(token);
       const remaining = computeRemaining(updated);
       res.setHeader('X-Tier', updated.tier);
-      if (remaining !== null) res.setHeader('X-Quota-Remaining', String(remaining));
+      if (remaining !== null) {
+        res.setHeader('X-Quota-Remaining', String(remaining));
+        res.setHeader('X-RateLimit-Remaining', String(remaining));
+      }
+      const limit = updated.monthly_quota ?? updated.credits;
+      if (limit !== null && limit !== undefined) res.setHeader('X-RateLimit-Limit', String(limit));
+      if (updated.expires_at != null) res.setHeader('X-Trial-Expires-At', new Date(updated.expires_at).toISOString());
       return { ok: true, token: updated };
     } catch (e) {
       const code = e instanceof Error ? e.message : 'UNKNOWN';
+      if (code === 'TRIAL_EXPIRED') {
+        writeJson(res, 402, { error: 'trial_expired', message: 'Your trial has expired. Upgrade at https://cz-agents.dev/pricing.html' });
+        return { ok: false, status: 402, reason: 'trial_expired' };
+      }
       if (code === 'QUOTA_EXCEEDED') {
         res.setHeader('Retry-After', '60');
-        writeJson(res, 429, { error: 'quota_exceeded', message: 'Monthly quota exceeded for this token.' });
+        res.setHeader('X-RateLimit-Remaining', '0');
+        writeJson(res, 429, { error: 'quota_exceeded', message: 'Monthly quota exceeded. Upgrade at https://cz-agents.dev/pricing.html' });
         return { ok: false, status: 429, reason: 'quota' };
       }
       if (code === 'CREDITS_EXHAUSTED') {
-        writeJson(res, 402, { error: 'credits_exhausted', message: 'No remaining report credits. Purchase more.' });
+        res.setHeader('X-RateLimit-Remaining', '0');
+        writeJson(res, 402, { error: 'credits_exhausted', message: 'No remaining report credits. Top up at https://cz-agents.dev/pricing.html' });
         return { ok: false, status: 402, reason: 'credits' };
       }
       writeJson(res, 500, { error: 'internal', message: 'Token consume failed.' });

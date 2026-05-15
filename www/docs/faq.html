@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ — cz-agents</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #0d0d0d; --bg-elev: #151515; --fg: #e6e9ef; --fg-dim: #8a93a6; --fg-ghost: #4a5365; --accent: #ff6b35; --accent-dim: #c94a1a; --border: #262626; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; min-height: 100vh; }
+    code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
+    .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+    header { border-bottom: 1px solid var(--border); padding-bottom: 32px; margin-bottom: 48px; }
+    .logo a { color: inherit; text-decoration: none; }
+    .logo h1 { font-size: 32px; font-weight: 800; }
+    .logo .tld, a, .active { color: var(--accent); }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 16px; }
+    .nav-links a { color: var(--fg-dim); text-decoration: none; font: 14px 'JetBrains Mono', monospace; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    h1 { font-size: 36px; line-height: 1.15; margin-bottom: 24px; }
+    .faq-item { border-top: 1px solid var(--border); padding: 18px 0; }
+    .faq-item:last-child { border-bottom: 1px solid var(--border); }
+    dt { font-weight: 600; color: var(--fg); margin-bottom: 8px; }
+    dd { color: var(--fg-dim); }
+    footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--fg-ghost); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo"><a href="/"><h1>cz-agents<span class="tld">.dev</span></h1></a></div>
+      <nav class="nav-links" aria-label="Documentation navigation">
+        <a href="/docs/">Docs</a>
+        <a href="/docs/api.html">REST API</a>
+        <a href="/docs/limits.html">Rate Limits</a>
+        <a href="/docs/tiers.html">Tiers</a>
+        <a href="/docs/faq.html" class="active">FAQ</a>
+        <a href="/">Back to cz-agents.dev</a>
+      </nav>
+    </header>
+
+    <main>
+      <h1>FAQ</h1>
+      <dl>
+        <div class="faq-item">
+          <dt>What's the difference between MCP and REST?</dt>
+          <dd>MCP is tool-oriented and works well inside Claude Desktop, Cursor, and agent runtimes. REST is URL-oriented and fits scripts, batch checks, and internal systems.</dd>
+        </div>
+        <div class="faq-item">
+          <dt>Do I need a token for basic use?</dt>
+          <dd>No. Free hosted REST and MCP access works without a token, subject to per-IP limits. Paid tokens unlock higher monthly quotas and paid DD features.</dd>
+        </div>
+        <div class="faq-item">
+          <dt>What's in a DD report?</dt>
+          <dd>A DD report combines company facts, sanctions screening, insolvency signals, statutory context, risk scoring, and red flags. Free DD is basic; paid DD includes the full report depth.</dd>
+        </div>
+        <div class="faq-item">
+          <dt>How fresh is the data?</dt>
+          <dd>ARES is cached for 1 hour server-side. ISIR is checked live. Sanctions data is updated weekly.</dd>
+        </div>
+        <div class="faq-item">
+          <dt>Can I use this for KYC/AML?</dt>
+          <dd>Yes, as a screening and evidence-gathering layer. You remain responsible for your internal policy, legal review, and final KYC/AML decisions.</dd>
+        </div>
+        <div class="faq-item">
+          <dt>What's the statutory chain / UBO detection?</dt>
+          <dd>It is a heuristic walk through statutory bodies and linked entities. It helps surface relationships, but it is not a substitute for an official beneficial-owner register extract.</dd>
+        </div>
+        <div class="faq-item">
+          <dt>What happens when I exceed the quota?</dt>
+          <dd>The API returns <code>429</code>. Rate-limited responses include rate-limit headers and may include <code>Retry-After</code>.</dd>
+        </div>
+        <div class="faq-item">
+          <dt>Where do I get a token / trial?</dt>
+          <dd>Use the trial form or subscription buttons on <a href="/pricing.html">pricing</a>. Tokens are delivered after onboarding or checkout.</dd>
+        </div>
+        <div class="faq-item">
+          <dt>Can I self-host?</dt>
+          <dd>Yes. The open-source MCP servers can be self-hosted under the project license. Hosted plans add managed quota, tokens, and paid DD features.</dd>
+        </div>
+      </dl>
+    </main>
+
+    <footer>cz-agents FAQ</footer>
+  </div>
+</body>
+</html>

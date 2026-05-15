@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ceník — cz-agents</title>
-  <meta name="description" content="Ceník cz-agents: bezplatný open-source tier, Compliance API (€99/měs), Agency (€199/měs), Reality (1 990–5 990 Kč/měs), pay-per-report (€0,50).">
+  <meta name="description" content="Ceník cz-agents: bezplatný open-source tier, Compliance API (€99/měs), Agency (€199/měs), Reality (1 990–5 990 Kč/měs), pay-per-report (€1,00).">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://cz-agents.dev/cs/pricing.html">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -361,6 +361,135 @@
       color: var(--fg-dim);
       margin-bottom: 8px;
     }
+    .tab-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px;
+      margin: 28px 0 10px;
+    }
+    .tab-btn {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--fg-dim);
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    .tab-badge {
+      display: inline-block;
+      color: var(--accent);
+      border: 1px solid rgba(255,107,53,0.35);
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      margin-bottom: 8px;
+    }
+    .tab-hidden { display: none; }
+    .trial-stripe,
+    .final-cta,
+    .contact-cta {
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px;
+      margin-top: 40px;
+    }
+    .trial-stripe h2,
+    .final-cta h2 {
+      margin-top: 0;
+    }
+    .trial-stripe form {
+      max-width: none !important;
+      margin: 22px 0 0 !important;
+      display: grid !important;
+      grid-template-columns: minmax(180px, 1fr) minmax(220px, 1fr) auto;
+      gap: 12px !important;
+      align-items: start;
+    }
+    .trial-stripe .buy,
+    .final-cta .buy,
+    .contact-cta .buy {
+      display: inline-block;
+      text-align: center;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 16px;
+      border: 0;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .feature-matrix {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+      font-size: 13px;
+    }
+    .feature-matrix th,
+    .feature-matrix td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+    }
+    .feature-matrix th {
+      color: var(--fg);
+      background: var(--bg-elev);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+    .feature-matrix tbody tr:nth-child(even) { background: rgba(255,255,255,0.025); }
+    .feature-matrix .yes { color: var(--accent); font-weight: 800; }
+    .feature-matrix .no { color: var(--fg-ghost); }
+    .feature-matrix .quota { color: var(--fg-dim); font-family: 'JetBrains Mono', monospace; }
+    .agency-credit-link {
+      display: inline-block;
+      color: var(--accent);
+      border: 1px solid rgba(255,107,53,0.35);
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      text-decoration: none;
+      margin-top: 4px;
+    }
+    .final-cta {
+      background: #1f2937;
+      padding: 48px;
+      text-align: center;
+    }
+    .final-cta-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .contact-cta {
+      text-align: center;
+      color: var(--fg-dim);
+      font-size: 15px;
+    }
+    @media (max-width: 760px) {
+      .tab-bar { border-radius: 14px; }
+      .tab-btn { flex: 1; }
+      .trial-stripe form { grid-template-columns: 1fr; }
+    }
     .divider {
       border: none;
       border-top: 1px solid var(--border);
@@ -384,13 +513,12 @@
       <nav class="nav-links" aria-label="Navigace">
         <a href="/cs/">Domů</a>
         <a href="/cs/pricing.html" class="active">Ceník</a>
-        <a href="/onboard.html">Onboard</a>
+        <a href="/cs/onboard.html">Jak začít</a>
         <a href="/terms.html">Podmínky</a>
         <a href="/privacy.html">Soukromí</a>
       </nav>
     </header>
 
-    <!-- Hero -->
     <section>
       <h2 style="margin-top:0;">Ceník</h2>
       <p class="section-note">
@@ -399,12 +527,18 @@
         placené tiers limit ruší a odemknou pokročilé nástroje.
         Zrušíš kdykoli.
       </p>
+      <div class="tab-bar" role="tablist" aria-label="Ceník produktů">
+        <button class="tab-btn active" data-tab="compliance" type="button">Compliance DD (EUR)</button>
+        <button class="tab-btn" data-tab="reality" type="button">Reality MCP (CZK)</button>
+      </div>
     </section>
 
-    <!-- Main compliance tiers -->
-    <section>
-      <h3 class="section-sub">Compliance (KYC / AML / due-diligence)</h3>
-      <div class="pricing-grid three-col">
+    <div class="tab-content" id="tab-compliance">
+      <span class="tab-badge">Pro compliance týmy &amp; právníky</span>
+
+      <section>
+        <h2 style="margin-top:0;">Česká compliance data, ceník pro týmy každé velikosti</h2>
+        <div class="pricing-grid three-col">
 
         <!-- Free -->
         <div class="tier free">
@@ -413,7 +547,7 @@
           <ul>
             <li>6 open-source MCP serverů (ARES, ČNB, sankce, ISIR, ADIS, DD basic)</li>
             <li>Self-host MIT, bez registrace</li>
-            <li>Hostované endpointy s rate limitem (~30 req/min/IP)</li>
+            <li>Hostované endpointy s rate limitem (~30 req/den per IP)</li>
             <li>DD basic: ARES + sankce, bez statutárního řetězce</li>
             <li>Token není potřeba</li>
           </ul>
@@ -436,7 +570,7 @@
             <li>Address crowding check (rich)</li>
             <li>5 000 API volání/měsíc</li>
           </ul>
-          <a class="buy" href="https://app.cz-agents.dev/api/stripe/checkout?price=price_1TUl5VRwLTHt42lJaQfOZsHx" target="_blank" rel="noopener">Předplatit</a>
+          <button class="buy" onclick="czSubscribe('pro')">Předplatit</button>
           <span class="fine-print">bez DPH · 429 při překročení · zrušíš kdykoli</span>
         </div>
 
@@ -451,79 +585,167 @@
             <li>Denní email digest o změnách ve watchlistu</li>
             <li>25 000 API volání/měsíc</li>
           </ul>
-          <a class="buy" href="https://app.cz-agents.dev/api/stripe/checkout?price=price_1TUl5WRwLTHt42lJqCdE4pnB" target="_blank" rel="noopener">Předplatit</a>
+          <button class="buy" onclick="czSubscribe('agency')">Předplatit</button>
+          <a class="agency-credit-link" href="#credit-packs">Reporty od €1,00 →</a>
           <span class="fine-print">bez DPH · 429 při překročení · zrušíš kdykoli</span>
         </div>
 
+        </div>
+      </section>
+
+      <section id="trial" class="trial-stripe">
+        <h2>Vyzkoušejte Compliance zdarma po dobu 14 dnů — bez platební karty</h2>
+        <p class="section-note">Získej 14denní trial token s plným přístupem — bez kreditní karty. Aktivační odkaz přijde během chvíle.</p>
+        <form id="trial-form" style="max-width:480px;margin:2rem auto;display:flex;flex-direction:column;gap:1rem;">
+          <input type="email" id="trial-email" name="email" required placeholder="tvuj@email.cz"
+            style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:1rem;background:var(--bg-card);color:var(--fg);">
+          <select id="trial-tier" name="tier"
+            style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:1rem;background:var(--bg-card);color:var(--fg);">
+            <option value="compliance">API Compliance (€99/měs) — KYC/AML/DD nástroje</option>
+            <option value="agency">Agency (€199/měs) — plný ddplus + realestate-pro</option>
+          </select>
+          <button type="submit" class="buy" style="max-width:200px;">Požádat o trial přístup</button>
+          <p id="trial-msg" style="display:none;color:var(--accent);font-size:.9rem;"></p>
+        </form>
+        <script>
+          document.getElementById('trial-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button');
+            const msg = document.getElementById('trial-msg');
+            btn.disabled = true;
+            btn.textContent = 'Odesílám…';
+            try {
+              const r = await fetch('https://app.cz-agents.dev/api/trial/request', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  email: document.getElementById('trial-email').value,
+                  tier: document.getElementById('trial-tier').value,
+                  source: new URLSearchParams(location.search).get('utm_campaign') || 'pricing-cs'
+                })
+              });
+              if (r.ok) {
+                msg.textContent = '✓ Žádost přijata — aktivační email přijde za chvíli.';
+                msg.style.display = 'block';
+                btn.textContent = 'Odesláno!';
+              } else {
+                throw new Error('server error');
+              }
+            } catch {
+              btn.disabled = false;
+              btn.textContent = 'Požádat o trial přístup';
+              msg.textContent = 'Něco se pokazilo — napiš přímo na martin.havel@gmail.com.';
+              msg.style.color = '#dc2626';
+              msg.style.display = 'block';
+            }
+          });
+        </script>
+      </section>
+
+    <!-- Credit packs (pay-as-you-go) -->
+    <section id="credit-packs">
+      <h2>Preferuješ platbu za reporty? Kup kreditový balíček</h2>
+      <p class="section-note">Předplacené kredity — bez předplatného. Každý kredit = jeden plný DD report (detekce nominee, risk timeline, propojené subjekty, address crowding). Kredity nevyprší. Token dorazí emailem po platbě.</p>
+      <p style="font-size:13px;color:var(--fg-muted);margin-top:8px;">Minimální balíček je 20 reportů — jde o poměr tokenu (jeden token na nákup) k hodnotě požadavku. Udržuje API otevřené bez přísných rate limitů.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:20px;">
+
+        <!-- Starter -->
+        <div class="tier" style="display:flex;flex-direction:column;">
+          <h4>Startér</h4>
+          <div class="price">€20<small style="font-size:13px;"> / 20 reportů</small></div>
+          <div class="desc" style="flex:1;">€1,00 za report. Ideální pro jednorázovou prověrku nebo vyzkoušení plného toolsetu.</div>
+          <form id='ppr-form' style='margin-top:12px;'>
+            <button type='submit' class='buy' style='width:100%;'>Koupit startér →</button>
+            <span id='ppr-err' style='color:#dc2626;font-size:12px;display:none;margin-top:4px;'></span>
+          </form>
+          <script>
+          document.getElementById('ppr-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button');
+            const err = document.getElementById('ppr-err');
+            btn.disabled = true; btn.textContent = 'Přesměrovávám…'; err.style.display = 'none';
+            try {
+              const r = await fetch('https://app.cz-agents.dev/api/stripe/pay-per-report/checkout', {
+                method: 'POST', headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ quantity: 20 })
+              });
+              const d = await r.json();
+              if (d.url) { window.location.href = d.url; return; }
+              throw new Error(d.error || 'chyba pokladny');
+            } catch(ex) {
+              err.textContent = String(ex); err.style.display = '';
+              btn.disabled = false; btn.textContent = 'Koupit startér →';
+            }
+          });
+          </script>
+          <span style="font-size:11px;color:var(--fg-ghost);font-family:'JetBrains Mono',monospace;margin-top:6px;">jednorázová platba · bez expirace</span>
+        </div>
+
+        <!-- Pack 50 -->
+        <div class="tier" style="display:flex;flex-direction:column;">
+          <h4>Balíček 50</h4>
+          <div class="price">€35<small style="font-size:13px;"> / 50 reportů</small></div>
+          <div class="desc" style="flex:1;">€0,70 za report — o 30 % levnější. Pro projektové prověřování nebo opakované kontroly.</div>
+          <a class="buy" href="https://buy.stripe.com/7sY9AVfFo4Ta3z15EbeAg05" style="display:block;text-align:center;margin-top:12px;">Koupit balíček 50 →</a>
+          <span style="font-size:11px;color:var(--fg-ghost);font-family:'JetBrains Mono',monospace;margin-top:6px;">jednorázová platba · bez expirace</span>
+        </div>
+
+        <!-- Pack 100 -->
+        <div class="tier" style="display:flex;flex-direction:column;border-color:var(--accent);">
+          <h4>Balíček 100 <span style="font-size:11px;background:var(--accent);color:var(--bg);padding:2px 6px;border-radius:4px;font-weight:600;vertical-align:middle;">POPULAR</span></h4>
+          <div class="price">€60<small style="font-size:13px;"> / 100 reportů</small></div>
+          <div class="desc" style="flex:1;">€0,60 za report — o 40 % levnější. Pro compliance týmy pravidelně prověřující dodavatele nebo protistrany.</div>
+          <a class="buy" href="https://buy.stripe.com/7sY6oJeBkbhy6Ld7MjeAg06" style="display:block;text-align:center;margin-top:12px;">Koupit balíček 100 →</a>
+          <span style="font-size:11px;color:var(--fg-ghost);font-family:'JetBrains Mono',monospace;margin-top:6px;">jednorázová platba · bez expirace</span>
+        </div>
+
+        <!-- Pack 250 -->
+        <div class="tier" style="display:flex;flex-direction:column;">
+          <h4>Balíček 250</h4>
+          <div class="price">€125<small style="font-size:13px;"> / 250 reportů</small></div>
+          <div class="desc" style="flex:1;">€0,50 za report — o 50 % levnější. Pro hromadné zpracování, onboarding pipeline nebo pravidelný refresh portfolia.</div>
+          <a class="buy" href="https://buy.stripe.com/9B69AV0KufxOglNd6DeAg07" style="display:block;text-align:center;margin-top:12px;">Koupit balíček 250 →</a>
+          <span style="font-size:11px;color:var(--fg-ghost);font-family:'JetBrains Mono',monospace;margin-top:6px;">jednorázová platba · bez expirace</span>
+        </div>
+
       </div>
+      <p style="margin-top:14px;font-size:13px;color:var(--fg-ghost);">Potřebuješ vlastní objem nebo fakturaci na IČO? <a href="mailto:martin.havel@gmail.com" style="color:var(--accent);">Napiš mi.</a></p>
     </section>
 
-    <hr class="divider">
-
-    <!-- Reality tiers -->
-    <section>
-      <h2>Reality — české distressed nemovitosti <span class="pill live">live</span></h2>
-      <p class="section-note">
-        Přístup k MCP serveru <a class="url" href="https://reality.cz-agents.dev" target="_blank" rel="noopener">reality.cz-agents.dev</a>
-        (<code>realestate.cz-agents.dev/mcp</code>). Ceny v CZK vč. DPH.
-        Samostatné předplatné nezávislé na Compliance — oba tiers nelze sloučit do jednoho plánu.
-      </p>
-      <div class="pricing-grid">
-
-        <div class="tier">
-          <h4>Reality Professional</h4>
-          <div class="price">1 990 Kč<small>/měs</small></div>
-          <ul>
-            <li>Přístup k Reality MCP serveru</li>
-            <li><code>search_distress_properties</code> — až 50 výsledků</li>
-            <li><code>get_property_detail</code> — parcela, scoring, mapová data</li>
-            <li>Bez owner name / IČO ve výstupu</li>
-          </ul>
-          <a class="buy" href="https://app.cz-agents.dev/api/stripe/checkout?price=price_1TUluxRwLTHt42lJIdoYZuXW" target="_blank" rel="noopener">Předplatit</a>
-          <span class="fine-print">cena vč. DPH · zrušíš kdykoli</span>
-        </div>
-
-        <div class="tier featured">
-          <h4>Reality Business</h4>
-          <div class="price">5 990 Kč<small>/měs</small></div>
-          <ul>
-            <li>Vše z Professional, plus:</li>
-            <li><code>search_distress_properties</code> — 100+ výsledků</li>
-            <li><code>get_property_detail</code> — vč. <code>owner_name</code> + <code>owner_ico</code></li>
-            <li>Kompletní data vlastníka pro due-diligence integraci</li>
-          </ul>
-          <a class="buy" href="https://app.cz-agents.dev/api/stripe/checkout?price=price_1TUluxRwLTHt42lJ48dNTcAD" target="_blank" rel="noopener">Předplatit</a>
-          <span class="fine-print">cena vč. DPH · zrušíš kdykoli</span>
-        </div>
-
-      </div>
-    </section>
-
-    <hr class="divider">
-
-    <!-- Pay-per-report -->
-    <section>
-      <h2>Nechceš předplatné?</h2>
-      <div class="ppr-block">
-        <div class="ppr-left">
-          <div class="ppr-price">€0,50<small>/report</small></div>
-          <p>
-            Jednorázový plný DD report přes všechny Compliance nástroje — detekce nominee, risk timeline,
-            propojené subjekty, address crowding. Bez měsíčního poplatku, bez kvóty. Platíš jen když to potřebuješ.
-          </p>
-        </div>
-        <div class="ppr-right">
-          <a class="buy" href="https://app.cz-agents.dev/api/stripe/checkout?price=price_1TUl5WRwLTHt42lJMSCL6Rzl&mode=payment" target="_blank" rel="noopener">Koupit report — €0,50</a>
-          <span class="fine-print">jednorázová platba · max 5 reportů/uživatel lifetime</span>
-        </div>
-      </div>
-    </section>
-
-    <hr class="divider">
+      <section>
+        <h2>Co je zahrnuto v každém plánu</h2>
+        <table class="feature-matrix">
+          <thead>
+            <tr>
+              <th>Funkce</th>
+              <th>Free</th>
+              <th>Compliance</th>
+              <th>Agency</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Vyhledávání v ARES</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Kurzy ČNB</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Screening sankčních seznamů</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Insolvence ISIR</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Základní DD report</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Detekce nominee ředitele</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Detekce phoenix company</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Riziková časová osa (AI)</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Kontrola koncentrace adres</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Propojené subjekty depth=1</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Propojené subjekty depth=2-3</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+            <tr><td>Watchlist monitoring</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+            <tr><td>Upozornění na změny firem</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+            <tr><td>Měsíční kvóta</td><td class="quota">30 req/den</td><td class="quota">5000/měs</td><td class="quota">25000/měs</td></tr>
+          </tbody>
+        </table>
+      </section>
 
     <!-- FAQ -->
     <section>
-      <h2>Časté otázky</h2>
+      <h2>Časté dotazy</h2>
       <dl class="faq">
 
         <div class="faq-item">
@@ -563,12 +785,17 @@
 
         <div class="faq-item">
           <dt>Je k dispozici zkušební doba?</dt>
-          <dd>Časově omezená zkušební verze není. Free tier (open-source, rate-limitované hostované endpointy) je trvale dostupný a slouží jako evaluace. Pro specifický evaluační případ použití napiš na <a class="url" href="mailto:martin.havel@gmail.com">martin.havel@gmail.com</a>.</dd>
+          <dd>Ano — požádej o 14denní trial token (bez kreditní karty) přes formulář výše. Free tier (rate-limitované hostované endpointy) je navíc trvale dostupný pro evaluaci.</dd>
         </div>
 
         <div class="faq-item">
           <dt>Odkud data pocházejí? Kupujete od CEE nebo Bisnode?</dt>
           <dd>Ne. cz-agents používá pouze státem garantované veřejné registry: ARES (MF), ČNB, ISIR (MSp), EU FSF, OFAC SDN. Nekupujeme od paywallů profesních komor (Centrální evidence exekucí Exekutorské komory) ani od komerčních přeprodejců. Tvoje předplatné platí údržbu, ne přístup k datům, která stát už publikuje.</dd>
+        </div>
+
+        <div class="faq-item">
+          <dt>Mohu dobít kredity ke stávajícímu pay-per-report tokenu?</dt>
+          <dd>Ano — každý nákup vytvoří nový token, případně napiš na <a class="url" href="mailto:martin.havel@gmail.com">martin.havel@gmail.com</a> pro dobití stávajícího. <a class="url" href="#credit-packs">Balíčky výše</a> jsou dostupné kdykoli — Starter (20), Pack 50, Pack 100, Pack 250. Kredity nevyprší, takže větší balíček předem sníží cenu za report.</dd>
         </div>
 
         <div class="faq-item">
@@ -579,14 +806,89 @@
       </dl>
     </section>
 
+      <section class="final-cta">
+        <h2>Připraveni integrovat česká data do vašeho workflow?</h2>
+        <div class="final-cta-actions">
+          <a class="buy" href="#trial">Začít trial zdarma →</a>
+          <a class="buy" href="mailto:martin.havel@gmail.com">Kontakt pro Agency →</a>
+        </div>
+      </section>
+    </div>
+
+    <div class="tab-content tab-hidden" id="tab-reality">
+      <span class="tab-badge">Pro realitní makléře &amp; developery</span>
+
+      <section>
+        <h2 style="margin-top:0;">Reality MCP — česká data o nemovitostech pro makléře a developery <span class="pill live">live</span></h2>
+        <p class="section-note">
+          Přístup k MCP serveru <a class="url" href="https://reality.cz-agents.dev" target="_blank" rel="noopener">reality.cz-agents.dev</a>
+          (<code>realestate.cz-agents.dev/mcp</code>). Ceny v CZK vč. DPH.
+          Samostatné předplatné nezávislé na Compliance — oba tiers nelze sloučit do jednoho plánu.
+        </p>
+        <div class="pricing-grid">
+
+          <div class="tier">
+            <h4>Reality Professional</h4>
+            <div class="price">1 990 Kč<small>/měs</small></div>
+            <ul>
+              <li>Přístup k Reality MCP serveru</li>
+              <li><code>search_distress_properties</code> — až 50 výsledků</li>
+              <li><code>get_property_detail</code> — parcela, scoring, mapová data</li>
+              <li>Bez owner name / IČO ve výstupu</li>
+            </ul>
+            <button class="buy" onclick="czSubscribe('re_pro')">Předplatit</button>
+            <span class="fine-print">cena vč. DPH · zrušíš kdykoli</span>
+          </div>
+
+          <div class="tier featured">
+            <h4>Reality Business</h4>
+            <div class="price">5 990 Kč<small>/měs</small></div>
+            <ul>
+              <li>Vše z Professional, plus:</li>
+              <li><code>search_distress_properties</code> — 100+ výsledků</li>
+              <li><code>get_property_detail</code> — vč. <code>owner_name</code> + <code>owner_ico</code></li>
+              <li>Kompletní data vlastníka pro due-diligence integraci</li>
+            </ul>
+            <button class="buy" onclick="czSubscribe('re_agency')">Předplatit</button>
+            <span class="fine-print">cena vč. DPH · zrušíš kdykoli</span>
+          </div>
+
+        </div>
+      </section>
+
+      <section>
+        <h2>Časté dotazy</h2>
+        <dl class="faq">
+          <div class="faq-item">
+            <dt>Mohu používat Reality a Compliance dohromady?</dt>
+            <dd>Ano, jako dvě samostatná předplatná. Účtují se nezávisle a mohou běžet paralelně.</dd>
+          </div>
+          <div class="faq-item">
+            <dt>Jak je to s DPH u CZK plánů?</dt>
+            <dd>Ceny Reality v CZK jsou uvedené včetně DPH. Stripe DPH zpracuje automaticky.</dd>
+          </div>
+          <div class="faq-item">
+            <dt>Je dostupný vlastní plán?</dt>
+            <dd>Ano. Napište na <a class="url" href="mailto:martin.havel@gmail.com">martin.havel@gmail.com</a> s očekávaným objemem, požadavky na data vlastníků a fakturaci.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="contact-cta">
+        Potřebujete vlastní plán nebo CZK fakturaci? Napište na <a class="url" href="mailto:martin.havel@gmail.com">martin.havel@gmail.com</a>
+      </section>
+    </div>
+
     <footer>
       <div>
         <a href="https://github.com/martinhavel/cz-agents-mcp">GitHub</a> ·
         <a href="https://dev.to/martinhavel/building-mcp-servers-for-a-country-that-isnt-in-the-dataset-czech-gov-apis-1lo8">dev.to</a> ·
         <a href="https://modelcontextprotocol.io">MCP spec</a> ·
         <a href="https://registry.modelcontextprotocol.io">MCP registry</a> ·
-        <a href="/privacy.html">Privacy</a> ·
-        <a href="/terms.html">Terms</a>
+        <a href="/cs/onboard.html">Onboarding</a> ·
+        <a href="/dpa.html">SZOU/DPA</a> ·
+        <a href="/privacy.html">Soukromí</a> ·
+        <a href="/terms.html">Podmínky</a>
       </div>
       <div>
         by <a href="https://martinhavel.cz">Martin Havel</a> · MIT
@@ -600,6 +902,25 @@
         try { localStorage.setItem('lang', a.dataset.lang); } catch (e) {}
       });
     });
+    function activatePricingTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(function (btn) {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+      });
+      document.querySelectorAll('.tab-content').forEach(function (content) {
+        content.classList.toggle('tab-hidden', content.id !== 'tab-' + tab);
+      });
+    }
+    document.querySelectorAll('.tab-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        activatePricingTab(btn.dataset.tab);
+        if (history.replaceState) {
+          history.replaceState(null, '', '#' + btn.dataset.tab);
+        }
+      });
+    });
+    if (window.location.hash === '#reality') {
+      activatePricingTab('reality');
+    }
     // FAQ accordion
     document.querySelectorAll('.faq-item dt').forEach(function (dt) {
       dt.addEventListener('click', function () {
@@ -607,6 +928,22 @@
         item.classList.toggle('open');
       });
     });
+  </script>
+  <script>
+    window['cz' + 'Subscribe'] = async function (tier) {
+      const isReality = tier === 're_pro' || tier === 're_agency';
+      const url = isReality
+        ? 'https://app.cz-agents.dev/api/stripe/public-realestate-checkout'
+        : 'https://app.cz-agents.dev/api/stripe/public-checkout';
+      try {
+        const r = await fetch(url, { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ tier }) });
+        const d = await r.json();
+        if (d.url) { window.location.href = d.url; return; }
+        alert('Chyba platby: ' + (d.message || d.error || 'unknown'));
+      } catch (e) {
+        alert('Chyba sítě — zkuste znovu nebo napište na martin.havel@gmail.com');
+      }
+    };
   </script>
 </body>
 </html>

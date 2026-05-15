@@ -15,11 +15,18 @@
   code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
   a { color: #2563eb; }
   ul { margin: 8px 0 16px 24px; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; }
+  .tab { cursor: pointer; padding: 8px 20px; border-radius: 6px 6px 0 0; font-size: 14px; font-weight: 600; border: 1px solid #e5e7eb; border-bottom: none; background: #f9fafb; color: #6b7280; }
+  .tab.active { background: #fff; color: #1f2937; border-bottom: 1px solid #fff; margin-bottom: -1px; }
+  .lang { display: none; border: 1px solid #e5e7eb; border-radius: 0 8px 8px 8px; padding: 28px 28px 16px; }
+  .lang.active { display: block; }
 </style>
   <!-- Privacy-friendly analytics (self-hosted Umami) -->
   <script async defer src="https://analytics.mhai.app/script.js" data-website-id="5a96aa8b-7575-4667-8ac6-267287849cf3"></script>
 </head>
 <body>
+<div class="tabs"><div class="tab active" id="tab-en" onclick="switchLang('en')">English</div><div class="tab" id="tab-cs" onclick="switchLang('cs')">Čeština</div></div>
+<div class="lang active" id="lang-en">
 <h1>Terms of Service</h1>
 <p class="updated">Last updated: 2026-04-26 · <a href="/">cz-agents.dev</a></p>
 
@@ -134,6 +141,55 @@
 <p style="margin-top: 40px; color: #6b7280; font-size: 13px;">
   ← <a href="/">Back to cz-agents.dev</a>
 </p>
+
+</div>
+
+<div class="lang" id="lang-cs">
+<h1>Podmínky použití</h1>
+<p>Poslední aktualizace: 2026-04-26 · cz-agents.dev</p>
+<p>Používáním MCP serverů cz-agents (<em>služba</em>), ať prostřednictvím npm balíčků, hostovaných endpointů <code>*.cz-agents.dev</code> nebo Anthropic Connectors Directory, souhlasíte s těmito podmínkami. Provozovatelem služby je Martin Havel (IČO 71677763, Košťálkova 1103/2, 182 00 Praha 8, Česká republika).</p>
+
+<h2>Co služba je</h2>
+<p>Sada nástrojů Model Context Protocol (MCP) s otevřeným zdrojovým kódem pro česká obchodní a vládní data. Vyhledává informace z veřejných rejstříků (ARES, ČNB, ISIR, sankce EU, OFAC) a agreguje je do strukturovaných odpovědí pro AI agenty a vývojáře.</p>
+
+<h2>Co služba není</h2>
+<ul>
+<li><strong>Není právní poradenství.</strong> Reporty jsou informační přehledy dat z veřejných rejstříků, nikoli autoritativní právní stanoviska. Pro závazná právní nebo compliance rozhodnutí se poraďte s kvalifikovaným českým právníkem nebo licencovaným poskytovatelem AML/KYC.</li>
+<li><strong>Není úvěrové hodnocení.</strong> Rizikové skóre je deterministický souhrn s explicitními vahami. Nespadá pod regulaci ratingových agentur.</li>
+<li><strong>Není v reálném čase.</strong> TTL cache (≤24 h pro ARES, denně pro sankce, téměř v reálném čase pro ISIR) znamená, že odpovědi mohou za zdrojovým rejstříkem zaostávat. U časově kritických rozhodnutí vždy ověřte v originálním zdroji.</li>
+</ul>
+
+<h2>Přijatelné použití</h2>
+<p>Souhlasíte, že službu nebudete používat pro: hromadné scrapování obcházející limity; redistribuci uložených datasetů (sankční snapshoty, feed ISIR) jako vlastní produkt; identifikaci nebo sledování fyzických osob nad rámec veřejnorejstříkových účelů; jakýkoli protiprávní účel dle českého práva nebo práva vaší jurisdikce.</p>
+
+<h2>Bezplatné vs. placené úrovně</h2>
+<p>Služba nabízí bezplatný tier s denními limity na IP a placené tiery s měsíčními kvótami. Ceny a limity jsou uvedeny na cz-agents.dev. Placené předplatné je fakturováno přes Stripe; zrušení nabývá účinnosti na konci aktuálního zúčtovacího období. Částečné měsíce se nerefundují, ledaže to vyžaduje české spotřebitelské právo (zákon č. 89/2012 Sb., občanský zákoník).</p>
+
+<h2>Omezení odpovědnosti</h2>
+<p>Služba je poskytována <em>tak jak je</em>. Neposkytujeme záruky přesnosti, úplnosti ani vhodnosti pro konkrétní účel. V maximálním rozsahu povoleném českým právem je celková odpovědnost za jakýkoli nárok z vašeho užívání služby omezena na částku zaplacenou za službu v 12 měsících před nárokem. Neodpovídáme za následné, nepřímé ani zvláštní škody. Toto omezení neovlivňuje zákonná spotřebitelská práva, která nelze smluvně omezit.</p>
+
+<h2>Ukončení</h2>
+<p>Přístup lze pozastavit za porušení podmínek (zejména části o přijatelném použití) nebo za nezaplacení placeného tieru. Kdykoli můžete ukončit přestal používat službu, a pro placené tiery zrušit přes Stripe.</p>
+
+<h2>Změny podmínek</h2>
+<p>Podstatné změny budou oznámeny v repozitáři projektu na GitHubu (github.com/martinhavel/cz-agents-mcp) nejméně 14 dní před vstupem v platnost. Pokračující používání po tomto datu představuje souhlas.</p>
+
+<h2>Rozhodné právo a řešení sporů</h2>
+<p>Tyto podmínky se řídí českým právem. Spory, které nelze vyřešit dohodou, podléhají výlučné příslušnosti soudů České republiky. Spotřebitelé si zachovávají práva dle pravidel EU na ochranu spotřebitele.</p>
+
+<h2>Kontakt</h2>
+<p>Martin Havel · martin.havel@gmail.com · martinhavel.cz</p>
+<p><a href="https://cz-agents.dev">← Zpět na cz-agents.dev</a></p>
+</div>
+
+<script>
+function switchLang(lang) {
+  document.querySelectorAll('.lang').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('lang-' + lang).classList.add('active');
+  document.getElementById('tab-' + lang).classList.add('active');
+}
+</script>
 
 </body>
 </html>

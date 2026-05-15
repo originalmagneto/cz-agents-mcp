@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { validateIcoInput } from '@czagents/shared';
+import { validateIcoInput, trackIco } from '@czagents/shared';
 import { buildReport } from './report.js';
 import { buildChain } from './chain.js';
 import { detectNomineeDirector } from './patterns/nominee-director.js';
@@ -32,8 +32,8 @@ function requireTier(currentTier: DdTier, required: DdTier, toolName: string) {
           tool: toolName,
           tier_needed: required,
           current_tier: currentTier,
-          message: `Tool '${toolName}' requires '${required}' tier or higher. Current: '${currentTier}'. Upgrade at https://app.cz-agents.dev/billing`,
-          upgrade_url: 'https://cz-agents.dev/pricing',
+          message: `Tool '${toolName}' requires '${required}' tier or higher. Current: '${currentTier}'. Upgrade at https://cz-agents.dev/pricing.html.html`,
+          upgrade_url: 'https://cz-agents.dev/pricing.html.html?utm_source=mcp&utm_medium=tier_gate',
         }, null, 2),
       },
     ],
@@ -53,7 +53,7 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
         'Czech company due-diligence aggregator. Combines ARES (legal data, statutory body, VAT, bank accounts), ' +
         'sanctions screening, and (optionally) ISIR insolvency check into a single risk-scored report. ' +
         'Use whenever the user asks for KYC / DD / company background check on a Czech IČO. ' +
-        'Free tier (basic report) rate-limited; Compliance and Agency tiers (more tools, higher quotas) at https://cz-agents.dev/pricing.',
+        'Free tier (basic report) rate-limited; Compliance and Agency tiers (more tools, higher quotas) at https://cz-agents.dev/pricing.html.',
     },
   );
 
@@ -70,6 +70,7 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
     { title: 'Get Czech Company Due-Diligence Report', readOnlyHint: true, openWorldHint: true },
     async ({ ico, depth }) => {
       const clean = validateIcoInput(ico);
+      trackIco(clean);
       const report = await buildReport(clean, clients, { depth });
       return wrap(JSON.stringify(report, null, 2));
     },
@@ -84,6 +85,7 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
     { title: 'Get Risk Score', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
       const clean = validateIcoInput(ico);
+      trackIco(clean);
       const report = await buildReport(clean, clients, { depth: 'basic' });
       const top = report.red_flags.slice().sort((a, b) => b.weight - a.weight).slice(0, 5);
       return wrap(JSON.stringify({
@@ -108,6 +110,7 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
       const gate = requireTier(tier, 'agency', 'get_statutory_chain');
       if (gate) return gate;
       const clean = validateIcoInput(ico);
+      trackIco(clean);
       const result = await buildChain(clean, clients.ares, { maxDepth: max_depth });
       return wrap(JSON.stringify(result, null, 2));
     },
@@ -125,6 +128,7 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
       const gate = requireTier(tier, 'compliance', 'detect_nominee_director');
       if (gate) return gate;
       const clean = validateIcoInput(ico);
+      trackIco(clean);
       const report = await buildReport(clean, clients, { depth: 'full' });
       const findings = detectNomineeDirector(report);
       return wrap(JSON.stringify(findings, null, 2));
@@ -142,6 +146,7 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
       const gate = requireTier(tier, 'compliance', 'detect_phoenix');
       if (gate) return gate;
       const clean = validateIcoInput(ico);
+      trackIco(clean);
       const report = await buildReport(clean, clients, { depth: 'full' });
       const findings = detectPhoenix(report);
       return wrap(JSON.stringify(findings, null, 2));
@@ -159,6 +164,7 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
       const gate = requireTier(tier, 'compliance', 'get_risk_timeline');
       if (gate) return gate;
       const clean = validateIcoInput(ico);
+      trackIco(clean);
       const report = await buildReport(clean, clients, { depth: 'full' });
       const result = buildTimeline(report);
       return wrap(JSON.stringify({ ico: clean, ...result }, null, 2));
@@ -176,6 +182,7 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
       const gate = requireTier(tier, 'compliance', 'detect_address_crowding');
       if (gate) return gate;
       const clean = validateIcoInput(ico);
+      trackIco(clean);
       const company = await clients.ares.getByIco(clean);
       if (!company) {
         return wrap(JSON.stringify({ error: 'ico_not_found', ico: clean }));

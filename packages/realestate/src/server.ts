@@ -8,7 +8,7 @@
  * Paid tools (search_distress_properties, get_property_detail) have been
  * moved to the hosted closed-source realestate-pro service:
  *   https://realestate-pro.cz-agents.dev/mcp
- * See https://cz-agents.dev/pricing for subscription details.
+ * See https://cz-agents.dev/pricing.html for subscription details.
  *
  * Reference: cz-agents-realestate-launch-plan.md Section 4 + 6 + 7.
  */
@@ -35,7 +35,7 @@ export function buildRealEstateServer(_tier: RealEstateTier = 'free'): McpServer
         'Czech distress real estate intelligence — free aggregate tools. ' +
         'Returns anonymised district-level statistics (insolvency counts, auction counts, price trends). ' +
         'Full property search, owner data, and per-property details are available at the hosted ' +
-        'realestate-pro endpoint (https://realestate-pro.cz-agents.dev/mcp) — see https://cz-agents.dev/pricing.',
+        'realestate-pro endpoint (https://realestate-pro.cz-agents.dev/mcp) — see https://cz-agents.dev/pricing.html.',
     },
   );
 

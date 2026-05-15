@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pricing — cz-agents</title>
-  <meta name="description" content="cz-agents pricing: Free open-source tier, Compliance API (€99/mo), Agency (€199/mo), Reality (1 990–5 990 Kč/mo), and pay-per-report (€0.50).">
+  <meta name="description" content="cz-agents pricing: Free open-source tier, Compliance API (€99/mo), Agency (€199/mo), Reality (1 990–5 990 Kč/mo), and pay-per-report (€1.00).">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://cz-agents.dev/pricing.html">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -361,6 +361,135 @@
       color: var(--fg-dim);
       margin-bottom: 8px;
     }
+    .tab-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px;
+      margin: 28px 0 10px;
+    }
+    .tab-btn {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--fg-dim);
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+    .tab-badge {
+      display: inline-block;
+      color: var(--accent);
+      border: 1px solid rgba(255,107,53,0.35);
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      margin-bottom: 8px;
+    }
+    .tab-hidden { display: none; }
+    .trial-stripe,
+    .final-cta,
+    .contact-cta {
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px;
+      margin-top: 40px;
+    }
+    .trial-stripe h2,
+    .final-cta h2 {
+      margin-top: 0;
+    }
+    .trial-stripe form {
+      max-width: none !important;
+      margin: 22px 0 0 !important;
+      display: grid !important;
+      grid-template-columns: minmax(180px, 1fr) minmax(220px, 1fr) auto;
+      gap: 12px !important;
+      align-items: start;
+    }
+    .trial-stripe .buy,
+    .final-cta .buy,
+    .contact-cta .buy {
+      display: inline-block;
+      text-align: center;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 16px;
+      border: 0;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .feature-matrix {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 18px;
+      font-size: 13px;
+    }
+    .feature-matrix th,
+    .feature-matrix td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+      text-align: left;
+    }
+    .feature-matrix th {
+      color: var(--fg);
+      background: var(--bg-elev);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+    .feature-matrix tbody tr:nth-child(even) { background: rgba(255,255,255,0.025); }
+    .feature-matrix .yes { color: var(--accent); font-weight: 800; }
+    .feature-matrix .no { color: var(--fg-ghost); }
+    .feature-matrix .quota { color: var(--fg-dim); font-family: 'JetBrains Mono', monospace; }
+    .agency-credit-link {
+      display: inline-block;
+      color: var(--accent);
+      border: 1px solid rgba(255,107,53,0.35);
+      border-radius: 999px;
+      padding: 5px 9px;
+      font-size: 11px;
+      font-family: 'JetBrains Mono', monospace;
+      text-decoration: none;
+      margin-top: 4px;
+    }
+    .final-cta {
+      background: #1f2937;
+      padding: 48px;
+      text-align: center;
+    }
+    .final-cta-actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .contact-cta {
+      text-align: center;
+      color: var(--fg-dim);
+      font-size: 15px;
+    }
+    @media (max-width: 760px) {
+      .tab-bar { border-radius: 14px; }
+      .tab-btn { flex: 1; }
+      .trial-stripe form { grid-template-columns: 1fr; }
+    }
     .divider {
       border: none;
       border-top: 1px solid var(--border);
@@ -384,13 +513,13 @@
       <nav class="nav-links" aria-label="Site navigation">
         <a href="/">Home</a>
         <a href="/pricing.html" class="active">Pricing</a>
-        <a href="/onboard.html">Onboard</a>
+        <a href="/docs/">Documentation</a>
+        <a href="/onboard.html">Get Started</a>
         <a href="/terms.html">Terms</a>
         <a href="/privacy.html">Privacy</a>
       </nav>
     </header>
 
-    <!-- Hero -->
     <section>
       <h2 style="margin-top:0;">Pricing</h2>
       <p class="section-note">
@@ -399,12 +528,18 @@
         paid tiers remove the limit and unlock additional tools.
         Cancel anytime.
       </p>
+      <div class="tab-bar" role="tablist" aria-label="Pricing products">
+        <button class="tab-btn active" data-tab="compliance" type="button">Compliance DD (EUR)</button>
+        <button class="tab-btn" data-tab="reality" type="button">Reality MCP (CZK)</button>
+      </div>
     </section>
 
-    <!-- Main compliance tiers -->
-    <section>
-      <h3 class="section-sub">Compliance (KYC / AML / due-diligence)</h3>
-      <div class="pricing-grid three-col">
+    <div class="tab-content" id="tab-compliance">
+      <span class="tab-badge">For compliance teams &amp; legal</span>
+
+      <section>
+        <h2 style="margin-top:0;">Czech compliance data, priced for teams of any size</h2>
+        <div class="pricing-grid three-col">
 
         <!-- Free -->
         <div class="tier free">
@@ -413,7 +548,7 @@
           <ul>
             <li>6 open-source MCP servers (ARES, ČNB, sanctions, ISIR, ADIS, DD basic)</li>
             <li>Self-host MIT, no signup</li>
-            <li>Hosted endpoints rate-limited (~30 req/min/IP)</li>
+            <li>REST API: 300 req/h (ARES/sanctions/ISIR) · 60 req/h (DD) — no token needed</li>
             <li>DD basic: ARES + sanctions, no statutory chain</li>
             <li>No token required</li>
           </ul>
@@ -435,8 +570,9 @@
             <li>Linked entities depth=1</li>
             <li>Address crowding check (rich)</li>
             <li>5 000 API calls/month</li>
+            <li>REST API + MCP — quota shared across both transports</li>
           </ul>
-          <a class="buy" href="https://app.cz-agents.dev/api/stripe/checkout?price=price_1TUl5VRwLTHt42lJaQfOZsHx" target="_blank" rel="noopener">Subscribe</a>
+          <button class="buy" onclick="czSubscribe('pro')">Subscribe</button>
           <span class="fine-print">excl. VAT · 429 on overage · cancel anytime</span>
         </div>
 
@@ -450,80 +586,168 @@
             <li>Watchlist scan (4 tools: add/remove/list/scan)</li>
             <li>Daily email digest on watchlist changes</li>
             <li>25 000 API calls/month</li>
+            <li>REST API + MCP — quota shared across both transports</li>
           </ul>
-          <a class="buy" href="https://app.cz-agents.dev/api/stripe/checkout?price=price_1TUl5WRwLTHt42lJqCdE4pnB" target="_blank" rel="noopener">Subscribe</a>
+          <button class="buy" onclick="czSubscribe('agency')">Subscribe</button>
+          <a class="agency-credit-link" href="#credit-packs">Pay-per-report from €1.00 →</a>
           <span class="fine-print">excl. VAT · 429 on overage · cancel anytime</span>
         </div>
 
+        </div>
+      </section>
+
+      <section id="trial" class="trial-stripe">
+        <h2>Try Compliance free for 14 days — no credit card required</h2>
+        <p class="section-note">Get a 14-day full-access trial token — no credit card required. Activation link arrives in seconds.</p>
+        <form id="trial-form" style="max-width:480px;margin:2rem auto;display:flex;flex-direction:column;gap:1rem;">
+          <input type="email" id="trial-email" name="email" required placeholder="your@company.com"
+            style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:1rem;background:var(--bg-card);color:var(--fg);">
+          <select id="trial-tier" name="tier"
+            style="padding:10px 14px;border:1px solid var(--border);border-radius:8px;font-size:1rem;background:var(--bg-card);color:var(--fg);">
+            <option value="compliance">Compliance (€99/mo) — DD, sanctions, ddplus tools</option>
+            <option value="agency">Agency (€199/mo) — everything + bulk export + realestate-pro</option>
+          </select>
+          <button type="submit" class="buy"
+            style="max-width:200px;">Request trial access</button>
+          <p id="trial-msg" style="display:none;color:var(--accent);font-size:.9rem;"></p>
+        </form>
+        <script>
+          document.getElementById('trial-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button');
+            const msg = document.getElementById('trial-msg');
+            btn.disabled = true;
+            btn.textContent = 'Sending…';
+            try {
+              const r = await fetch('https://app.cz-agents.dev/api/trial/request', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  email: document.getElementById('trial-email').value,
+                  tier: document.getElementById('trial-tier').value,
+                  source: new URLSearchParams(location.search).get('utm_campaign') || 'pricing'
+                })
+              });
+              if (r.ok) {
+                msg.textContent = '✓ Request received — expect an email within 1 business day.';
+                msg.style.display = 'block';
+                btn.textContent = 'Sent!';
+              } else {
+                throw new Error('server error');
+              }
+            } catch {
+              btn.disabled = false;
+              btn.textContent = 'Request trial access';
+              msg.textContent = 'Something went wrong — please email martin.havel@gmail.com directly.';
+              msg.style.color = '#dc2626';
+              msg.style.display = 'block';
+            }
+          });
+        </script>
+      </section>
+
+      <section id="credit-packs">
+      <h2>Prefer pay-as-you-go? Buy report credits</h2>
+      <p class="section-note">Pre-paid credit packs. Each credit = one full DD report across all Compliance tools (nominee check, risk timeline, linked entities, address crowding). Credits never expire. Token delivered by email after payment.</p>
+      <p style="font-size:13px;color:var(--fg-muted);margin-top:8px;">Minimum pack is 20 reports — this keeps the token overhead (one token per purchase) proportionate to the value of the request and lets us prevent abuse while keeping the API open without hard rate limits.</p>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:20px;">
+
+        <!-- Starter / testovací balíček -->
+        <div class="tier" style="display:flex;flex-direction:column;">
+          <h4>Starter</h4>
+          <div class="price">€20<small style="font-size:13px;"> / 20 reports</small></div>
+          <div class="desc" style="flex:1;">€1.00 per report. Ideal for a quick one-off check or trying out the full toolset before committing to a pack.</div>
+          <form id='ppr-form' style='margin-top:12px;'>
+            <button type='submit' class='buy' style='width:100%;'>Buy starter →</button>
+            <span id='ppr-err' style='color:#dc2626;font-size:12px;display:none;margin-top:4px;'></span>
+          </form>
+          <script>
+          document.getElementById('ppr-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button');
+            const err = document.getElementById('ppr-err');
+            btn.disabled = true; btn.textContent = 'Redirecting…'; err.style.display = 'none';
+            try {
+              const r = await fetch('https://app.cz-agents.dev/api/stripe/pay-per-report/checkout', {
+                method: 'POST', headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ quantity: 20 })
+              });
+              const d = await r.json();
+              if (d.url) { window.location.href = d.url; return; }
+              throw new Error(d.error || 'checkout failed');
+            } catch(ex) {
+              err.textContent = String(ex); err.style.display = '';
+              btn.disabled = false; btn.textContent = 'Buy starter →';
+            }
+          });
+          </script>
+          <span style="font-size:11px;color:var(--fg-ghost);font-family:'JetBrains Mono',monospace;margin-top:6px;">one-time · no expiry</span>
+        </div>
+
+        <!-- Pack 50 -->
+        <div class="tier" style="display:flex;flex-direction:column;">
+          <h4>Pack 50</h4>
+          <div class="price">€35<small style="font-size:13px;"> / 50 reports</small></div>
+          <div class="desc" style="flex:1;">€0.70 per report — 30% cheaper than single reports. Good for a batch project or ongoing spot-checks.</div>
+          <a class="buy" href="https://buy.stripe.com/7sY9AVfFo4Ta3z15EbeAg05" style="display:block;text-align:center;margin-top:12px;">Buy Pack 50 →</a>
+          <span style="font-size:11px;color:var(--fg-ghost);font-family:'JetBrains Mono',monospace;margin-top:6px;">one-time · no expiry</span>
+        </div>
+
+        <!-- Pack 100 -->
+        <div class="tier" style="display:flex;flex-direction:column;border-color:var(--accent);">
+          <h4>Pack 100 <span style="font-size:11px;background:var(--accent);color:var(--bg);padding:2px 6px;border-radius:4px;font-weight:600;vertical-align:middle;">POPULAR</span></h4>
+          <div class="price">€60<small style="font-size:13px;"> / 100 reports</small></div>
+          <div class="desc" style="flex:1;">€0.60 per report — 40% cheaper. Best for compliance teams running regular screenings on a portfolio of suppliers or counterparties.</div>
+          <a class="buy" href="https://buy.stripe.com/7sY6oJeBkbhy6Ld7MjeAg06" style="display:block;text-align:center;margin-top:12px;">Buy Pack 100 →</a>
+          <span style="font-size:11px;color:var(--fg-ghost);font-family:'JetBrains Mono',monospace;margin-top:6px;">one-time · no expiry</span>
+        </div>
+
+        <!-- Pack 250 -->
+        <div class="tier" style="display:flex;flex-direction:column;">
+          <h4>Pack 250</h4>
+          <div class="price">€125<small style="font-size:13px;"> / 250 reports</small></div>
+          <div class="desc" style="flex:1;">€0.50 per report — 50% cheaper. For high-volume workflows: batch enrichment, onboarding pipelines, or periodic full-portfolio refreshes.</div>
+          <a class="buy" href="https://buy.stripe.com/9B69AV0KufxOglNd6DeAg07" style="display:block;text-align:center;margin-top:12px;">Buy Pack 250 →</a>
+          <span style="font-size:11px;color:var(--fg-ghost);font-family:'JetBrains Mono',monospace;margin-top:6px;">one-time · no expiry</span>
+        </div>
+
       </div>
+      <p style="margin-top:14px;font-size:13px;color:var(--fg-ghost);">Need a custom volume or invoicing for a Czech company? <a href="mailto:martin.havel@gmail.com" style="color:var(--accent);">Email me.</a></p>
     </section>
 
-    <hr class="divider">
+      <section>
+        <h2>What's included in each plan</h2>
+        <table class="feature-matrix">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Free</th>
+              <th>Compliance</th>
+              <th>Agency</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>ARES lookup</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>CNB FX rates</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Sanctions screening</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>ISIR insolvency</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>DD basic report</td><td class="yes">✓</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Nominee director detection</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Phoenix company detection</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Risk timeline (AI)</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Address crowding check</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Linked entities depth=1</td><td class="no">—</td><td class="yes">✓</td><td class="yes">✓</td></tr>
+            <tr><td>Linked entities depth=2-3</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+            <tr><td>Watchlist monitoring</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+            <tr><td>Company change alerts</td><td class="no">—</td><td class="no">—</td><td class="yes">✓</td></tr>
+            <tr><td>Monthly quota</td><td class="quota">30 req/day</td><td class="quota">5000/mo</td><td class="quota">25000/mo</td></tr>
+          </tbody>
+        </table>
+      </section>
 
-    <!-- Reality tiers -->
-    <section>
-      <h2>Reality — Czech distress real estate <span class="pill live">live</span></h2>
-      <p class="section-note">
-        Access to <a class="url" href="https://reality.cz-agents.dev" target="_blank" rel="noopener">reality.cz-agents.dev</a> MCP server
-        (<code>realestate.cz-agents.dev/mcp</code>). Priced in CZK, VAT included.
-        Separate subscription from Compliance — the two do not combine into a single plan.
-      </p>
-      <div class="pricing-grid">
-
-        <div class="tier">
-          <h4>Reality Professional</h4>
-          <div class="price">1 990 Kč<small>/mo</small></div>
-          <ul>
-            <li>Reality MCP server access</li>
-            <li><code>search_distress_properties</code> — up to 50 results</li>
-            <li><code>get_property_detail</code> — parcel, scoring, map data</li>
-            <li>No owner name / IČO in output</li>
-          </ul>
-          <a class="buy" href="https://app.cz-agents.dev/api/stripe/checkout?price=price_1TUluxRwLTHt42lJIdoYZuXW" target="_blank" rel="noopener">Subscribe</a>
-          <span class="fine-print">cena vč. DPH · zrušíš kdykoli</span>
-        </div>
-
-        <div class="tier featured">
-          <h4>Reality Business</h4>
-          <div class="price">5 990 Kč<small>/mo</small></div>
-          <ul>
-            <li>Everything in Professional, plus:</li>
-            <li><code>search_distress_properties</code> — 100+ results</li>
-            <li><code>get_property_detail</code> — incl. <code>owner_name</code> + <code>owner_ico</code></li>
-            <li>Full owner data for due-diligence integration</li>
-          </ul>
-          <a class="buy" href="https://app.cz-agents.dev/api/stripe/checkout?price=price_1TUluxRwLTHt42lJ48dNTcAD" target="_blank" rel="noopener">Subscribe</a>
-          <span class="fine-print">cena vč. DPH · zrušíš kdykoli</span>
-        </div>
-
-      </div>
-    </section>
-
-    <hr class="divider">
-
-    <!-- Pay-per-report -->
-    <section>
-      <h2>Don't want a subscription?</h2>
-      <div class="ppr-block">
-        <div class="ppr-left">
-          <div class="ppr-price">€0.50<small>/report</small></div>
-          <p>
-            Single full DD report across all Compliance tools — nominee check, risk timeline,
-            linked entities, address crowding. No monthly fee, no quota. Pay only when you need it.
-          </p>
-        </div>
-        <div class="ppr-right">
-          <a class="buy" href="https://app.cz-agents.dev/api/stripe/checkout?price=price_1TUl5WRwLTHt42lJMSCL6Rzl&mode=payment" target="_blank" rel="noopener">Buy a report — €0.50</a>
-          <span class="fine-print">one-time payment · max 5 reports/user lifetime</span>
-        </div>
-      </div>
-    </section>
-
-    <hr class="divider">
-
-    <!-- FAQ -->
-    <section>
-      <h2>FAQ</h2>
+      <section>
+      <h2>Frequently asked questions</h2>
       <dl class="faq">
 
         <div class="faq-item">
@@ -563,12 +787,17 @@
 
         <div class="faq-item">
           <dt>Is there a free trial?</dt>
-          <dd>There is no time-limited trial. The Free tier (open-source, rate-limited hosted endpoints) is available permanently and serves as evaluation access. For a specific evaluation use case, email <a class="url" href="mailto:martin.havel@gmail.com">martin.havel@gmail.com</a>.</dd>
+          <dd>Yes — request a 14-day full-access trial token (no credit card) via the form above. The Free tier (rate-limited hosted endpoints) is also available permanently for evaluation.</dd>
         </div>
 
         <div class="faq-item">
           <dt>Where does the data come from? Do you buy from CEE or Bisnode?</dt>
           <dd>No. cz-agents uses only state-guaranteed public registries: ARES (MoF), ČNB, ISIR (Justice), EU FSF, OFAC SDN. We do not buy from professional-chamber paywalls (Centrální evidence exekucí) or commercial resellers. Your subscription pays for maintenance, not for re-selling data the state already publishes.</dd>
+        </div>
+
+        <div class="faq-item">
+          <dt>Can I buy more credits for my pay-per-report token?</dt>
+          <dd>Yes — each purchase creates a new token (or you can email <a class="url" href="mailto:martin.havel@gmail.com">martin.havel@gmail.com</a> to top up an existing one). The <a class="url" href="#credit-packs">credit packs above</a> are available at any time — Starter (20), Pack 50, Pack 100, Pack 250. Credits never expire, so buying a larger pack upfront saves you per-report cost.</dd>
         </div>
 
         <div class="faq-item">
@@ -579,12 +808,87 @@
       </dl>
     </section>
 
+      <section class="final-cta">
+        <h2>Ready to ship Czech DD into your workflow?</h2>
+        <div class="final-cta-actions">
+          <a class="buy" href="#trial">Start free trial →</a>
+          <a class="buy" href="mailto:martin.havel@gmail.com">Contact for Agency →</a>
+        </div>
+      </section>
+    </div>
+
+    <div class="tab-content tab-hidden" id="tab-reality">
+      <span class="tab-badge">For real estate agents &amp; developers</span>
+
+      <section>
+        <h2 style="margin-top:0;">Reality MCP — Czech real estate data for agents &amp; developers <span class="pill live">live</span></h2>
+        <p class="section-note">
+          Access to <a class="url" href="https://reality.cz-agents.dev" target="_blank" rel="noopener">reality.cz-agents.dev</a> MCP server
+          (<code>realestate.cz-agents.dev/mcp</code>). Priced in CZK, VAT included.
+          Separate subscription from Compliance — the two do not combine into a single plan.
+        </p>
+        <div class="pricing-grid">
+
+          <div class="tier">
+            <h4>Reality Professional</h4>
+            <div class="price">1 990 Kč<small>/mo</small></div>
+            <ul>
+              <li>Reality MCP server access</li>
+              <li><code>search_distress_properties</code> — up to 50 results</li>
+              <li><code>get_property_detail</code> — parcel, scoring, map data</li>
+              <li>No owner name / IČO in output</li>
+            </ul>
+            <button class="buy" onclick="czSubscribe('re_pro')">Subscribe</button>
+            <span class="fine-print">cena vč. DPH · zrušíš kdykoli</span>
+          </div>
+
+          <div class="tier featured">
+            <h4>Reality Business</h4>
+            <div class="price">5 990 Kč<small>/mo</small></div>
+            <ul>
+              <li>Everything in Professional, plus:</li>
+              <li><code>search_distress_properties</code> — 100+ results</li>
+              <li><code>get_property_detail</code> — incl. <code>owner_name</code> + <code>owner_ico</code></li>
+              <li>Full owner data for due-diligence integration</li>
+            </ul>
+            <button class="buy" onclick="czSubscribe('re_agency')">Subscribe</button>
+            <span class="fine-print">cena vč. DPH · zrušíš kdykoli</span>
+          </div>
+
+        </div>
+      </section>
+
+      <section>
+        <h2>Frequently asked questions</h2>
+        <dl class="faq">
+          <div class="faq-item">
+            <dt>Can I use Reality and Compliance together?</dt>
+            <dd>Yes, as two separate subscriptions. They bill independently and can run in parallel.</dd>
+          </div>
+          <div class="faq-item">
+            <dt>VAT treatment for CZK plans?</dt>
+            <dd>Reality prices in CZK are shown including VAT. Stripe handles VAT collection automatically.</dd>
+          </div>
+          <div class="faq-item">
+            <dt>Custom plan available?</dt>
+            <dd>Yes. Email <a class="url" href="mailto:martin.havel@gmail.com">martin.havel@gmail.com</a> with expected volume, required owner data access, and invoicing needs.</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section class="contact-cta">
+        Need a custom plan or CZK invoicing? Email <a class="url" href="mailto:martin.havel@gmail.com">martin.havel@gmail.com</a>
+      </section>
+    </div>
+
     <footer>
       <div>
         <a href="https://github.com/martinhavel/cz-agents-mcp">GitHub</a> ·
         <a href="https://dev.to/martinhavel/building-mcp-servers-for-a-country-that-isnt-in-the-dataset-czech-gov-apis-1lo8">dev.to</a> ·
         <a href="https://modelcontextprotocol.io">MCP spec</a> ·
         <a href="https://registry.modelcontextprotocol.io">MCP registry</a> ·
+        <a href="/onboard.html">Onboarding</a> ·
+        <a href="/dpa.html">DPA</a> ·
         <a href="/privacy.html">Privacy</a> ·
         <a href="/terms.html">Terms</a>
       </div>
@@ -595,11 +899,49 @@
   </div>
 
   <script>
+    window['cz' + 'Subscribe'] = async function (tier) {
+      const isReality = tier === 're_pro' || tier === 're_agency';
+      const url = isReality
+        ? 'https://app.cz-agents.dev/api/stripe/public-realestate-checkout'
+        : 'https://app.cz-agents.dev/api/stripe/public-checkout';
+      try {
+        const r = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tier }),
+        });
+        const d = await r.json();
+        if (d.url) { window.location.href = d.url; return; }
+        alert('Checkout error: ' + (d.message || d.error || 'unknown'));
+      } catch (e) {
+        alert('Network error — please try again or email martin.havel@gmail.com');
+      }
+    };
+
     document.querySelectorAll('nav.lang a').forEach(function (a) {
       a.addEventListener('click', function () {
         try { localStorage.setItem('lang', a.dataset.lang); } catch (e) {}
       });
     });
+    function activatePricingTab(tab) {
+      document.querySelectorAll('.tab-btn').forEach(function (btn) {
+        btn.classList.toggle('active', btn.dataset.tab === tab);
+      });
+      document.querySelectorAll('.tab-content').forEach(function (content) {
+        content.classList.toggle('tab-hidden', content.id !== 'tab-' + tab);
+      });
+    }
+    document.querySelectorAll('.tab-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        activatePricingTab(btn.dataset.tab);
+        if (history.replaceState) {
+          history.replaceState(null, '', '#' + btn.dataset.tab);
+        }
+      });
+    });
+    if (window.location.hash === '#reality') {
+      activatePricingTab('reality');
+    }
     // FAQ accordion
     document.querySelectorAll('.faq-item dt').forEach(function (dt) {
       dt.addEventListener('click', function () {

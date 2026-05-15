@@ -3,6 +3,7 @@ Allow: /
 
 # Block obvious junk paths if any get added later
 Disallow: /onboard?
+Disallow: /token?
 Disallow: /*?utm_
 
 Sitemap: https://cz-agents.dev/sitemap.xml

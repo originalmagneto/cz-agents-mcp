@@ -15,11 +15,18 @@
   code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
   a { color: #2563eb; }
   ul { margin: 8px 0 16px 24px; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; }
+  .tab { cursor: pointer; padding: 8px 20px; border-radius: 6px 6px 0 0; font-size: 14px; font-weight: 600; border: 1px solid #e5e7eb; border-bottom: none; background: #f9fafb; color: #6b7280; }
+  .tab.active { background: #fff; color: #1f2937; border-bottom: 1px solid #fff; margin-bottom: -1px; }
+  .lang { display: none; border: 1px solid #e5e7eb; border-radius: 0 8px 8px 8px; padding: 28px 28px 16px; }
+  .lang.active { display: block; }
 </style>
   <!-- Privacy-friendly analytics (self-hosted Umami) -->
   <script async defer src="https://analytics.mhai.app/script.js" data-website-id="5a96aa8b-7575-4667-8ac6-267287849cf3"></script>
 </head>
 <body>
+<div class="tabs"><div class="tab active" id="tab-en" onclick="switchLang('en')">English</div><div class="tab" id="tab-cs" onclick="switchLang('cs')">Čeština</div></div>
+<div class="lang active" id="lang-en">
 <h1>Privacy Policy</h1>
 <p class="updated">Last updated: 2026-04-26 · <a href="/">cz-agents.dev</a></p>
 
@@ -123,6 +130,60 @@
 <p style="margin-top: 40px; color: #6b7280; font-size: 13px;">
   ← <a href="/">Back to cz-agents.dev</a>
 </p>
+
+</div>
+
+<div class="lang" id="lang-cs">
+<h1>Zásady ochrany soukromí</h1>
+<p>Poslední aktualizace: 2026-04-26 · cz-agents.dev</p>
+<p>cz-agents (<em>služba</em>) provozuje Martin Havel, IČO 71677763, Košťálkova 1103/2, 182 00 Praha 8, Česká republika. Tyto zásady popisují, jaká data služba zpracovává, proč a jak dlouho.</p>
+
+<h2>Jaká data zpracováváme</h2>
+<p>Služba se skládá z MCP serverů, které vyhledávají veřejně dostupná data z českých a evropských státních rejstříků. Zpracováváme tři kategorie dat:</p>
+<ul>
+<li><strong>Data z veřejných rejstříků</strong> — IČO, názvy firem, statutární orgány, záznamy v sankčních seznamech, insolvenční řízení, kurzy měn. Čerpána v reálném čase nebo s krátkou cache (≤24 h) z ARES (Ministerstvo financí), ČNB, ISIR (Ministerstvo spravedlnosti), EU Financial Sanctions Files a OFAC SDN. Tato data neuchováváme po dobu přesahující TTL cache, s výjimkou sankčních snapshotů (pro detekci změn) a událostí ISIR (append-only log).</li>
+<li><strong>Metadata požadavků</strong> — IP adresa (pro rate limiting), Bearer API tokeny (pro placené tiery), HTTP hlavičky, timing požadavků/odpovědí. Uchovávány po dobu až 30 dní v serverových logách, poté smazány.</li>
+<li><strong>Fakturační data</strong> — pro placené tiery používáme Stripe jako platební procesor. Stripe uchovává údaje o kartě a e-mail zákazníka; my uchováváme ID zákazníka/předplatného Stripe propojené s neprůhledným API tokenem (žádná data o kartě).</li>
+</ul>
+
+<h2>Právní základ (GDPR čl. 6)</h2>
+<ul>
+<li>Data z veřejných rejstříků — čl. 6(1)(f) oprávněný zájem. České obchodní rejstříky jsou ze zákona veřejné (zákon č. 304/2013 Sb. o veřejných rejstřících; § 125 zákona č. 120/2001 Sb. pro ISIR). Jejich zpřístupnění přes API nemění veřejný charakter dat.</li>
+<li>Metadata požadavků — čl. 6(1)(f) oprávněný zájem na provozu, zabezpečení a rate limitingu služby.</li>
+<li>Fakturační data — čl. 6(1)(b) plnění smlouvy.</li>
+</ul>
+
+<h2>Co neděláme</h2>
+<ul>
+<li>Neprodáváme ani nesdílíme data se třetími stranami pro marketingové účely.</li>
+<li>Nepoužíváme osobní údaje k profilování nad rámec rate limitů.</li>
+<li>Neuchováváme data platebních karet — veškeré platební zpracování zajišťuje Stripe.</li>
+<li>Nepřenášíme data mimo EU. Servery jsou hostovány ve Falkensteinu, DE (Hetzner).</li>
+</ul>
+
+<h2>Práva subjektů údajů</h2>
+<p>Pokud jste identifikovatelná fyzická osoba, jejíž data se ve službě vyskytují (typicky jako člen statutárního orgánu nebo sankcionovaná osoba z veřejného rejstříku), máte práva dle GDPR čl. 15–22 (přístup, oprava, výmaz, omezení, přenositelnost, námitka). Pro data pocházející z veřejného rejstříku je vhodná cesta výmazu obrátit se na zdrojový rejstřík (např. ARES). Na žádost potvrdíme, co o vás cachujeme, a obnovíme ze zdroje. Kontakt: martin.havel@gmail.com.</p>
+
+<h2>Děti</h2>
+<p>Služba není určena dětem mladším 16 let a vědomě od nich data nesbírá.</p>
+
+<h2>Změny zásad</h2>
+<p>Podstatné změny budou oznámeny v repozitáři projektu na GitHubu (github.com/martinhavel/cz-agents-mcp) nejméně 14 dní před vstupem v platnost. Aktuální verze je vždy autoritativní na cz-agents.dev/privacy.</p>
+
+<h2>Dozorový úřad</h2>
+<p>Pokud se domníváte, že jsou porušována vaše práva, můžete podat stížnost u Úřadu pro ochranu osobních údajů (uoou.gov.cz).</p>
+
+<p><a href="https://cz-agents.dev">← Zpět na cz-agents.dev</a></p>
+</div>
+
+<script>
+function switchLang(lang) {
+  document.querySelectorAll('.lang').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('lang-' + lang).classList.add('active');
+  document.getElementById('tab-' + lang).classList.add('active');
+}
+</script>
 
 </body>
 </html>

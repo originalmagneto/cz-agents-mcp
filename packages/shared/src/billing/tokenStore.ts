@@ -41,6 +41,10 @@ const MIGRATIONS: Array<{ check: string; apply: string }> = [
     check: "SELECT 1 FROM pragma_table_info('tokens') WHERE name='stripe_session_id'",
     apply: 'ALTER TABLE tokens ADD COLUMN stripe_session_id TEXT',
   },
+  {
+    check: "SELECT 1 FROM pragma_table_info('tokens') WHERE name='expires_at'",
+    apply: 'ALTER TABLE tokens ADD COLUMN expires_at INTEGER',
+  },
 ];
 
 const CREATE_INDEXES = `
@@ -80,14 +84,15 @@ export class TokenStore {
     stripe_session_id?: string | null;
     monthly_quota: number | null;
     credits: number | null;
+    expires_at?: number | null;
   }): TokenRecord {
     const token = generateToken();
     const now = Date.now();
     this.db.prepare(`
       INSERT INTO tokens (token, service, tier, stripe_customer_id, stripe_subscription_id,
                           stripe_session_id, monthly_quota, counter, credits,
-                          period_started_at, created_at, updated_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?)
+                          period_started_at, created_at, updated_at, expires_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?)
     `).run(
       token,
       input.service,
@@ -100,6 +105,7 @@ export class TokenStore {
       now,
       now,
       now,
+      input.expires_at ?? null,
     );
     return this.find(token)!;
   }
@@ -145,6 +151,10 @@ export class TokenStore {
       const record = this.find(token);
       if (!record) {
         throw new Error('TOKEN_NOT_FOUND');
+      }
+
+      if (record.expires_at != null && now > record.expires_at) {
+        throw new Error('TRIAL_EXPIRED');
       }
 
       // Rollover monthly counter for subscriptions

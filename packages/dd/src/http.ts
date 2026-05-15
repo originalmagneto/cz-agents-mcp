@@ -15,8 +15,17 @@ import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
 import {
   createRateLimiter,
+  createRestRateLimiter,
   checkBodySize,
   checkOrigin,
+  runWithIp,
+  setRequestIp,
+  clearRequestIp,
+  getMetrics,
+  getRestIp,
+  jsonOk,
+  jsonErr,
+  parseIco,
   TokenStore,
   createQuotaGuard,
   handleStripeWebhook,
@@ -29,6 +38,7 @@ import { AdisClient } from '@czagents/adis';
 import { buildDdServer } from './server.js';
 import type { DdClients } from './clients.js';
 import { DD_BILLING } from './billing.js';
+import { buildReport } from './report.js';
 
 const PORT = Number(process.env.PORT ?? 3030);
 const MCP_PATH = process.env.MCP_PATH ?? '/mcp';
@@ -54,9 +64,10 @@ async function main() {
   const tokenStore = new TokenStore(tokenDbPath);
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   const quota = createQuotaGuard({ store: tokenStore, service: 'dd', allowAnonymous: true });
+  const ddRestLimiter = createRestRateLimiter({ max: 60, windowMs: 60 * 60 * 1000 });
 
   const transports = new Map<string, StreamableHTTPServerTransport>();
-  const limiter = createRateLimiter({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX });
+  const limiter = createRateLimiter({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX, getIp: getClientIp });
 
   const http = createServer(async (req, res) => {
     // Permissive Accept-header rewrite for clients that send "*/*"
@@ -108,6 +119,12 @@ async function main() {
       return;
     }
 
+    if (req.url === '/metrics') {
+      res.writeHead(200, { 'Content-Type': 'text/plain; version=0.0.4' });
+      res.end(getMetrics());
+      return;
+    }
+
     if (req.url === '/webhook/stripe' && req.method === 'POST') {
       if (!webhookSecret) {
         res.writeHead(503, { 'Content-Type': 'application/json' });
@@ -134,6 +151,8 @@ async function main() {
       }
       return;
     }
+
+    if (await handleDdRest(req, res, clients, quota, ddRestLimiter)) return;
 
     if (!req.url?.startsWith(MCP_PATH)) {
       res.writeHead(404);
@@ -210,7 +229,13 @@ async function main() {
       await server.connect(transport);
     }
 
-    await transport.handleRequest(req, res);
+    const clientIp = getClientIp(req);
+    setRequestIp(clientIp);
+    try {
+      await runWithIp(clientIp, () => transport.handleRequest(req, res));
+    } finally {
+      clearRequestIp();
+    }
   });
 
   http.listen(PORT, () => {
@@ -218,6 +243,83 @@ async function main() {
       `[cz-agents/dd] listening on :${PORT}${MCP_PATH} (sanctions=${sanctions ? 'enabled' : 'disabled'}, tokens: ${tokenDbPath}, webhook: ${webhookSecret ? 'enabled' : 'disabled'})`,
     );
   });
+}
+
+async function handleDdRest(
+  req: import('node:http').IncomingMessage,
+  res: import('node:http').ServerResponse,
+  clients: DdClients,
+  quota: ReturnType<typeof createQuotaGuard>,
+  limiter: ReturnType<typeof createRestRateLimiter>,
+): Promise<boolean> {
+  if (!req.url) return false;
+  const url = new URL(req.url, 'http://localhost');
+  if (!url.pathname.startsWith('/v1/')) return false;
+
+  if (req.method !== 'GET') {
+    jsonErr(res, 405, 'method_not_allowed', 'Use GET for REST requests.');
+    return true;
+  }
+
+  if (!limiter(req, res)) return true;
+
+  const auth = quota(req, res);
+  if (!auth.ok) return true;
+
+  const isPaid = auth.token.tier !== 'free';
+  const clientIp = getRestIp(req);
+
+  await runWithIp(clientIp, async () => {
+    try {
+      // GET /v1/dd/{ico}
+      const ddMatch = url.pathname.match(/^\/v1\/dd\/([0-9]{7,8})$/);
+      if (ddMatch) {
+        const ico = parseIco(req, res);
+        if (!ico) return;
+        const depth = isPaid ? 'full' : 'basic';
+        const report = await buildReport(ico, clients, { depth });
+        jsonOk(res, report, 'dd');
+        return;
+      }
+
+      // GET /v1/dd/{ico}/risk
+      const riskMatch = url.pathname.match(/^\/v1\/dd\/([0-9]{7,8})\/risk$/);
+      if (riskMatch) {
+        const ico = parseIco(req, res);
+        if (!ico) return;
+        const report = await buildReport(ico, clients, { depth: 'basic' });
+        const top = report.red_flags.slice().sort((a: { weight: number }, b: { weight: number }) => b.weight - a.weight).slice(0, 5);
+        jsonOk(res, {
+          ico,
+          company_name: report.company.name,
+          value: report.risk_score.value,
+          level: report.risk_score.level,
+          top_flags: top,
+          tier: auth.token.tier,
+        }, 'dd');
+        return;
+      }
+
+      jsonErr(res, 404, 'not_found', 'REST endpoint not found. See https://cz-agents.dev/docs/api.html');
+    } catch (e) {
+      jsonErr(res, 500, 'upstream_error', e instanceof Error ? e.message : 'Unexpected error');
+    }
+  });
+
+  return true;
+}
+
+function getClientIp(req: import('node:http').IncomingMessage): string {
+  const cf = req.headers['cf-connecting-ip'];
+  if (typeof cf === 'string' && cf.length > 0) return cf;
+  const xff = req.headers['x-forwarded-for'];
+  if (typeof xff === 'string' && xff.length > 0) {
+    const first = xff.split(',')[0]?.trim();
+    if (first) return first;
+  }
+  const xr = req.headers['x-real-ip'];
+  if (typeof xr === 'string' && xr.length > 0) return xr;
+  return req.socket.remoteAddress ?? 'unknown';
 }
 
 function readRawBody(req: import('node:http').IncomingMessage, maxBytes: number): Promise<string> {

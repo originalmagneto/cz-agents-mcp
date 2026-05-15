@@ -4,7 +4,7 @@
  */
 import type { BillingConfig } from '@czagents/shared';
 
-const PAY_PER_REPORT_PRICE = 'price_1TQDUIRwLTHt42lJ6t0c9DSR';
+const PAY_PER_REPORT_PRICE = 'price_1TUl5WRwLTHt42lJMSCL6Rzl';
 
 export const DD_BILLING: BillingConfig = {
   service: 'dd',

@@ -13,7 +13,7 @@ export function buildCnbServer(): McpServer {
       instructions:
         'Czech National Bank (ČNB) daily FX rates. Use these tools to get official CZK exchange ' +
         'rates, convert between currencies, or fetch historical rates for invoicing/accounting. ' +
-        'Free tier rate-limited; higher limits at https://cz-agents.dev/pricing.',
+        'Free tier rate-limited; higher limits at https://cz-agents.dev/pricing.html.',
     },
   );
 

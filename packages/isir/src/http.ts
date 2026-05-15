@@ -7,7 +7,20 @@
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
-import { createRateLimiter, checkBodySize, checkOrigin } from '@czagents/shared';
+import {
+  createRateLimiter,
+  createRestRateLimiter,
+  checkBodySize,
+  checkOrigin,
+  getMetrics,
+  getRestIp,
+  jsonErr,
+  jsonOk,
+  parseIco,
+  runWithIp,
+  setRequestIp,
+  clearRequestIp,
+} from '@czagents/shared';
 import { IsirClient } from './client.js';
 import { buildIsirServer } from './server.js';
 
@@ -21,9 +34,11 @@ async function main() {
   const client = new IsirClient();
 
   const transports = new Map<string, StreamableHTTPServerTransport>();
+  const restLimiter = createRestRateLimiter();
   const limiter = createRateLimiter({
     windowMs: RATE_LIMIT_WINDOW_MS,
     max: RATE_LIMIT_MAX,
+    getIp: getClientIp,
   });
 
   const http = createServer(async (req, res) => {
@@ -39,14 +54,24 @@ async function main() {
         }
       }
     }
-    if (req.url === '/health' || req.url === '/healthz') {
+    if (req.url === '/v1/health' || req.url === '/health' || req.url === '/healthz') {
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({
         status: 'ok',
-        service: 'cz-agents/isir',
+        service: 'isir',
         version: '0.1.0',
-        mode: process.env.ISIR_SOAP_ENABLED ? 'soap' : 'stub',
+        transport: ['mcp', 'rest'],
       }));
+      return;
+    }
+
+    if (req.url === '/metrics') {
+      res.writeHead(200, { 'Content-Type': 'text/plain; version=0.0.4' });
+      res.end(getMetrics());
+      return;
+    }
+
+    if (await handleIsirRest(req, res, client, restLimiter)) {
       return;
     }
 
@@ -100,7 +125,13 @@ async function main() {
       await server.connect(transport);
     }
 
-    await transport.handleRequest(req, res);
+    const clientIp = getClientIp(req);
+    setRequestIp(clientIp);
+    try {
+      await runWithIp(clientIp, () => transport.handleRequest(req, res));
+    } finally {
+      clearRequestIp();
+    }
   });
 
   http.listen(PORT, () => {
@@ -108,6 +139,56 @@ async function main() {
       `[cz-agents/isir] Streamable HTTP MCP server listening on :${PORT}${MCP_PATH} (mode: ${process.env.ISIR_SOAP_ENABLED ? 'soap' : 'stub'})`,
     );
   });
+}
+
+async function handleIsirRest(
+  req: import('node:http').IncomingMessage,
+  res: import('node:http').ServerResponse,
+  client: IsirClient,
+  limiter: ReturnType<typeof createRestRateLimiter>,
+): Promise<boolean> {
+  if (!req.url) return false;
+  const url = new URL(req.url, 'http://localhost');
+  if (!url.pathname.startsWith('/v1/')) return false;
+
+  if (req.method !== 'GET') {
+    jsonErr(res, 405, 'method_not_allowed', 'Use GET for REST requests.');
+    return true;
+  }
+
+  if (!limiter(req, res)) return true;
+  const clientIp = getRestIp(req);
+
+  await runWithIp(clientIp, async () => {
+    try {
+      if (/^\/v1\/insolvency\/[0-9]{7,8}$/.test(url.pathname)) {
+        const ico = parseIco(req, res);
+        if (!ico) return;
+        const result = await client.checkActiveInsolvency(ico);
+        jsonOk(res, result, 'isir');
+        return;
+      }
+
+      jsonErr(res, 404, 'not_found', 'REST endpoint not found.');
+    } catch (e) {
+      jsonErr(res, 500, 'upstream_error', e instanceof Error ? e.message : 'Unexpected REST error');
+    }
+  });
+
+  return true;
+}
+
+function getClientIp(req: import('node:http').IncomingMessage): string {
+  const cf = req.headers['cf-connecting-ip'];
+  if (typeof cf === 'string' && cf.length > 0) return cf;
+  const xff = req.headers['x-forwarded-for'];
+  if (typeof xff === 'string' && xff.length > 0) {
+    const first = xff.split(',')[0]?.trim();
+    if (first) return first;
+  }
+  const xr = req.headers['x-real-ip'];
+  if (typeof xr === 'string' && xr.length > 0) return xr;
+  return req.socket.remoteAddress ?? 'unknown';
 }
 
 main().catch((err) => {

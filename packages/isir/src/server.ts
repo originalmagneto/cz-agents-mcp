@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { validateIcoInput } from '@czagents/shared';
+import { validateIcoInput, trackIco } from '@czagents/shared';
 import { IsirClient } from './client.js';
 
 export function buildIsirServer(client: IsirClient = new IsirClient()): McpServer {
@@ -16,7 +16,7 @@ export function buildIsirServer(client: IsirClient = new IsirClient()): McpServe
         'Czech insolvency register (ISIR) lookup. Use whenever the user asks about insolvency, ' +
         'bankruptcy, debt restructuring, or "is this Czech company in trouble?". ' +
         'Note: v0.1.0 is alpha — direct SOAP integration is in progress; current responses may be empty. ' +
-        'Free tier rate-limited; higher limits at https://cz-agents.dev/pricing.',
+        'Free tier rate-limited; higher limits at https://cz-agents.dev/pricing.html.',
     },
   );
 
@@ -29,6 +29,7 @@ export function buildIsirServer(client: IsirClient = new IsirClient()): McpServe
     { title: 'Check IČO Insolvency in ISIR', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
       const clean = validateIcoInput(ico);
+      trackIco(clean);
       try {
         const result = await client.checkActiveInsolvency(clean);
         if (!result) {
