@@ -147,8 +147,11 @@ export async function buildReport(
   // ADIS unreliable-VAT-payer check. Cheap (~1s) and runs even in basic depth
   // because joint-liability under § 109 ZDPH is one of the more material risks
   // the report should surface. Returns null when ADIS not wired or DIČ unknown.
+  // Use ARES-supplied DIČ when available — natural persons have DIČ ≠ CZ+IČO
+  // (birth-number based), so looking up by IČO alone returns NENALEZEN.
+  const adisDic = subject?.dic ?? undefined;
   const adisStatus = clients.adis
-    ? await safe(() => clients.adis!.checkPayer({ ico }))
+    ? await safe(() => clients.adis!.checkPayer(adisDic ? { dic: adisDic } : { ico }))
     : null;
 
   const isVirtualAddress = !basicOnly
