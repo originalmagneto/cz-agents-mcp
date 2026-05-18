@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>REST API Reference — cz-agents</title>
+  <title>REST API reference — cz-agents</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -17,6 +17,11 @@
     .logo a { color: inherit; text-decoration: none; }
     .logo h1 { font-size: 32px; font-weight: 800; }
     .logo .tld, a, .active { color: var(--accent); }
+    .header-top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+    .lang-switch { display: flex; gap: 8px; font: 12px 'JetBrains Mono', monospace; }
+    .lang-switch a { color: var(--fg-ghost); text-decoration: none; padding: 3px 7px; border: 1px solid transparent; border-radius: 4px; }
+    .lang-switch a:hover { color: var(--fg-dim); border-color: var(--border); }
+    .lang-switch a.active { color: var(--accent); border-color: var(--border); background: var(--bg-elev); }
     .nav-links { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 16px; }
     .nav-links a { color: var(--fg-dim); text-decoration: none; font: 14px 'JetBrains Mono', monospace; }
     .nav-links a:hover, .nav-links a.active { color: var(--accent); }
@@ -31,108 +36,88 @@
     pre { background: #080808; border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; margin: 10px 0 18px; color: var(--fg); }
     .endpoint { color: var(--fg); font-family: 'JetBrains Mono', monospace; }
     footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--fg-ghost); font-size: 13px; }
-    .header-top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
-    .lang-switch { display: flex; gap: 8px; font: 12px "JetBrains Mono", monospace; }
-    .lang-switch a { color: var(--fg-ghost); text-decoration: none; padding: 3px 7px; border: 1px solid transparent; border-radius: 4px; }
-    .lang-switch a:hover { color: var(--fg-dim); border-color: var(--border); }
-    .lang-switch a.active { color: var(--accent); border-color: var(--border); background: var(--bg-elev); }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <div class="header-top"><div class="logo"><a href="/"><h1>cz-agents<span class="tld">.dev</span></h1></a></div><div class="lang-switch"><a href="/docs/api.html" class="active">EN</a><a href="">CS</a></div></div>
-      <nav class="nav-links" aria-label="Documentation navigation">
-        <a href="/docs/">Docs</a>
-        <a href="/docs/api.html" class="active">REST API</a>
-        <a href="/docs/limits.html">Rate Limits</a>
-        <a href="/docs/tiers.html">Tiers</a>
-        <a href="/docs/faq.html">FAQ</a>
-        <a href="/">Back to cz-agents.dev</a>
+      <div class="header-top">
+        <div class="logo"><a href="/cs/"><h1>cz-agents<span class="tld">.dev</span></h1></a></div>
+        <div class="lang-switch">
+          <a href="/docs/api.html">EN</a>
+          <a href="/cs/docs/api.html" class="active">CS</a>
+        </div>
+      </div>
+      <nav class="nav-links" aria-label="Navigace v dokumentaci">
+        <a href="/cs/docs/">Docs</a>
+        <a href="/cs/docs/api.html" class="active">REST API</a>
+        <a href="/cs/docs/limits.html">Limity</a>
+        <a href="/cs/docs/tiers.html">Tiery</a>
+        <a href="/cs/docs/faq.html">FAQ</a>
+        <a href="/cs/">← cz-agents.dev</a>
       </nav>
     </header>
 
     <main>
-      <h1>REST API Reference</h1>
-      <p>All endpoints return JSON. Paid calls use the same Bearer token as MCP.</p>
+      <h1>REST API reference</h1>
+      <p>Všechny endpointy vrací JSON. Placená volání používají stejný Bearer token jako MCP.</p>
       <pre><code>Authorization: Bearer czat_...</code></pre>
 
-      <h2>Endpoints</h2>
+      <h2>Endpointy</h2>
       <table>
-        <thead><tr><th>Endpoint</th><th>Description</th></tr></thead>
+        <thead><tr><th>Endpoint</th><th>Popis</th></tr></thead>
         <tbody>
-          <tr><td class="endpoint">GET https://ares.cz-agents.dev/v1/companies?q={query}</td><td>Search companies</td></tr>
-          <tr><td class="endpoint">GET https://ares.cz-agents.dev/v1/companies/{ico}</td><td>Company by IČO</td></tr>
-          <tr><td class="endpoint">GET https://ares.cz-agents.dev/v1/companies/{ico}/bank-accounts</td><td>Transparent bank accounts</td></tr>
-          <tr><td class="endpoint">GET https://ares.cz-agents.dev/v1/companies/{ico}/statutaries</td><td>Statutory body</td></tr>
-          <tr><td class="endpoint">GET https://sanctions.cz-agents.dev/v1/sanctions/check?ico={ico}</td><td>Screen IČO vs EU+OFAC</td></tr>
-          <tr><td class="endpoint">GET https://isir.cz-agents.dev/v1/insolvency/{ico}</td><td>Insolvency status</td></tr>
-          <tr><td class="endpoint">GET https://dd.cz-agents.dev/v1/dd/{ico}</td><td>Full DD report (basic free, full paid)</td></tr>
-          <tr><td class="endpoint">GET https://dd.cz-agents.dev/v1/dd/{ico}/risk</td><td>Risk score + top flags</td></tr>
+          <tr><td class="endpoint">GET https://ares.cz-agents.dev/v1/companies?q={dotaz}</td><td>Fulltext vyhledávání firem</td></tr>
+          <tr><td class="endpoint">GET https://ares.cz-agents.dev/v1/companies/{ico}</td><td>Detail firmy podle IČO</td></tr>
+          <tr><td class="endpoint">GET https://ares.cz-agents.dev/v1/companies/{ico}/bank-accounts</td><td>Transparentní bankovní účty</td></tr>
+          <tr><td class="endpoint">GET https://ares.cz-agents.dev/v1/companies/{ico}/statutaries</td><td>Statutární orgán</td></tr>
+          <tr><td class="endpoint">GET https://sanctions.cz-agents.dev/v1/sanctions/check?ico={ico}</td><td>Sankční kontrola IČO (EU+OFAC)</td></tr>
+          <tr><td class="endpoint">GET https://isir.cz-agents.dev/v1/insolvency/{ico}</td><td>Stav insolvence</td></tr>
+          <tr><td class="endpoint">GET https://dd.cz-agents.dev/v1/dd/{ico}</td><td>Plný DD report (základní zdarma, plný placený)</td></tr>
+          <tr><td class="endpoint">GET https://dd.cz-agents.dev/v1/dd/{ico}/risk</td><td>Rizikové skóre + hlavní red flags</td></tr>
         </tbody>
       </table>
 
-      <h2>Examples</h2>
-      <h3>Company Search</h3>
+      <h2>Příklady</h2>
+      <h3>Vyhledávání firem</h3>
       <pre><code>curl "https://ares.cz-agents.dev/v1/companies?q=Acme"</code></pre>
       <pre><code>{
   "data": { "items": [{ "ico": "27074358", "name": "Acme Imports s.r.o." }] },
   "meta": { "fetched_at": "2026-06-01T10:00:00.000Z", "source": "ares" }
 }</code></pre>
 
-      <h3>Company By IČO</h3>
+      <h3>Detail firmy podle IČO</h3>
       <pre><code>curl https://ares.cz-agents.dev/v1/companies/27074358</code></pre>
       <pre><code>{
   "data": { "ico": "27074358", "name": "Acme Imports s.r.o.", "status": "active" },
   "meta": { "fetched_at": "2026-06-01T10:00:00.000Z", "source": "ares" }
 }</code></pre>
 
-      <h3>Bank Accounts</h3>
-      <pre><code>curl https://ares.cz-agents.dev/v1/companies/27074358/bank-accounts</code></pre>
-      <pre><code>{
-  "data": { "ico": "27074358", "accounts": [] },
-  "meta": { "fetched_at": "2026-06-01T10:00:00.000Z", "source": "ares" }
-}</code></pre>
-
-      <h3>Statutaries</h3>
-      <pre><code>curl https://ares.cz-agents.dev/v1/companies/27074358/statutaries</code></pre>
-      <pre><code>{
-  "data": { "ico": "27074358", "members": [{ "name": "Novák Consulting s.r.o.", "role": "member" }] },
-  "meta": { "fetched_at": "2026-06-01T10:00:00.000Z", "source": "ares" }
-}</code></pre>
-
-      <h3>Sanctions Check</h3>
+      <h3>Sankční kontrola</h3>
       <pre><code>curl "https://sanctions.cz-agents.dev/v1/sanctions/check?ico=27074358"</code></pre>
       <pre><code>{
   "data": { "ico": "27074358", "name": "Acme Imports s.r.o.", "matches": [] },
   "meta": { "fetched_at": "2026-06-01T10:00:00.000Z", "source": "sanctions" }
 }</code></pre>
 
-      <h3>Insolvency</h3>
+      <h3>Insolvence</h3>
       <pre><code>curl https://isir.cz-agents.dev/v1/insolvency/12345678</code></pre>
       <pre><code>{
   "data": { "ico": "12345678", "name": "Novák Consulting s.r.o.", "active": false, "cases": [] },
   "meta": { "fetched_at": "2026-06-01T10:00:00.000Z", "source": "isir" }
 }</code></pre>
 
-      <h3>DD Report</h3>
+      <h3>DD report (placený)</h3>
       <pre><code>curl -H "Authorization: Bearer czat_..." https://dd.cz-agents.dev/v1/dd/27074358</code></pre>
       <pre><code>{
   "data": { "ico": "27074358", "company": { "name": "Acme Imports s.r.o." }, "risk_score": { "value": 18, "level": "low" }, "red_flags": [] },
   "meta": { "fetched_at": "2026-06-01T10:00:00.000Z", "source": "dd" }
 }</code></pre>
 
-      <h3>DD Risk</h3>
-      <pre><code>curl https://dd.cz-agents.dev/v1/dd/27074358/risk</code></pre>
-      <pre><code>{
-  "data": { "ico": "27074358", "company_name": "Acme Imports s.r.o.", "value": 18, "level": "low", "top_flags": [] },
-  "meta": { "fetched_at": "2026-06-01T10:00:00.000Z", "source": "dd" }
-}</code></pre>
+      <h2>Obálka odpovědi</h2>
+      <pre><code>{ "data": { ... }, "meta": { "fetched_at": "...", "source": "ares" } }</code></pre>
 
-      <h2>Response Envelope</h2>
-      <pre><code>{ "data": { ... }, "meta": { "fetched_at": "2026-06-01T10:00:00.000Z", "source": "dd" } }</code></pre>
-
-      <h2>Error Format</h2>
+      <h2>Formát chyby</h2>
       <pre><code>{
   "type": "https://cz-agents.dev/problems/not_found",
   "title": "not_found",

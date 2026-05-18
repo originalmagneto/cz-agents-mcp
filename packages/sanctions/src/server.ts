@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { trackIco } from '@czagents/shared';
+import { trackIco, logToolCall } from '@czagents/shared';
 import { SanctionsDb } from './db.js';
 import { SanctionsSearch } from './search.js';
 
@@ -43,6 +43,7 @@ export function buildSanctionsServer(deps: ServerDeps): McpServer {
     },
     { title: 'Search Sanctioned Person', readOnlyHint: true, openWorldHint: true },
     async ({ name, dob, nationality, threshold, limit }) => {
+      logToolCall('sanctions', 'search_person', { name, dob, nationality, threshold, limit });
       const matches = search.searchByName(name, { dob, nationality, threshold, limit, typeFilter: 'person' });
       return wrap(matches.length === 0
         ? `Žádný match pro "${name}" (threshold ${threshold}).`
@@ -61,6 +62,7 @@ export function buildSanctionsServer(deps: ServerDeps): McpServer {
     },
     { title: 'Search Sanctioned Entity', readOnlyHint: true, openWorldHint: true },
     async ({ name, country, threshold, limit }) => {
+      logToolCall('sanctions', 'search_entity', { name, country, threshold, limit });
       const matches = search.searchByName(name, { nationality: country, threshold, limit, typeFilter: 'entity' });
       return wrap(matches.length === 0
         ? `Žádný match pro "${name}" (threshold ${threshold}).`
@@ -77,6 +79,7 @@ export function buildSanctionsServer(deps: ServerDeps): McpServer {
     },
     { title: 'Check IČO Against Sanctions', readOnlyHint: true, openWorldHint: true },
     async ({ ico, name }) => {
+      logToolCall('sanctions', 'check_ico', { ico, name });
       trackIco(ico);
       const matches = search.searchByIco(ico, name);
       return wrap(matches.length === 0
@@ -93,6 +96,7 @@ export function buildSanctionsServer(deps: ServerDeps): McpServer {
     },
     { title: 'Get Sanctions Listing Detail', readOnlyHint: true, openWorldHint: true },
     async ({ id }) => {
+      logToolCall('sanctions', 'get_listing', { id });
       const entity = db.getById(id);
       if (!entity) return wrap(`Listing ${id} nenalezen.`);
       return wrap(JSON.stringify(entity, null, 2));
@@ -108,6 +112,7 @@ export function buildSanctionsServer(deps: ServerDeps): McpServer {
     },
     { title: 'List Recent Sanctions Updates', readOnlyHint: true, openWorldHint: true },
     async ({ since, source }) => {
+      logToolCall('sanctions', 'list_recent_updates', { since, source });
       const sinceMs = new Date(since).getTime();
       if (Number.isNaN(sinceMs)) {
         return { content: [{ type: 'text', text: `Invalid date: ${since}` }], isError: true };

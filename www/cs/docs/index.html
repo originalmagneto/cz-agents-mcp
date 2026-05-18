@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Documentation — cz-agents</title>
+  <title>Dokumentace — cz-agents</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -17,6 +17,11 @@
     .logo a { color: inherit; text-decoration: none; }
     .logo h1 { font-size: 32px; font-weight: 800; }
     .logo .tld, a, .active { color: var(--accent); }
+    .header-top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+    .lang-switch { display: flex; gap: 8px; font: 12px 'JetBrains Mono', monospace; }
+    .lang-switch a { color: var(--fg-ghost); text-decoration: none; padding: 3px 7px; border: 1px solid transparent; border-radius: 4px; }
+    .lang-switch a:hover { color: var(--fg-dim); border-color: var(--border); }
+    .lang-switch a.active { color: var(--accent); border-color: var(--border); background: var(--bg-elev); }
     .nav-links { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 16px; }
     .nav-links a { color: var(--fg-dim); text-decoration: none; font: 14px 'JetBrains Mono', monospace; }
     .nav-links a:hover, .nav-links a.active { color: var(--accent); }
@@ -29,43 +34,44 @@
     pre { background: #080808; border: 1px solid var(--border); border-radius: 8px; padding: 16px; overflow-x: auto; margin: 12px 0 20px; color: var(--fg); }
     ul { color: var(--fg-dim); padding-left: 20px; }
     footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--fg-ghost); font-size: 13px; }
-    .header-top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
-    .lang-switch { display: flex; gap: 8px; font: 12px "JetBrains Mono", monospace; }
-    .lang-switch a { color: var(--fg-ghost); text-decoration: none; padding: 3px 7px; border: 1px solid transparent; border-radius: 4px; }
-    .lang-switch a:hover { color: var(--fg-dim); border-color: var(--border); }
-    .lang-switch a.active { color: var(--accent); border-color: var(--border); background: var(--bg-elev); }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <div class="header-top"><div class="logo"><a href="/"><h1>cz-agents<span class="tld">.dev</span></h1></a></div><div class="lang-switch"><a href="/docs/index.html" class="active">EN</a><a href="">CS</a></div></div>
-      <nav class="nav-links" aria-label="Documentation navigation">
-        <a href="/docs/" class="active">Docs</a>
-        <a href="/docs/api.html">REST API</a>
-        <a href="/docs/limits.html">Rate Limits</a>
-        <a href="/docs/tiers.html">Tiers</a>
-        <a href="/docs/faq.html">FAQ</a>
-        <a href="/">Back to cz-agents.dev</a>
+      <div class="header-top">
+        <div class="logo"><a href="/cs/"><h1>cz-agents<span class="tld">.dev</span></h1></a></div>
+        <div class="lang-switch">
+          <a href="/docs/">EN</a>
+          <a href="/cs/docs/" class="active">CS</a>
+        </div>
+      </div>
+      <nav class="nav-links" aria-label="Navigace v dokumentaci">
+        <a href="/cs/docs/" class="active">Docs</a>
+        <a href="/cs/docs/api.html">REST API</a>
+        <a href="/cs/docs/limits.html">Limity</a>
+        <a href="/cs/docs/tiers.html">Tiery</a>
+        <a href="/cs/docs/faq.html">FAQ</a>
+        <a href="/cs/">← cz-agents.dev</a>
       </nav>
     </header>
 
     <main>
-      <h1>cz-agents documentation</h1>
-      <p>Use Czech business-data agents through MCP servers or through simple REST endpoints.</p>
+      <h1>Dokumentace cz-agents</h1>
+      <p>Data z českých státních registrů jsou dostupná přes MCP servery nebo přes jednoduché REST endpointy.</p>
 
-      <section class="grid" aria-label="Transport options">
+      <section class="grid" aria-label="Způsoby přístupu">
         <article class="card">
           <h3>MCP</h3>
-          <p>Best for Claude Desktop, Cursor, and autonomous agents that call tools interactively.</p>
+          <p>Ideální pro Claude Desktop, Cursor a autonomní agenty, kteří volají nástroje interaktivně.</p>
         </article>
         <article class="card">
           <h3>REST API</h3>
-          <p>Best for scripts, batch jobs, cron checks, and internal compliance workflows.</p>
+          <p>Ideální pro skripty, batch joby, cron kontroly a interní compliance procesy.</p>
         </article>
       </section>
 
-      <h2>Quick Start MCP</h2>
+      <h2>Rychlý start — MCP</h2>
       <pre><code>{
   "mcpServers": {
     "cz-dd": {
@@ -77,19 +83,19 @@
   }
 }</code></pre>
 
-      <h2>Quick Start REST</h2>
+      <h2>Rychlý start — REST</h2>
       <pre><code>curl https://dd.cz-agents.dev/v1/dd/27074358</code></pre>
 
       <h2>Reference</h2>
       <ul>
-        <li><a href="/docs/api.html">REST API Reference</a></li>
-        <li><a href="/docs/limits.html">Rate Limits</a></li>
-        <li><a href="/docs/tiers.html">Tiers &amp; Pricing</a></li>
-        <li><a href="/docs/faq.html">FAQ</a></li>
+        <li><a href="/cs/docs/api.html">REST API reference</a></li>
+        <li><a href="/cs/docs/limits.html">Limity volání</a></li>
+        <li><a href="/cs/docs/tiers.html">Tiery a ceník</a></li>
+        <li><a href="/cs/docs/faq.html">FAQ</a></li>
       </ul>
     </main>
 
-    <footer>cz-agents documentation</footer>
+    <footer>cz-agents dokumentace</footer>
   </div>
 </body>
 </html>

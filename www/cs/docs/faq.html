@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ — cz-agents</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #0d0d0d; --bg-elev: #151515; --fg: #e6e9ef; --fg-dim: #8a93a6; --fg-ghost: #4a5365; --accent: #ff6b35; --accent-dim: #c94a1a; --border: #262626; }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; min-height: 100vh; }
+    code { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
+    .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+    header { border-bottom: 1px solid var(--border); padding-bottom: 32px; margin-bottom: 48px; }
+    .logo a { color: inherit; text-decoration: none; }
+    .logo h1 { font-size: 32px; font-weight: 800; }
+    .logo .tld, a, .active { color: var(--accent); }
+    .header-top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+    .lang-switch { display: flex; gap: 8px; font: 12px 'JetBrains Mono', monospace; }
+    .lang-switch a { color: var(--fg-ghost); text-decoration: none; padding: 3px 7px; border: 1px solid transparent; border-radius: 4px; }
+    .lang-switch a:hover { color: var(--fg-dim); border-color: var(--border); }
+    .lang-switch a.active { color: var(--accent); border-color: var(--border); background: var(--bg-elev); }
+    .nav-links { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 16px; }
+    .nav-links a { color: var(--fg-dim); text-decoration: none; font: 14px 'JetBrains Mono', monospace; }
+    .nav-links a:hover, .nav-links a.active { color: var(--accent); }
+    h1 { font-size: 36px; line-height: 1.15; margin-bottom: 24px; }
+    .faq-item { border-top: 1px solid var(--border); padding: 18px 0; }
+    .faq-item:last-child { border-bottom: 1px solid var(--border); }
+    dt { font-weight: 600; color: var(--fg); margin-bottom: 8px; }
+    dd { color: var(--fg-dim); }
+    footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--fg-ghost); font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="header-top">
+        <div class="logo"><a href="/cs/"><h1>cz-agents<span class="tld">.dev</span></h1></a></div>
+        <div class="lang-switch">
+          <a href="/docs/faq.html">EN</a>
+          <a href="/cs/docs/faq.html" class="active">CS</a>
+        </div>
+      </div>
+      <nav class="nav-links" aria-label="Navigace v dokumentaci">
+        <a href="/cs/docs/">Docs</a>
+        <a href="/cs/docs/api.html">REST API</a>
+        <a href="/cs/docs/limits.html">Limity</a>
+        <a href="/cs/docs/tiers.html">Tiery</a>
+        <a href="/cs/docs/faq.html" class="active">FAQ</a>
+        <a href="/cs/">← cz-agents.dev</a>
+      </nav>
+    </header>
+
+    <main>
+      <h1>FAQ</h1>
+      <dl>
+        <div class="faq-item">
+          <dt>Jaký je rozdíl mezi MCP a REST?</dt>
+          <dd>MCP je nástrojově orientované a funguje dobře uvnitř Claude Desktop, Cursor a agent runtimeů. REST je URL-orientované a hodí se pro skripty, batch kontroly a interní systémy.</dd>
+        </div>
+        <div class="faq-item">
+          <dt>Potřebuji token pro základní použití?</dt>
+          <dd>Ne. Free hostovaný REST i MCP přístup funguje bez tokenu, s limitem per IP. Placené tokeny odemykají vyšší měsíční kvóty a plné DD funkce.</dd>
+        </div>
+        <div class="faq-item">
+          <dt>Co obsahuje DD report?</dt>
+          <dd>DD report kombinuje firemní fakta, sankční kontrolu, insolvenční signály, statutární kontext, rizikové skóre a red flags. Free DD je základní; placený DD zahrnuje plnou hloubku reportu.</dd>
+        </div>
+        <div class="faq-item">
+          <dt>Jak aktuální jsou data?</dt>
+          <dd>ARES je cachován 1 hodinu na straně serveru. ISIR je kontrolován live. Sankční data jsou aktualizována týdně.</dd>
+        </div>
+        <div class="faq-item">
+          <dt>Mohu to použít pro KYC/AML?</dt>
+          <dd>Ano, jako screeningová a důkazní vrstva. Za interní politiku, právní přezkum a finální KYC/AML rozhodnutí odpovídáte vy.</dd>
+        </div>
+        <div class="faq-item">
+          <dt>Co je to statutární řetězec / detekce UBO?</dt>
+          <dd>Jde o heuristické procházení statutárních orgánů a propojených entit. Pomáhá odhalit vztahy, ale nenahrazuje výpis z oficiálního registru skutečných majitelů.</dd>
+        </div>
+        <div class="faq-item">
+          <dt>Co se stane, když překročím kvótu?</dt>
+          <dd>API vrátí <code>429</code>. Odpovědi s rate limitem obsahují příslušné hlavičky a mohou obsahovat <code>Retry-After</code>.</dd>
+        </div>
+        <div class="faq-item">
+          <dt>Kde získám token / trial?</dt>
+          <dd>Použijte formulář nebo tlačítka na stránce <a href="/cs/pricing.html">ceník</a>. Tokeny jsou doručeny po onboardingu nebo po checkout.</dd>
+        </div>
+        <div class="faq-item">
+          <dt>Mohu si to self-hostovat?</dt>
+          <dd>Ano. Open-source MCP servery lze self-hostovat pod licencí projektu. Hostované plány přidávají spravovanou kvótu, tokeny a placené DD funkce.</dd>
+        </div>
+      </dl>
+    </main>
+
+    <footer>cz-agents FAQ</footer>
+  </div>
+</body>
+</html>

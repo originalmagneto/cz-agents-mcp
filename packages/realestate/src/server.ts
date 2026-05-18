@@ -42,7 +42,7 @@ export function buildRealEstateServer(_tier: RealEstateTier = 'free'): McpServer
   // Free tier — k≥3 aggregate, no PII
   server.tool(
     'get_district_aggregate',
-    'Aggregate distress real estate statistics for a Czech okres (district). Returns counts by category (insolvency / auction) and average market data. Counts under 3 are suppressed (k-anonymity gate) to prevent identifying specific debtors in low-activity districts. Free tier — no PII exposed.',
+    'Aggregate distress real estate statistics for a Czech okres (district). Returns counts by category (insolvency / auction) and average market data. Low-volume districts are marked with low_activity. Free tier — no PII exposed.',
     {
       okres: z.string().describe('Czech okres name (e.g. "Praha", "Brno-město", "Beroun"). Case-sensitive.'),
       window_days: z.union([z.literal(30), z.literal(90), z.literal(365)])

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rate Limits — cz-agents</title>
+  <title>Limity volání — cz-agents</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
@@ -17,6 +17,11 @@
     .logo a { color: inherit; text-decoration: none; }
     .logo h1 { font-size: 32px; font-weight: 800; }
     .logo .tld, a, .active { color: var(--accent); }
+    .header-top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+    .lang-switch { display: flex; gap: 8px; font: 12px 'JetBrains Mono', monospace; }
+    .lang-switch a { color: var(--fg-ghost); text-decoration: none; padding: 3px 7px; border: 1px solid transparent; border-radius: 4px; }
+    .lang-switch a:hover { color: var(--fg-dim); border-color: var(--border); }
+    .lang-switch a.active { color: var(--accent); border-color: var(--border); background: var(--bg-elev); }
     .nav-links { display: flex; flex-wrap: wrap; gap: 18px; margin-top: 16px; }
     .nav-links a { color: var(--fg-dim); text-decoration: none; font: 14px 'JetBrains Mono', monospace; }
     .nav-links a:hover, .nav-links a.active { color: var(--accent); }
@@ -27,60 +32,61 @@
     th, td { border: 1px solid var(--border); padding: 10px 12px; text-align: left; }
     th { background: var(--bg-elev); font-family: 'JetBrains Mono', monospace; color: var(--fg); }
     td { color: var(--fg-dim); }
-    ul { padding-left: 20px; }
+    ul { padding-left: 20px; margin-top: 8px; }
     footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--fg-ghost); font-size: 13px; }
-    .header-top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
-    .lang-switch { display: flex; gap: 8px; font: 12px "JetBrains Mono", monospace; }
-    .lang-switch a { color: var(--fg-ghost); text-decoration: none; padding: 3px 7px; border: 1px solid transparent; border-radius: 4px; }
-    .lang-switch a:hover { color: var(--fg-dim); border-color: var(--border); }
-    .lang-switch a.active { color: var(--accent); border-color: var(--border); background: var(--bg-elev); }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <div class="header-top"><div class="logo"><a href="/"><h1>cz-agents<span class="tld">.dev</span></h1></a></div><div class="lang-switch"><a href="/docs/limits.html" class="active">EN</a><a href="">CS</a></div></div>
-      <nav class="nav-links" aria-label="Documentation navigation">
-        <a href="/docs/">Docs</a>
-        <a href="/docs/api.html">REST API</a>
-        <a href="/docs/limits.html" class="active">Rate Limits</a>
-        <a href="/docs/tiers.html">Tiers</a>
-        <a href="/docs/faq.html">FAQ</a>
-        <a href="/">Back to cz-agents.dev</a>
+      <div class="header-top">
+        <div class="logo"><a href="/cs/"><h1>cz-agents<span class="tld">.dev</span></h1></a></div>
+        <div class="lang-switch">
+          <a href="/docs/limits.html">EN</a>
+          <a href="/cs/docs/limits.html" class="active">CS</a>
+        </div>
+      </div>
+      <nav class="nav-links" aria-label="Navigace v dokumentaci">
+        <a href="/cs/docs/">Docs</a>
+        <a href="/cs/docs/api.html">REST API</a>
+        <a href="/cs/docs/limits.html" class="active">Limity</a>
+        <a href="/cs/docs/tiers.html">Tiery</a>
+        <a href="/cs/docs/faq.html">FAQ</a>
+        <a href="/cs/">← cz-agents.dev</a>
       </nav>
     </header>
 
     <main>
-      <h1>Rate Limits</h1>
-      <p>Free hosted access is limited per IP. Paid Bearer tokens use a monthly quota shared by MCP and REST.</p>
+      <h1>Limity volání</h1>
+      <p>Free hostovaný přístup je omezený per IP. Placené Bearer tokeny využívají měsíční kvótu sdílenou mezi MCP a REST.</p>
 
-      <h2>Without Token</h2>
+      <h2>Bez tokenu</h2>
       <table>
-        <thead><tr><th>Service</th><th>REST</th><th>MCP</th></tr></thead>
+        <thead><tr><th>Služba</th><th>REST</th><th>MCP</th></tr></thead>
         <tbody>
           <tr><td>ARES</td><td>300 req/h</td><td>60 req/min</td></tr>
-          <tr><td>Sanctions</td><td>300 req/h</td><td>60 req/min</td></tr>
+          <tr><td>Sankce</td><td>300 req/h</td><td>60 req/min</td></tr>
           <tr><td>ISIR</td><td>300 req/h</td><td>60 req/min</td></tr>
           <tr><td>DD</td><td>60 req/h</td><td>30 req/min</td></tr>
         </tbody>
       </table>
 
-      <h2>With Bearer Token</h2>
-      <p>Paid plans have a monthly quota shared across MCP and REST. Quota is tracked server-side and responses include <code>X-Quota-Remaining</code> when applicable.</p>
+      <h2>S Bearer tokenem</h2>
+      <p>Placené plány mají měsíční kvótu sdílenou napříč MCP a REST. Kvóta je sledována na straně serveru, odpovědi obsahují <code>X-Quota-Remaining</code>.</p>
 
-      <h2>Rate Limit Headers</h2>
+      <h2>Hlavičky rate limitů</h2>
       <ul>
         <li><code>X-RateLimit-Limit</code></li>
         <li><code>X-RateLimit-Remaining</code></li>
         <li><code>X-RateLimit-Reset</code></li>
-        <li><code>Retry-After</code> on <code>429</code></li>
+        <li><code>Retry-After</code> při <code>429</code></li>
       </ul>
 
-      <h2>Plans</h2>
-      <p>See <a href="/pricing.html">pricing</a> for monthly quotas and paid-tier features.</p>
+      <h2>Plány</h2>
+      <p>Měsíční kvóty a funkce placených tierů viz <a href="/cs/pricing.html">ceník</a>.</p>
     </main>
 
-    <footer>cz-agents rate limits</footer>
+    <footer>cz-agents limity volání</footer>
   </div>
 </body>
 </html>

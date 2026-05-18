@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Data Processing Agreement — cz-agents</title>
+<meta name="robots" content="index,follow">
+<style>
+  body { font-family: ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+         max-width: 800px; margin: 60px auto; padding: 0 20px; color: #1f2937; line-height: 1.7; }
+  h1 { font-size: 28px; margin-bottom: 6px; }
+  h2 { font-size: 19px; margin-top: 36px; margin-bottom: 8px; border-bottom: 1px solid #e5e7eb; padding-bottom: 4px; }
+  h3 { font-size: 16px; margin-top: 20px; margin-bottom: 4px; }
+  .meta { color: #6b7280; font-size: 13px; margin-bottom: 28px; }
+  p, li { font-size: 15px; }
+  code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+  a { color: #2563eb; }
+  ul, ol { margin: 8px 0 16px 24px; }
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; }
+  .tab { cursor: pointer; padding: 8px 20px; border-radius: 6px 6px 0 0; font-size: 14px; font-weight: 600; border: 1px solid #e5e7eb; border-bottom: none; background: #f9fafb; color: #6b7280; }
+  .tab.active { background: #fff; color: #1f2937; border-bottom: 1px solid #fff; margin-bottom: -1px; }
+  .lang { display: none; border: 1px solid #e5e7eb; border-radius: 0 8px 8px 8px; padding: 28px 28px 16px; }
+  .lang.active { display: block; }
+  .placeholder { background: #fffbeb; border: 1px dashed #f59e0b; border-radius: 6px; padding: 4px 10px; font-size: 13px; color: #92400e; display: inline; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 12px 0 20px; }
+  th { background: #f3f4f6; text-align: left; padding: 8px 12px; border: 1px solid #e5e7eb; }
+  td { padding: 8px 12px; border: 1px solid #e5e7eb; vertical-align: top; }
+  .sign-block { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-top: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .sign-col h3 { margin-top: 0; }
+  .sign-line { margin-top: 40px; border-top: 1px solid #9ca3af; padding-top: 4px; font-size: 13px; color: #6b7280; }
+</style>
+  <script async defer src="https://analytics.mhai.app/script.js" data-website-id="5a96aa8b-7575-4667-8ac6-267287849cf3"></script>
+</head>
+<body>
+
+<h1>Data Processing Agreement</h1>
+<p class="meta">
+  cz-agents.dev — <a href="/">cz-agents.dev</a> ·
+  <a href="#" onclick="switchLang('en');return false;">EN</a> /
+  <a href="#" onclick="switchLang('cs');return false;">CS</a>
+</p>
+
+<div class="tabs">
+  <div class="tab active" id="tab-en" onclick="switchLang('en')">English</div>
+  <div class="tab" id="tab-cs" onclick="switchLang('cs')">Čeština</div>
+</div>
+
+<!-- ==================== ENGLISH ==================== -->
+<div class="lang active" id="lang-en">
+
+<p>This Data Processing Agreement (<strong>"DPA"</strong>) is entered into between:</p>
+
+<table>
+  <tr>
+    <th>Data Controller ("Customer")</th>
+    <th>Data Processor ("Processor")</th>
+  </tr>
+  <tr>
+    <td>
+      Company name: <span class="placeholder">___________________________</span><br>
+      IČO / Registration no.: <span class="placeholder">_______________</span><br>
+      Registered address: <span class="placeholder">___________________</span><br>
+      Contact email: <span class="placeholder">________________________</span>
+    </td>
+    <td>
+      Martin Havel<br>
+      IČO: 71677763<br>
+      Košťálkova 1103/2, 182 00 Praha 8, Czech Republic<br>
+      Email: martin.havel@gmail.com<br>
+      Trading as: cz-agents.dev
+    </td>
+  </tr>
+</table>
+
+<p>together referred to as the <strong>"Parties"</strong>.</p>
+
+<h2>1. Background and scope</h2>
+<p>The Customer uses the cz-agents API (<em>the Service</em>) to query Czech public registers (ARES company register, ISIR insolvency register, EU/OFAC sanctions lists) for the purpose of due-diligence, KYC/AML compliance, or business intelligence.</p>
+<p>In providing the Service, the Processor retrieves and temporarily processes data that may include personal data of natural persons registered in those public registers (company directors, statutory representatives, beneficial owners, registered agents). This DPA governs such processing under GDPR Article 28.</p>
+
+<h2>2. Duration</h2>
+<p>This DPA is effective from the date both Parties sign it (or from the date the Customer first uses the Service, whichever is earlier) and remains in force for as long as the Customer holds an active subscription or API token. Upon termination of the service relationship this DPA terminates automatically.</p>
+
+<h2>3. Nature and purpose of processing</h2>
+<table>
+  <tr><th>Item</th><th>Detail</th></tr>
+  <tr><td>Nature</td><td>Retrieval from public registers; API response delivery; short-term request logging; token-based authentication</td></tr>
+  <tr><td>Purpose</td><td>Enabling the Customer to perform due-diligence and compliance checks on Czech legal entities</td></tr>
+  <tr><td>Legal basis (Processor's own processing)</td><td>Legitimate interest (GDPR Art. 6(1)(f)) — public-register data republished for compliance use</td></tr>
+</table>
+
+<h2>4. Categories of personal data and data subjects</h2>
+<table>
+  <tr><th>Category of data</th><th>Categories of data subjects</th></tr>
+  <tr><td>Name, address, date of birth (where public), role/function</td><td>Directors, statutory representatives, beneficial owners, and other natural persons listed in ARES</td></tr>
+  <tr><td>Insolvency proceedings details</td><td>Natural persons listed as debtors in the ISIR insolvency register</td></tr>
+  <tr><td>Sanctions-list entries (name, nationality, identifiers)</td><td>Natural persons listed on EU Consolidated Financial Sanctions List (FSF) or OFAC SDN list</td></tr>
+</table>
+<p>The Processor does not process special categories of personal data (GDPR Art. 9) or data relating to criminal convictions (Art. 10).</p>
+
+<h2>5. Obligations of the Processor</h2>
+<p>The Processor shall:</p>
+<ol>
+  <li>Process personal data only on documented instructions from the Customer (i.e., API requests made using the Customer's token) and for no other purpose.</li>
+  <li>Ensure that persons authorised to process personal data are bound by confidentiality.</li>
+  <li>Implement appropriate technical and organisational security measures (see Section 7).</li>
+  <li>Inform the Customer if, in the Processor's opinion, an instruction infringes GDPR or other applicable law.</li>
+  <li>Assist the Customer in fulfilling its obligations regarding data subject rights (access, erasure, restriction, portability) to the extent technically feasible given that the underlying source data is public-register data controlled by third parties.</li>
+  <li>Notify the Customer without undue delay (and no later than 72 hours) after becoming aware of a personal data breach affecting Customer data.</li>
+  <li>Delete all Customer data (API tokens, usage logs, query logs) within 30 days of service termination, unless retention is required by applicable law.</li>
+  <li>Make available all information necessary to demonstrate compliance with this DPA, and allow for audits and inspections conducted by the Customer or a mandated auditor, upon 14 days' written notice.</li>
+</ol>
+
+<h2>6. Sub-processors</h2>
+<p>The Customer grants the Processor general authorisation to engage the following sub-processors. The Processor shall inform the Customer of any intended changes (addition or replacement) with at least 14 days' notice, giving the Customer the opportunity to object.</p>
+<table>
+  <tr><th>Sub-processor</th><th>Service</th><th>Location</th></tr>
+  <tr><td>Hetzner Online GmbH</td><td>Cloud hosting and storage</td><td>EU (Germany)</td></tr>
+  <tr><td>Cloudflare, Inc.</td><td>CDN, WAF, DDoS protection</td><td>EU PoPs; data stored EU</td></tr>
+  <tr><td>Resend, Inc.</td><td>Transactional email delivery</td><td>EU (Frankfurt)</td></tr>
+</table>
+
+<h2>7. Technical and organisational security measures</h2>
+<ul>
+  <li>All data in transit protected by TLS 1.2 or higher</li>
+  <li>API tokens stored hashed or in access-controlled SQLite volumes on encrypted-at-rest Hetzner servers</li>
+  <li>Access to production infrastructure restricted to named individuals; SSH key authentication only</li>
+  <li>Request logs retained for a maximum of 90 days, then deleted</li>
+  <li>No personal data exported to third-party analytics or advertising platforms</li>
+  <li>Regular dependency updates and security patching</li>
+</ul>
+
+<h2>8. International data transfers</h2>
+<p>All processing takes place within the EU/EEA (Hetzner Germany). No transfers to third countries are made except as necessary for Cloudflare's network routing, which is covered by Cloudflare's standard contractual clauses with Hetzner as origin.</p>
+
+<h2>9. Customer obligations</h2>
+<p>The Customer shall ensure it has a lawful basis for each query submitted to the Service, and that its use of returned data complies with applicable law (including GDPR, AML regulations, and any sector-specific rules).</p>
+
+<h2>10. Liability</h2>
+<p>Liability of each Party for breach of this DPA is governed by the applicable service agreement between the Parties. Where no such agreement exists, each Party's total liability arising under or in connection with this DPA shall not exceed the total fees paid by the Customer in the 12 months preceding the event giving rise to liability.</p>
+
+<h2>11. Governing law</h2>
+<p>This DPA is governed by Czech law. Disputes shall be resolved before the courts of the Czech Republic.</p>
+
+<h2>12. Entire agreement</h2>
+<p>This DPA supplements the <a href="/terms.html">Terms of Service</a> and, together with them, constitutes the entire agreement between the Parties regarding data processing. In case of conflict, this DPA prevails.</p>
+
+<div class="sign-block">
+  <div class="sign-col">
+    <h3>Data Controller (Customer)</h3>
+    <p>Signed for and on behalf of <span class="placeholder">________________________</span></p>
+    <div class="sign-line">Name, Title</div>
+    <div class="sign-line">Date</div>
+    <div class="sign-line">Signature</div>
+  </div>
+  <div class="sign-col">
+    <h3>Data Processor (cz-agents)</h3>
+    <p>Signed by Martin Havel, IČO 71677763</p>
+    <div class="sign-line">Name: Martin Havel</div>
+    <div class="sign-line">Date</div>
+    <div class="sign-line">Signature</div>
+  </div>
+</div>
+
+</div>
+
+<!-- ==================== ČEŠTINA ==================== -->
+<div class="lang" id="lang-cs">
+
+<p>Tato Smlouva o zpracování osobních údajů (<strong>„SZOU"</strong>) je uzavřena mezi:</p>
+
+<table>
+  <tr>
+    <th>Správce (Zákazník)</th>
+    <th>Zpracovatel</th>
+  </tr>
+  <tr>
+    <td>
+      Název společnosti: <span class="placeholder">___________________________</span><br>
+      IČO: <span class="placeholder">_______________</span><br>
+      Sídlo: <span class="placeholder">___________________</span><br>
+      Kontaktní email: <span class="placeholder">________________________</span>
+    </td>
+    <td>
+      Martin Havel<br>
+      IČO: 71677763<br>
+      Košťálkova 1103/2, 182 00 Praha 8<br>
+      Email: martin.havel@gmail.com<br>
+      Provozuje: cz-agents.dev
+    </td>
+  </tr>
+</table>
+
+<p>dále společně jako <strong>„Strany"</strong>.</p>
+
+<h2>1. Předmět a rozsah</h2>
+<p>Zákazník využívá API cz-agents (<em>Služba</em>) k dotazování českých veřejných rejstříků (ARES, ISIR, sankční seznamy EU/OFAC) pro účely due diligence, KYC/AML compliance nebo obchodní analýzy.</p>
+<p>Při poskytování Služby Zpracovatel načítá a dočasně zpracovává údaje, které mohou obsahovat osobní údaje fyzických osob evidovaných ve veřejných rejstřících (jednatelé, statutární orgány, skuteční majitelé, zástupci). Tato SZOU upravuje takové zpracování podle čl. 28 GDPR.</p>
+
+<h2>2. Trvání</h2>
+<p>SZOU nabývá účinnosti dnem podpisu oběma Stranami (nebo dnem prvního využití Služby Zákazníkem, nastane-li dříve) a trvá po dobu aktivního předplatného nebo API tokenu. Ukončením smluvního vztahu SZOU automaticky zaniká.</p>
+
+<h2>3. Povaha a účel zpracování</h2>
+<table>
+  <tr><th>Položka</th><th>Detail</th></tr>
+  <tr><td>Povaha</td><td>Dotazování veřejných rejstříků; doručení odpovědí přes API; krátkodobé logování požadavků; autentizace tokenem</td></tr>
+  <tr><td>Účel</td><td>Umožnit Zákazníkovi provádět due-diligence a compliance kontroly českých právnických osob</td></tr>
+  <tr><td>Právní základ (vlastní zpracování Zpracovatele)</td><td>Oprávněný zájem (čl. 6 odst. 1 písm. f) GDPR) — údaje z veřejných rejstříků šířené pro compliance účely</td></tr>
+</table>
+
+<h2>4. Kategorie osobních údajů a subjektů údajů</h2>
+<table>
+  <tr><th>Kategorie údajů</th><th>Kategorie subjektů údajů</th></tr>
+  <tr><td>Jméno, adresa, datum narození (je-li veřejné), funkce/role</td><td>Jednatelé, členové statutárních orgánů, skuteční majitelé a jiné fyzické osoby evidované v ARES</td></tr>
+  <tr><td>Údaje o insolvenčních řízeních</td><td>Fyzické osoby evidované jako dlužníci v insolvenčním rejstříku (ISIR)</td></tr>
+  <tr><td>Záznamy v sankčních seznamech (jméno, státní příslušnost, identifikátory)</td><td>Fyzické osoby na konsolidovaném seznamu EU (FSF) nebo americkém sankčním seznamu OFAC SDN</td></tr>
+</table>
+<p>Zpracovatel nezpracovává zvláštní kategorie osobních údajů (čl. 9 GDPR) ani údaje o odsouzeních (čl. 10 GDPR).</p>
+
+<h2>5. Povinnosti Zpracovatele</h2>
+<p>Zpracovatel je povinen:</p>
+<ol>
+  <li>Zpracovávat osobní údaje pouze na základě zdokumentovaných pokynů Zákazníka (tj. API požadavků odeslaných tokenem Zákazníka) a pro žádný jiný účel.</li>
+  <li>Zajistit, aby osoby oprávněné ke zpracování osobních údajů byly vázány mlčenlivostí.</li>
+  <li>Přijmout odpovídající technická a organizační bezpečnostní opatření (viz oddíl 7).</li>
+  <li>Informovat Zákazníka, pokud se Zpracovatel domnívá, že pokyn Zákazníka porušuje GDPR nebo jiné platné právo.</li>
+  <li>Pomáhat Zákazníkovi při plnění jeho povinností ve vztahu k právům subjektů údajů (přístup, výmaz, omezení, přenositelnost), a to v rozsahu technicky možném s ohledem na to, že zdrojová data jsou veřejná rejstříková data kontrolovaná třetími stranami.</li>
+  <li>Oznámit Zákazníkovi bez zbytečného odkladu (nejpozději do 72 hodin) každé porušení zabezpečení osobních údajů týkající se dat Zákazníka.</li>
+  <li>Vymazat veškerá data Zákazníka (API tokeny, logy využití, logy dotazů) do 30 dnů od ukončení Služby, ledaže by uchovávání ukládal platný zákon.</li>
+  <li>Poskytnout veškeré informace potřebné k prokázání souladu s touto SZOU a umožnit audity po písemném oznámení s předstihem alespoň 14 dní.</li>
+</ol>
+
+<h2>6. Subdodavatelé (zpracovatelé)</h2>
+<p>Zákazník uděluje Zpracovateli obecné oprávnění zapojit následující subdodavatele. Zpracovatel informuje Zákazníka o každé zamýšlené změně (přidání nebo nahrazení) s předstihem nejméně 14 dní, přičemž Zákazník má právo vznést námitky.</p>
+<table>
+  <tr><th>Subdodavatel</th><th>Služba</th><th>Umístění</th></tr>
+  <tr><td>Hetzner Online GmbH</td><td>Cloudový hosting a úložiště</td><td>EU (Německo)</td></tr>
+  <tr><td>Cloudflare, Inc.</td><td>CDN, WAF, ochrana před DDoS</td><td>EU PoP; data uložena v EU</td></tr>
+  <tr><td>Resend, Inc.</td><td>Transakční doručování emailů</td><td>EU (Frankfurt)</td></tr>
+</table>
+
+<h2>7. Technická a organizační bezpečnostní opatření</h2>
+<ul>
+  <li>Veškerá data při přenosu chráněna protokolem TLS 1.2 nebo vyšším</li>
+  <li>API tokeny uloženy v šifrovaných SQLite svazcích na serverech Hetzner s šifrováním v klidu</li>
+  <li>Přístup k produkční infrastruktuře omezen na jmenovitě uvedené osoby; autentizace výhradně SSH klíčem</li>
+  <li>Logy požadavků uchovávány maximálně 90 dní, poté vymazány</li>
+  <li>Osobní údaje nejsou exportovány do nástrojů třetích stran pro analytiku nebo reklamní účely</li>
+  <li>Pravidelná aktualizace závislostí a bezpečnostní záplaty</li>
+</ul>
+
+<h2>8. Mezinárodní předávání dat</h2>
+<p>Veškeré zpracování probíhá v EU/EHP (Hetzner Německo). Předávání do třetích zemí se neprovádí, s výjimkou nezbytného routování sítí Cloudflare, které je pokryto standardními smluvními doložkami Cloudflare s Hetznerem jako zdrojovým serverem.</p>
+
+<h2>9. Povinnosti Zákazníka</h2>
+<p>Zákazník zajistí, že pro každý dotaz odeslaný do Služby disponuje zákonným právním základem, a že využití vrácených dat je v souladu s platným právem (včetně GDPR, AML předpisů a případných odvětvových předpisů).</p>
+
+<h2>10. Odpovědnost</h2>
+<p>Odpovědnost každé Strany za porušení této SZOU se řídí platnou servisní smlouvou mezi Stranami. Pokud taková smlouva neexistuje, celková odpovědnost každé Strany vyplývající z této SZOU nesmí přesáhnout celkové poplatky zaplacené Zákazníkem v 12 měsících předcházejících události, jež odpovědnost zakládá.</p>
+
+<h2>11. Rozhodné právo</h2>
+<p>Tato SZOU se řídí českým právem. Spory budou řešeny před soudy České republiky.</p>
+
+<h2>12. Úplnost ujednání</h2>
+<p>Tato SZOU doplňuje <a href="/terms.html">Podmínky použití</a> a společně s nimi tvoří úplné ujednání Stran v oblasti zpracování dat. V případě rozporu má tato SZOU přednost.</p>
+
+<div class="sign-block">
+  <div class="sign-col">
+    <h3>Správce (Zákazník)</h3>
+    <p>Podepsáno jménem společnosti <span class="placeholder">________________________</span></p>
+    <div class="sign-line">Jméno, funkce</div>
+    <div class="sign-line">Datum</div>
+    <div class="sign-line">Podpis</div>
+  </div>
+  <div class="sign-col">
+    <h3>Zpracovatel (cz-agents)</h3>
+    <p>Podepsal Martin Havel, IČO 71677763</p>
+    <div class="sign-line">Jméno: Martin Havel</div>
+    <div class="sign-line">Datum</div>
+    <div class="sign-line">Podpis</div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function switchLang(lang) {
+  document.querySelectorAll('.lang').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+  document.getElementById('lang-' + lang).classList.add('active');
+  document.getElementById('tab-' + lang).classList.add('active');
+}
+</script>
+
+</body>
+</html>

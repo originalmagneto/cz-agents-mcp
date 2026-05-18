@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { validateIcoInput, trackIco } from '@czagents/shared';
+import { validateIcoInput, trackIco, logToolCall } from '@czagents/shared';
 import { IsirClient } from './client.js';
 
 export function buildIsirServer(client: IsirClient = new IsirClient()): McpServer {
@@ -28,6 +28,7 @@ export function buildIsirServer(client: IsirClient = new IsirClient()): McpServe
     },
     { title: 'Check IČO Insolvency in ISIR', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
+      logToolCall('isir', 'check_ico_insolvency', { ico });
       const clean = validateIcoInput(ico);
       trackIco(clean);
       try {
@@ -57,6 +58,7 @@ export function buildIsirServer(client: IsirClient = new IsirClient()): McpServe
     { title: 'Search Person Insolvency in ISIR', readOnlyHint: true, openWorldHint: true },
     async ({ name, dob, only_active }) => {
       try {
+        logToolCall('isir', 'search_person_insolvency', { name, dob, only_active });
         const matches = await client.searchPersonInsolvency({ name, dob, onlyActive: only_active });
         if (matches.length === 0) {
           return wrap(`Žádné insolvenční řízení pro "${name}"${dob ? ` (nar. ${dob})` : ''} v ISIR.`);
@@ -83,6 +85,7 @@ export function buildIsirServer(client: IsirClient = new IsirClient()): McpServe
     { title: 'Poll ISIR Event Feed', readOnlyHint: true, openWorldHint: true },
     async ({ since_id }) => {
       try {
+        logToolCall('isir', 'poll_isir_events', { since_id });
         const result = await client.pollEvents(since_id);
         return wrap(JSON.stringify({
           since_id,

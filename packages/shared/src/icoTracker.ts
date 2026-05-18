@@ -56,6 +56,28 @@ export function trackIco(ico: string): void {
   icoCounter.set(ico, (icoCounter.get(ico) ?? 0) + 1);
 }
 
+export function logToolCall(service: string, tool: string, args: Record<string, unknown> = {}): void {
+  const ip = getCurrentIp() ?? 'unknown';
+  const parts = [`service=${service}`, `tool=${tool}`];
+  const paramKeys: string[] = [];
+
+  for (const [key, value] of Object.entries(args)) {
+    if (value === undefined || value === null) continue;
+    paramKeys.push(key);
+
+    if (isSafeLogValue(key, value)) {
+      parts.push(`${key}=${formatLogValue(value)}`);
+    }
+  }
+
+  if (paramKeys.length > 0) {
+    parts.push(`param_keys=${paramKeys.sort().join(',')}`);
+  }
+  parts.push(`ip=${ip}`);
+
+  console.error(`[tool] ${parts.join(' ')}`);
+}
+
 export function getMetrics(): string {
   const lines = [
     '# HELP unique_ico_per_ip_per_day Unique valid IČOs seen per anonymized IP prefix per day.',
@@ -116,4 +138,16 @@ function ipPrefix(ip: string): string {
 
 function escapeLabel(value: string): string {
   return value.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/"/g, '\\"');
+}
+
+function isSafeLogValue(key: string, value: unknown): boolean {
+  if (key === 'ico' || key === 'dic') return true;
+  if (key === 'icos' || key === 'dics') return Array.isArray(value);
+  if (['depth', 'max_depth', 'since_id', 'limit', 'threshold', 'only_active'].includes(key)) return true;
+  return false;
+}
+
+function formatLogValue(value: unknown): string {
+  if (Array.isArray(value)) return `count:${value.length}`;
+  return String(value).replace(/\s+/g, '_');
 }

@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { validateIcoInput, trackIco } from '@czagents/shared';
+import { validateIcoInput, trackIco, logToolCall } from '@czagents/shared';
 import { buildReport } from './report.js';
 import { buildChain } from './chain.js';
 import { detectNomineeDirector } from './patterns/nominee-director.js';
@@ -69,6 +69,7 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
     },
     { title: 'Get Czech Company Due-Diligence Report', readOnlyHint: true, openWorldHint: true },
     async ({ ico, depth }) => {
+      logToolCall('dd', 'get_dd_report', { ico, depth });
       const clean = validateIcoInput(ico);
       trackIco(clean);
       const report = await buildReport(clean, clients, { depth });
@@ -84,6 +85,7 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
     },
     { title: 'Get Risk Score', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
+      logToolCall('dd', 'get_risk_score', { ico });
       const clean = validateIcoInput(ico);
       trackIco(clean);
       const report = await buildReport(clean, clients, { depth: 'basic' });
@@ -107,6 +109,7 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
     },
     { title: 'Get Statutory Chain (UBO Walk)', readOnlyHint: true, openWorldHint: true },
     async ({ ico, max_depth }) => {
+      logToolCall('dd', 'get_statutory_chain', { ico, max_depth });
       const gate = requireTier(tier, 'agency', 'get_statutory_chain');
       if (gate) return gate;
       const clean = validateIcoInput(ico);
@@ -125,6 +128,7 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
     },
     { title: 'Detect Nominee Directors (Bílí koně)', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
+      logToolCall('dd', 'detect_nominee_director', { ico });
       const gate = requireTier(tier, 'compliance', 'detect_nominee_director');
       if (gate) return gate;
       const clean = validateIcoInput(ico);
@@ -143,6 +147,7 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
     },
     { title: 'Detect Phoenix Company Pattern', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
+      logToolCall('dd', 'detect_phoenix', { ico });
       const gate = requireTier(tier, 'compliance', 'detect_phoenix');
       if (gate) return gate;
       const clean = validateIcoInput(ico);
@@ -161,6 +166,7 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
     },
     { title: 'Get Risk Timeline (Časová osa rizika)', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
+      logToolCall('dd', 'get_risk_timeline', { ico });
       const gate = requireTier(tier, 'compliance', 'get_risk_timeline');
       if (gate) return gate;
       const clean = validateIcoInput(ico);
@@ -179,6 +185,7 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
     { ico: z.string().describe('Czech IČO 7-8 digits') },
     { title: 'Detect Address Crowding', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
+      logToolCall('dd', 'detect_address_crowding', { ico });
       const gate = requireTier(tier, 'compliance', 'detect_address_crowding');
       if (gate) return gate;
       const clean = validateIcoInput(ico);

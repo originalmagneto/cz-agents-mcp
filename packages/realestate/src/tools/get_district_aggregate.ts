@@ -5,15 +5,46 @@
  * no specific properties), so safe to expose without rate limit beyond
  * the basic IP-level free tier limit applied at HTTP layer.
  *
- * k-anonymity: if a count for the okres + window combination is < 3, return
- * `null` for that count + set `low_activity: true`. Prevents identifying
- * a specific debtor in low-activity districts.
+ * `low_activity` is set when the okres + window combination is below the
+ * public low-activity threshold.
  */
 
 import { getDb } from '../db.js';
 import type { DistrictAggregate } from '../types.js';
 
 const K_ANONYMITY_THRESHOLD = 3;
+const SOURCE_PRIORITY = ['eurostat_hpi', 'csu_vdb_extrap', 'cnb_arad', 'csu_vdb', 'cuzk_kupni', 'static_fallback'];
+
+const KRAJ_SLUG_TO_PRICE_INDEX_KEY: Record<string, string> = {
+  'hl-m-praha': 'Praha',
+  stredocesky: 'Středočeský',
+  jihocesky: 'Jihočeský',
+  plzensky: 'Plzeňský',
+  karlovarsky: 'Karlovarský',
+  ustecky: 'Ústecký',
+  liberecky: 'Liberecký',
+  kralovehradecky: 'Královéhradecký',
+  pardubicky: 'Pardubický',
+  vysocina: 'Vysočina',
+  jihomoravsky: 'Jihomoravský',
+  olomoucky: 'Olomoucký',
+  zlinsky: 'Zlínský',
+  moravskoslezsky: 'Moravskoslezský',
+};
+
+function slugifyCs(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function sourceRank(source: string): number {
+  const index = SOURCE_PRIORITY.indexOf(source);
+  return index === -1 ? 99 : index;
+}
 
 export function getDistrictAggregate(params: {
   okres: string;
@@ -23,52 +54,104 @@ export function getDistrictAggregate(params: {
   const db = getDb();
 
   const since = new Date(Date.now() - window_days * 24 * 60 * 60 * 1000).toISOString();
+  const okresSlug = slugifyCs(params.okres);
+  const districtParams = { okres: params.okres, okresSlug, since };
+  const districtWhere = `
+    (
+      l.okresSlug = @okresSlug
+      OR (l.okresSlug IS NULL AND l.kuMatchedName = @okres)
+    )
+    AND l.ingestedAt >= @since
+    AND l.status != 'archived'
+  `;
 
-  // Count distress leads in window. OkresMapping table doesn't exist yet
-  // (Sprint 1 SEO uses programmatic mapping in webapp/lib/okres-data.ts —
-  // not yet materialized as DB table). For now we match against
-  // kuMatchedName which is set by the RÚIAN enrichment cron. When
-  // OkresMapping table lands, JOIN can be added without API contract change.
+  // Prefer RealEstateLead.okresSlug (canonical district key). Existing
+  // production rows may predate that backfill, so null-slug rows fall back to
+  // kuMatchedName when it exactly matches the requested okres name.
   const distressCount = (db
     .prepare(`
       SELECT COUNT(*) AS c
       FROM RealEstateLead l
-      WHERE l.kuMatchedName = @okres
-        AND l.ingestedAt >= @since
-        AND l.status != 'archived'
+      WHERE ${districtWhere}
     `)
-    .get({ okres: params.okres, since }) as { c: number }).c;
+    .get(districtParams) as { c: number }).c;
 
   const insolvencyCount = (db
     .prepare(`
       SELECT COUNT(*) AS c
       FROM RealEstateLead l
-      WHERE l.kuMatchedName = @okres
-        AND l.ingestedAt >= @since
+      WHERE ${districtWhere}
         AND l.sourceType = 'isir'
     `)
-    .get({ okres: params.okres, since }) as { c: number }).c;
+    .get(districtParams) as { c: number }).c;
 
   const auctionCount = (db
     .prepare(`
       SELECT COUNT(*) AS c
       FROM RealEstateLead l
-      WHERE l.kuMatchedName = @okres
-        AND l.ingestedAt >= @since
+      WHERE ${districtWhere}
         AND l.sourceType IN ('portaldrazeb', 'cevd', 'cuzk_delta')
     `)
-    .get({ okres: params.okres, since }) as { c: number }).c;
+    .get(districtParams) as { c: number }).c;
+
+  const aggregateRow = db
+    .prepare(`
+      SELECT krajSlug
+      FROM DistrictAggregate
+      WHERE okresSlug = @okresSlug
+      ORDER BY CASE WHEN windowDays = @windowDays THEN 0 ELSE 1 END, windowDays DESC
+      LIMIT 1
+    `)
+    .get({ okresSlug, windowDays: window_days }) as { krajSlug: string } | undefined;
+
+  const priceIndexKraj =
+    (aggregateRow?.krajSlug ? KRAJ_SLUG_TO_PRICE_INDEX_KEY[aggregateRow.krajSlug] : null) ??
+    (okresSlug === 'praha' ? 'Praha' : null);
+
+  const priceRows = priceIndexKraj
+    ? (db
+      .prepare(`
+        SELECT kcPerM2, source, periodYear, periodQuarter
+        FROM RealEstatePriceIndex
+        WHERE kraj = @kraj
+          AND propertyType = 'byt'
+        ORDER BY periodYear DESC, periodQuarter DESC
+        LIMIT 20
+      `)
+      .all({ kraj: priceIndexKraj }) as Array<{
+        kcPerM2: number;
+        source: string;
+        periodYear: number;
+        periodQuarter: number;
+      }>)
+    : [];
+
+  const latestPeriod = priceRows[0]
+    ? { year: priceRows[0].periodYear, quarter: priceRows[0].periodQuarter }
+    : null;
+  const latestPriceRows = latestPeriod
+    ? priceRows.filter((row) => row.periodYear === latestPeriod.year && row.periodQuarter === latestPeriod.quarter)
+    : [];
+  const latestPrice = latestPriceRows.sort((a, b) => sourceRank(a.source) - sourceRank(b.source))[0];
+
+  const yoyPrice = latestPeriod
+    ? priceRows
+      .filter((row) => row.periodYear === latestPeriod.year - 1 && row.periodQuarter === latestPeriod.quarter)
+      .sort((a, b) => sourceRank(a.source) - sourceRank(b.source))[0]
+    : undefined;
 
   const lowActivity = distressCount < K_ANONYMITY_THRESHOLD;
 
   return {
     okres: params.okres,
     window_days,
-    insolvency_count: insolvencyCount < K_ANONYMITY_THRESHOLD ? null : insolvencyCount,
-    auction_count: auctionCount < K_ANONYMITY_THRESHOLD ? null : auctionCount,
-    distress_lead_count: lowActivity ? null : distressCount,
-    avg_estimated_price_kc_per_m2: null, // placeholder — depends on extracts
-    trend_yoy_pct: null, // placeholder — depends on cached aggregate
+    insolvency_count: insolvencyCount,
+    auction_count: auctionCount,
+    distress_lead_count: distressCount,
+    avg_estimated_price_kc_per_m2: latestPrice?.kcPerM2 ?? null,
+    trend_yoy_pct: latestPrice && yoyPrice
+      ? Math.round(((latestPrice.kcPerM2 - yoyPrice.kcPerM2) / yoyPrice.kcPerM2) * 1000) / 10
+      : null,
     ...(lowActivity ? { low_activity: true as const } : {}),
   };
 }

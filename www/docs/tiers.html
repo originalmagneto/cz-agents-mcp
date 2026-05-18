@@ -27,12 +27,17 @@
     td { color: var(--fg-dim); }
     .no { color: var(--fg-ghost); }
     footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--fg-ghost); font-size: 13px; }
+    .header-top { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+    .lang-switch { display: flex; gap: 8px; font: 12px "JetBrains Mono", monospace; }
+    .lang-switch a { color: var(--fg-ghost); text-decoration: none; padding: 3px 7px; border: 1px solid transparent; border-radius: 4px; }
+    .lang-switch a:hover { color: var(--fg-dim); border-color: var(--border); }
+    .lang-switch a.active { color: var(--accent); border-color: var(--border); background: var(--bg-elev); }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <div class="logo"><a href="/"><h1>cz-agents<span class="tld">.dev</span></h1></a></div>
+      <div class="header-top"><div class="logo"><a href="/"><h1>cz-agents<span class="tld">.dev</span></h1></a></div><div class="lang-switch"><a href="/docs/tiers.html" class="active">EN</a><a href="">CS</a></div></div>
       <nav class="nav-links" aria-label="Documentation navigation">
         <a href="/docs/">Docs</a>
         <a href="/docs/api.html">REST API</a>

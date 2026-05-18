@@ -1,14 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { validateIcoInput, isValidDic, icoFromDic, formatDic, trackIco, getCurrentIp } from '@czagents/shared';
-
-function logTool(tool: string, args: Record<string, unknown>): void {
-  const ip = getCurrentIp() ?? 'unknown';
-  const parts = Object.entries(args)
-    .filter(([, v]) => v !== undefined)
-    .map(([k, v]) => `${k}=${String(v)}`);
-  console.error(`[tool] ${tool} ${parts.join(' ')} ip=${ip}`);
-}
+import { validateIcoInput, isValidDic, icoFromDic, formatDic, trackIco, logToolCall } from '@czagents/shared';
 import { AresClient } from './client.js';
 
 /**
@@ -42,7 +34,7 @@ export function buildAresServer(): McpServer {
     },
     { title: 'Look Up Czech Company by IČO', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
-      logTool('lookup_by_ico', { ico });
+      logToolCall('ares', 'lookup_by_ico', { ico });
       const clean = validateIcoInput(ico);
       trackIco(clean);
       const subject = await ares.getByIco(clean);
@@ -78,7 +70,7 @@ export function buildAresServer(): McpServer {
     },
     { title: 'Search Czech Companies', readOnlyHint: true, openWorldHint: true },
     async ({ query, city, street, psc, nace, pocet, start }) => {
-      logTool('search_companies', { query, city, street, psc, nace: nace?.join(',') });
+      logToolCall('ares', 'search_companies', { query, city, street, psc, nace, pocet, start });
       const sidlo = city || street || psc
         ? { nazevObce: city, nazevUlice: street, psc }
         : undefined;
@@ -113,7 +105,7 @@ export function buildAresServer(): McpServer {
     },
     { title: 'Search Companies by Address', readOnlyHint: true, openWorldHint: true },
     async ({ street, city, psc, pocet }) => {
-      logTool('search_by_address', { street, city, psc });
+      logToolCall('ares', 'search_by_address', { street, city, psc, pocet });
       const result = await ares.search({
         sidlo: { nazevUlice: street, nazevObce: city, psc },
         pocet,
@@ -143,7 +135,7 @@ export function buildAresServer(): McpServer {
     },
     { title: 'Search Companies by NACE Code', readOnlyHint: true, openWorldHint: true },
     async ({ nace, city, pocet }) => {
-      logTool('search_by_nace', { nace, city });
+      logToolCall('ares', 'search_by_nace', { nace, city, pocet });
       const result = await ares.search({
         czNace: [nace],
         sidlo: city ? { nazevObce: city } : undefined,
@@ -172,7 +164,7 @@ export function buildAresServer(): McpServer {
     },
     { title: 'Get Transparent Bank Accounts', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
-      logTool('get_bank_accounts', { ico });
+      logToolCall('ares', 'get_bank_accounts', { ico });
       const clean = validateIcoInput(ico);
       trackIco(clean);
       const accounts = await ares.getBankAccounts(clean);
@@ -211,7 +203,7 @@ export function buildAresServer(): McpServer {
     },
     { title: 'Get Statutory Body', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
-      logTool('get_statutaries', { ico });
+      logToolCall('ares', 'get_statutaries', { ico });
       const clean = validateIcoInput(ico);
       trackIco(clean);
       const vr = await ares.getVrRecord(clean);
@@ -262,7 +254,7 @@ export function buildAresServer(): McpServer {
     },
     { title: 'Validate Czech DIČ', readOnlyHint: true },
     async ({ dic }) => {
-      logTool('validate_dic', { dic });
+      logToolCall('ares', 'validate_dic', { dic });
       const formatted = formatDic(dic);
       const valid = isValidDic(dic);
       const embedded = icoFromDic(dic);
@@ -289,7 +281,7 @@ export function buildAresServer(): McpServer {
     },
     { title: 'Check VAT Payer Status', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
-      logTool('check_vat_payer', { ico });
+      logToolCall('ares', 'check_vat_payer', { ico });
       const clean = validateIcoInput(ico);
       trackIco(clean);
       const subject = await ares.getByIco(clean);
@@ -331,7 +323,7 @@ export function buildAresServer(): McpServer {
     },
     { title: 'Get Company History', readOnlyHint: true, openWorldHint: true },
     async ({ ico }) => {
-      logTool('get_history', { ico });
+      logToolCall('ares', 'get_history', { ico });
       const clean = validateIcoInput(ico);
       trackIco(clean);
       const history = await ares.getHistory(clean);

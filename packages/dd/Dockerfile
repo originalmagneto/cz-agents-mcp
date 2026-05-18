@@ -4,13 +4,14 @@ WORKDIR /app
 # better-sqlite3 (used by sanctions + shared/billing) needs build tools
 RUN apk add --no-cache python3 make g++
 
-# Workspace root + every package dd depends on (shared, ares, sanctions, isir)
+# Workspace root + every package dd depends on (shared, ares, sanctions, isir, adis)
 COPY package.json package-lock.json* ./
 COPY tsconfig.base.json ./
 COPY packages/shared ./packages/shared
 COPY packages/ares ./packages/ares
 COPY packages/sanctions ./packages/sanctions
 COPY packages/isir ./packages/isir
+COPY packages/adis ./packages/adis
 COPY packages/dd ./packages/dd
 
 RUN npm install --workspaces --include-workspace-root
@@ -18,6 +19,7 @@ RUN npm run build --workspace=@czagents/shared
 RUN npm run build --workspace=@czagents/ares
 RUN npm run build --workspace=@czagents/sanctions
 RUN npm run build --workspace=@czagents/isir
+RUN npm run build --workspace=@czagents/adis
 RUN npm run build --workspace=@czagents/dd
 
 FROM node:20-alpine AS runner
@@ -36,6 +38,8 @@ COPY --from=builder /app/packages/sanctions/dist ./packages/sanctions/dist
 COPY --from=builder /app/packages/sanctions/package.json ./packages/sanctions/package.json
 COPY --from=builder /app/packages/isir/dist ./packages/isir/dist
 COPY --from=builder /app/packages/isir/package.json ./packages/isir/package.json
+COPY --from=builder /app/packages/adis/dist ./packages/adis/dist
+COPY --from=builder /app/packages/adis/package.json ./packages/adis/package.json
 COPY --from=builder /app/packages/dd/dist ./packages/dd/dist
 COPY --from=builder /app/packages/dd/package.json ./packages/dd/package.json
 

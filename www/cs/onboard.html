@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jak začít — cz-agents</title>
+  <meta name="description" content="Jak začít s cz-agents MCP servery pro česká firemní data. Zdarma, zkušební přístup nebo placené API.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://cz-agents.dev/cs/onboard.html">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <script async defer src="https://analytics.mhai.app/script.js" data-website-id="5a96aa8b-7575-4667-8ac6-267287849cf3"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0e14; --bg-elev: #131820; --fg: #e6e9ef;
+      --fg-dim: #8a93a6; --fg-ghost: #4a5365;
+      --accent: #ff6b35; --accent-dim: #c94a1a;
+      --border: #1f2630; --green: #6ece58; --yellow: #e4d050; --blue: #5eaeff;
+    }
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.6; min-height: 100vh; }
+    pre, code { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 0.85em; }
+    .container { max-width: 920px; margin: 0 auto; padding: 40px 20px; }
+    .lang { position: absolute; top: 40px; right: 20px; display: flex; gap: 6px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+    .lang a { color: var(--fg-ghost); text-decoration: none; padding: 4px 8px; border: 1px solid transparent; border-radius: 4px; }
+    .lang a:hover { color: var(--fg-dim); border-color: var(--border); }
+    .lang a.active { color: var(--accent); border-color: var(--border); background: var(--bg-elev); }
+    header { border-bottom: 1px solid var(--border); padding-bottom: 32px; margin-bottom: 48px; }
+    .logo { display: flex; align-items: baseline; gap: 12px; margin-bottom: 24px; }
+    .logo a { text-decoration: none; color: inherit; }
+    .logo h1 { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+    .logo .tld { color: var(--accent); font-size: 32px; font-weight: 800; }
+    .nav-links { display: flex; gap: 20px; margin-top: 16px; flex-wrap: wrap; }
+    .nav-links a { color: var(--fg-dim); text-decoration: none; font-size: 14px; font-family: 'JetBrains Mono', monospace; }
+    .nav-links a:hover { color: var(--accent); }
+    .nav-links a.active { color: var(--accent); }
+    h2 { font-size: 22px; font-weight: 600; margin-bottom: 16px; margin-top: 48px; }
+    h3 { font-size: 16px; font-weight: 600; margin-bottom: 10px; }
+    p { color: var(--fg-dim); margin-bottom: 12px; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .section-note { color: var(--fg-dim); font-size: 15px; margin-bottom: 28px; }
+    .paths { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 28px 0; }
+    .path-card { background: var(--bg-elev); border: 1px solid var(--border); border-radius: 8px; padding: 24px; display: flex; flex-direction: column; gap: 10px; }
+    .path-card.featured { border-color: var(--accent-dim); box-shadow: 0 0 0 1px var(--accent-dim); }
+    .path-badge { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 10px; margin-bottom: 4px; }
+    .badge-free { background: #1a3a1a; color: var(--green); }
+    .badge-trial { background: #2a2a1a; color: var(--yellow); }
+    .badge-paid { background: #2a1a10; color: var(--accent); }
+    .path-title { font-size: 18px; font-weight: 600; }
+    .path-desc { color: var(--fg-dim); font-size: 14px; flex: 1; }
+    .path-cta { display: inline-block; margin-top: 8px; padding: 9px 18px; border-radius: 6px; font-size: 14px; font-weight: 600; text-align: center; cursor: pointer; text-decoration: none; }
+    .cta-outline { border: 1px solid var(--border); color: var(--fg-dim); background: transparent; }
+    .cta-outline:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+    .cta-primary { background: var(--accent); color: var(--bg); border: none; }
+    .cta-primary:hover { background: #ff8555; text-decoration: none; }
+    .cta-secondary { background: var(--bg-elev); border: 1px solid var(--accent-dim); color: var(--accent); }
+    .cta-secondary:hover { background: #1a1208; text-decoration: none; }
+    .steps { display: flex; flex-direction: column; gap: 0; margin: 24px 0; }
+    .step { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+    .step:last-child { border-bottom: none; }
+    .step-num { flex-shrink: 0; width: 28px; height: 28px; background: var(--bg-elev); border: 1px solid var(--border); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; color: var(--accent); margin-top: 2px; }
+    .step-body { flex: 1; }
+    .step-title { font-weight: 600; font-size: 15px; margin-bottom: 6px; color: var(--fg); }
+    .step-desc { color: var(--fg-dim); font-size: 14px; }
+    .code-block { background: var(--bg-elev); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px; margin: 16px 0; overflow-x: auto; position: relative; }
+    .code-block pre { color: var(--fg); font-size: 13px; line-height: 1.6; }
+    .code-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--fg-ghost); margin-bottom: 8px; }
+    .copy-btn { position: absolute; top: 12px; right: 12px; background: var(--bg); border: 1px solid var(--border); border-radius: 5px; color: var(--fg-dim); font-size: 12px; font-family: 'JetBrains Mono', monospace; padding: 4px 10px; cursor: pointer; }
+    .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+    .tool-list { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+    .tool-row { display: flex; gap: 12px; align-items: baseline; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+    .tool-name { color: var(--blue); min-width: 200px; }
+    .tool-desc { color: var(--fg-dim); font-size: 12px; }
+    .tool-tier { font-size: 11px; padding: 1px 7px; border-radius: 8px; flex-shrink: 0; }
+    .tier-free { background: #1a3a1a; color: var(--green); }
+    .tier-compliance { background: #2a1a10; color: var(--accent); }
+    .tier-agency { background: #1a1230; color: var(--blue); }
+    footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border); color: var(--fg-ghost); font-size: 13px; }
+    footer a { color: var(--fg-ghost); }
+    footer a:hover { color: var(--fg-dim); }
+    @media (max-width: 600px) { .paths { grid-template-columns: 1fr; } .step-num { display: none; } }
+  </style>
+</head>
+<body>
+<div class="container" style="position:relative;">
+
+  <nav class="lang" aria-label="Jazyk">
+    <a href="/onboard.html" data-lang="en">EN</a>
+    <a href="/cs/onboard.html" class="active" data-lang="cs">CS</a>
+  </nav>
+
+  <header>
+    <div class="logo">
+      <a href="/cs/"><h1>cz-agents<span class="tld">.dev</span></h1></a>
+    </div>
+    <nav class="nav-links" aria-label="Navigace">
+      <a href="/cs/">Domů</a>
+      <a href="/cs/pricing.html">Ceník</a>
+      <a href="/cs/onboard.html" class="active">Jak začít</a>
+      <a href="/terms.html">Podmínky</a>
+      <a href="/privacy.html">Soukromí</a>
+    </nav>
+  </header>
+
+  <main>
+    <section>
+      <h2 style="margin-top:0">Jak začít</h2>
+      <p class="section-note">Vyberte svoji cestu. Dotazy na česká firemní data zvládnete zprovoznit za méně než 5 minut.</p>
+
+      <div class="paths">
+        <div class="path-card">
+          <span class="path-badge badge-free">ZDARMA</span>
+          <div class="path-title">Vyzkoušet zdarma</div>
+          <p class="path-desc">Bez registrace. Hostované MCP endpointy s omezením 30 dotazů/den nebo vlastní provoz z open-source repozitáře. Vhodné pro testování a osobní použití.</p>
+          <a href="#free-start" class="path-cta cta-outline">Rychlý start →</a>
+        </div>
+
+        <div class="path-card featured">
+          <span class="path-badge badge-trial">14 DNÍ ZDARMA</span>
+          <div class="path-title">Zkušební přístup</div>
+          <p class="path-desc">Všechny placené nástroje odemčené na 14 dní — ddplus KYC/AML, detekce bílých koní, časová osa rizik, realestate-pro. Bez platební karty.</p>
+          <a href="/pricing.html#trial" class="path-cta cta-secondary">Požádat o zkušební přístup →</a>
+        </div>
+
+        <div class="path-card">
+          <span class="path-badge badge-paid">PLACENÉ</span>
+          <div class="path-title">Předplatné</div>
+          <p class="path-desc">API Compliance €99/měs. nebo Agency €199/měs. Token obdržíte okamžitě po platbě, bez kvótových omezení u většiny nástrojů.</p>
+          <a href="/cs/pricing.html" class="path-cta cta-primary">Zobrazit plány →</a>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section id="free-start">
+      <h2>Tier zdarma — rychlý start</h2>
+      <p class="section-note">Bez účtu. Přidejte server do konfigurace MCP klienta a začněte dotazovat.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Přidejte server do MCP klienta</div>
+            <div class="step-desc">Otevřete konfiguraci Claude Desktop / Cursor / Windsurf a přidejte jeden nebo více serverů.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Vložte konfigurační snippet</div>
+            <div class="step-desc">Příklad pro ARES (obchodní rejstřík) a DD (due diligence):</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-label">claude_desktop_config.json / mcp.json</div>
+        <button class="copy-btn" onclick="copyCode(this)">Kopírovat</button>
+        <pre>{
+  "mcpServers": {
+    "ares": {
+      "url": "https://ares.cz-agents.dev/mcp"
+    },
+    "dd": {
+      "url": "https://dd.cz-agents.dev/mcp"
+    },
+    "sanctions": {
+      "url": "https://sanctions.cz-agents.dev/mcp"
+    }
+  }
+}</pre>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Restartujte klienta a položte otázku</div>
+            <div class="step-desc">Zkuste: <code>„Co víš o IČO 27074358?"</code> — AI zavolá nástroje automaticky.</div>
+          </div>
+        </div>
+      </div>
+
+      <p style="margin-top:16px;font-size:14px;">
+        Tier zdarma je omezen na 30 požadavků/IP/den. Pro produkční nasazení nebo vyšší kvóty
+        <a href="/cs/pricing.html">viz placené plány</a>.
+      </p>
+    </section>
+
+    <hr class="divider">
+
+    <section id="paid-start">
+      <h2>Placený tier &amp; zkušební přístup — nastavení</h2>
+      <p class="section-note">Po přihlášení k odběru nebo po obdržení zkušebního tokenu připojte token k MCP klientu.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <div class="step-title">Získejte token</div>
+            <div class="step-desc">
+              <strong>Placené:</strong> Po platbě obdržíte API token e-mailem a v <a href="https://app.cz-agents.dev/app/billing">billing dashboardu</a>.<br>
+              <strong>Zkušební:</strong> <a href="/pricing.html#trial">Požádejte o zkušební přístup</a> — token doručíme e-mailem do 1 pracovního dne.
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <div class="step-title">Přidejte token do MCP konfigurace</div>
+            <div class="step-desc">Nahraďte <code>czat_your_token_here</code> svým skutečným tokenem:</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-label">claude_desktop_config.json — tier API Compliance</div>
+        <button class="copy-btn" onclick="copyCode(this)">Kopírovat</button>
+        <pre>{
+  "mcpServers": {
+    "ares": {
+      "url": "https://ares.cz-agents.dev/mcp"
+    },
+    "dd": {
+      "url": "https://dd.cz-agents.dev/mcp",
+      "headers": { "Authorization": "Bearer czat_your_token_here" }
+    },
+    "sanctions": {
+      "url": "https://sanctions.cz-agents.dev/mcp",
+      "headers": { "Authorization": "Bearer czat_your_token_here" }
+    },
+    "ddplus": {
+      "url": "https://ddplus.cz-agents.dev/mcp",
+      "headers": { "Authorization": "Bearer czat_your_token_here" }
+    }
+  }
+}</pre>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Otestujte připojení</div>
+            <div class="step-desc">Restartujte klienta a zkuste: <code>„Proveď kompletní due diligence na IČO 27074358."</code><br>Měli byste vidět detekci bílých koní, časovou osu rizik, adresní shluky a propojené osoby.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <div class="step-title">Spravujte předplatné</div>
+            <div class="step-desc">Přehled spotřeby, rotace tokenů, změna platební metody v <a href="https://app.cz-agents.dev/app/billing">billing dashboardu</a>.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section>
+      <h2>Dostupné nástroje</h2>
+      <p class="section-note">Co každý MCP server nabízí a který tier ho odemyká.</p>
+
+      <h3>ares.cz-agents.dev</h3>
+      <div class="tool-list">
+        <div class="tool-row"><span class="tool-name">get_by_ico</span><span class="tool-tier tier-free">zdarma</span><span class="tool-desc">Kompletní záznam ARES — název, adresa, DIČ, statutární orgán</span></div>
+        <div class="tool-row"><span class="tool-name">get_bank_accounts</span><span class="tool-tier tier-free">zdarma</span><span class="tool-desc">Zveřejněné bankovní účty (ARES)</span></div>
+        <div class="tool-row"><span class="tool-name">get_vr_record</span><span class="tool-tier tier-free">zdarma</span><span class="tool-desc">Zápis z veřejného rejstříku (OR)</span></div>
+        <div class="tool-row"><span class="tool-name">get_history</span><span class="tool-tier tier-free">zdarma</span><span class="tool-desc">Historie změn v ARES</span></div>
+      </div>
+
+      <h3 style="margin-top:24px">dd.cz-agents.dev &amp; ddplus.cz-agents.dev</h3>
+      <div class="tool-list">
+        <div class="tool-row"><span class="tool-name">get_dd_report</span><span class="tool-tier tier-free">zdarma</span><span class="tool-desc">Základní DD — ARES + sankce + ISIR souhrn</span></div>
+        <div class="tool-row"><span class="tool-name">get_risk_score</span><span class="tool-tier tier-free">zdarma</span><span class="tool-desc">Souhrnné rizikové skóre (0–100)</span></div>
+        <div class="tool-row"><span class="tool-name">detect_nominee_director</span><span class="tool-tier tier-compliance">compliance</span><span class="tool-desc">Detekce bílých koní ve statutárním orgánu</span></div>
+        <div class="tool-row"><span class="tool-name">get_risk_timeline</span><span class="tool-tier tier-compliance">compliance</span><span class="tool-desc">Chronologická časová osa rizikových událostí (AI)</span></div>
+        <div class="tool-row"><span class="tool-name">detect_phoenix</span><span class="tool-tier tier-compliance">compliance</span><span class="tool-desc">Detekce phoenix firem (řetězové insolvence)</span></div>
+        <div class="tool-row"><span class="tool-name">detect_address_crowding</span><span class="tool-tier tier-compliance">compliance</span><span class="tool-desc">Detekce virtuálních sídel a schránkových firem</span></div>
+        <div class="tool-row"><span class="tool-name">analyze_linked_entities_risk</span><span class="tool-tier tier-compliance">compliance</span><span class="tool-desc">Analýza rizik napříč vlastnickou sítí firem</span></div>
+        <div class="tool-row"><span class="tool-name">monitor_company</span><span class="tool-tier tier-agency">agency</span><span class="tool-desc">Spustit emailová upozornění na změny v ARES pro IČO</span></div>
+        <div class="tool-row"><span class="tool-name">list_monitored_companies</span><span class="tool-tier tier-agency">agency</span><span class="tool-desc">Seznam sledovaných IČO</span></div>
+        <div class="tool-row"><span class="tool-name">add_to_watchlist</span><span class="tool-tier tier-agency">agency</span><span class="tool-desc">Přidat IČO do trvalého watchlistu</span></div>
+        <div class="tool-row"><span class="tool-name">scan_watchlist</span><span class="tool-tier tier-agency">agency</span><span class="tool-desc">Spustit DD scan přes všechny IČO ve watchlistu</span></div>
+        <div class="tool-row"><span class="tool-name">get_statutory_chain</span><span class="tool-tier tier-agency">agency</span><span class="tool-desc">Kompletní vlastnický a jednatelský řetězec</span></div>
+      </div>
+
+      <h3 style="margin-top:24px">sanctions.cz-agents.dev</h3>
+      <div class="tool-list">
+        <div class="tool-row"><span class="tool-name">screen_entity</span><span class="tool-tier tier-free">zdarma</span><span class="tool-desc">Sankční screening EU FSF + OFAC SDN</span></div>
+      </div>
+
+      <h3 style="margin-top:24px">realestate-pro (tier Agency — Reality MCP)</h3>
+      <div class="tool-list">
+        <div class="tool-row"><span class="tool-name">search_properties</span><span class="tool-tier tier-agency">agency</span><span class="tool-desc">Vyhledávání nouzových nemovitostí s filtry</span></div>
+        <div class="tool-row"><span class="tool-name">get_property_detail</span><span class="tool-tier tier-agency">agency</span><span class="tool-desc">Detail inzerátu, fotky, EPC, zástavní práva</span></div>
+      </div>
+    </section>
+
+    <hr class="divider">
+
+    <section>
+      <h2>Potřebujete pomoct?</h2>
+      <p>
+        Napište na <a href="mailto:martin.havel@gmail.com">martin.havel@gmail.com</a> — odpověď typicky do 1 pracovního dne.<br>
+        Pro open-source problémy: <a href="https://github.com/martinhavel/cz-agents-mcp/issues" target="_blank" rel="noopener">GitHub Issues</a>.
+      </p>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      <a href="/cs/">cz-agents.dev</a> · <a href="/cs/pricing.html">Ceník</a> ·
+      <a href="/terms.html">Podmínky</a> · <a href="/privacy.html">Soukromí</a> ·
+      <a href="https://github.com/martinhavel/cz-agents-mcp" target="_blank" rel="noopener">GitHub</a>
+    </p>
+  </footer>
+</div>
+
+<script>
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.textContent).then(() => {
+    btn.textContent = 'Zkopírováno ✓';
+    setTimeout(() => btn.textContent = 'Kopírovat', 2000);
+  });
+}
+</script>
+</body>
+</html>

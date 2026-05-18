@@ -373,6 +373,8 @@
 <body>
   <div class="container">
     <nav class="lang" aria-label="Language">
+      <a href="/docs/" class="cta">Docs →</a>
+      <span class="sep">·</span>
       <a href="/pricing.html" class="cta">Pricing →</a>
       <span class="sep">·</span>
       <a href="/" class="active" data-lang="en" aria-current="page">EN</a>
@@ -389,9 +391,10 @@
       </p>
       <a href="/pricing.html" class="hero-cta">View pricing →</a>
       <a href="https://github.com/martinhavel/cz-agents-mcp" class="hero-cta-secondary">Free tier on GitHub</a>
+      <a href="/docs/api.html" style="color:var(--fg-dim); font-size:14px; text-decoration:none; margin-left:12px;">REST API docs →</a>
       <div class="badges">
         <span class="badge">MCP 1.10</span>
-        <span class="badge">REST API</span>
+        <a href="/docs/api.html" class="badge" style="text-decoration:none; color:var(--accent); border-color:var(--accent-dim)">REST API</a>
         <span class="badge">TypeScript</span>
         <span class="badge">MIT</span>
         <span class="badge live">● 7 servers live</span>
@@ -505,6 +508,25 @@
     <span class="s">"dd"</span><span class="k">:</span>        <span class="k">{</span> <span class="s">"url"</span><span class="k">:</span> <span class="s">"https://dd.cz-agents.dev/mcp"</span> <span class="k">}</span>
 <span class="k">}}</span></pre></div>
 
+    <h2 id="rest-api">REST API</h2>
+    <p style="color:var(--fg-dim); font-size: 14px;">Same data as MCP, plain GET requests. Free endpoints need no auth — just curl. Paid calls add <code>Authorization: Bearer czat_...</code>. <a class="url" href="/docs/api.html">→ Full REST API reference</a></p>
+    <div class="snippet"><button class="copy" type="button" data-copy='# company lookup (free)
+curl https://ares.cz-agents.dev/v1/companies/27074358
+
+# sanctions screen (free)
+curl "https://sanctions.cz-agents.dev/v1/sanctions/check?ico=27074358"
+
+# full DD report (paid)
+curl -H "Authorization: Bearer czat_..." https://dd.cz-agents.dev/v1/dd/27074358'>copy</button><pre class="code"><span class="k"># company lookup (free)</span>
+curl https://ares.cz-agents.dev/v1/companies/<span class="s">27074358</span>
+
+<span class="k"># sanctions screen (free)</span>
+curl <span class="s">"https://sanctions.cz-agents.dev/v1/sanctions/check?ico=27074358"</span>
+
+<span class="k"># full DD report (paid)</span>
+curl -H <span class="s">"Authorization: Bearer czat_..."</span> https://dd.cz-agents.dev/v1/dd/<span class="s">27074358</span></pre></div>
+    <p style="color:var(--fg-dim); font-size: 13px; margin-top: 6px;">Response envelope: <code>{"data": {...}, "meta": {"fetched_at": "...", "source": "ares"}}</code> — see <a class="url" href="/docs/api.html">all endpoints</a>.</p>
+
     <h2>Data principles</h2>
     <p style="color:var(--fg-dim); font-size: 14px;">
       cz-agents uses <strong>only state-guaranteed public registries</strong>: ARES (MoF), ČNB, ISIR
@@ -607,6 +629,8 @@ Risk score: 12/100 (low) — flagged: missing transparent VAT account.</pre>
         <a href="https://dev.to/martinhavel/building-mcp-servers-for-a-country-that-isnt-in-the-dataset-czech-gov-apis-1lo8">dev.to</a> ·
         <a href="https://modelcontextprotocol.io">MCP spec</a> ·
         <a href="https://registry.modelcontextprotocol.io">MCP registry</a> ·
+        <a href="/docs/">Docs</a> ·
+        <a href="/docs/api.html">REST API</a> ·
         <a href="/pricing.html">Pricing</a> ·
         <a href="/onboard.html">Onboarding</a> ·
         <a href="/dpa.html">DPA</a> ·

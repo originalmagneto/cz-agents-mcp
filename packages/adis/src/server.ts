@@ -1,6 +1,6 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
-import { validateIcoInput, trackIco } from '@czagents/shared';
+import { validateIcoInput, trackIco, logToolCall } from '@czagents/shared';
 import { AdisClient, MAX_DIC_PER_REQUEST } from './client.js';
 
 export function buildAdisServer(client: AdisClient = new AdisClient()): McpServer {
@@ -35,6 +35,7 @@ export function buildAdisServer(client: AdisClient = new AdisClient()): McpServe
     { title: 'Check Czech VAT Payer Reliability', readOnlyHint: true, openWorldHint: true },
     async ({ ico, dic }) => {
       try {
+        logToolCall('adis', 'check_dph_payer', { ico, dic });
         if (!ico && !dic) {
           return error('Either `ico` or `dic` is required.');
         }
@@ -66,6 +67,7 @@ export function buildAdisServer(client: AdisClient = new AdisClient()): McpServe
     { title: 'Bulk Check Czech VAT Payer Reliability', readOnlyHint: true, openWorldHint: true },
     async ({ icos, dics }) => {
       try {
+        logToolCall('adis', 'check_bulk_dph_payer', { icos, dics });
         if ((!icos || icos.length === 0) && (!dics || dics.length === 0)) {
           return error('Provide at least one IČO or DIČ.');
         }
@@ -92,6 +94,7 @@ export function buildAdisServer(client: AdisClient = new AdisClient()): McpServe
     { title: 'List All Unreliable VAT Payers', readOnlyHint: true, openWorldHint: true },
     async () => {
       try {
+        logToolCall('adis', 'list_unreliable_payers');
         const result = await client.listUnreliable();
         return wrap(JSON.stringify({
           generated_on: result.service.generated_on,
