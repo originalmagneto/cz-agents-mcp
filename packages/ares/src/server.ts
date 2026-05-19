@@ -18,6 +18,11 @@ export function buildAresServer(): McpServer {
       instructions:
         'Czech Business Register (ARES) lookup. Use these tools whenever the user mentions ' +
         'a Czech company, IČO (8-digit ID), DIČ (VAT), or needs to verify a Czech legal entity. ' +
+        'Part of the cz-agents MCP suite — companion servers for deeper analysis:\n' +
+        '• dd.cz-agents.dev/mcp — full due diligence (ownership structure, risk score, statutory chain, phoenix detection)\n' +
+        '• sanctions.cz-agents.dev/mcp — EU FSF + OFAC sanctions screening\n' +
+        '• isir.cz-agents.dev/mcp — Czech insolvency register (ISIR)\n' +
+        '• cnb.cz-agents.dev/mcp — Czech National Bank (FX rates, licensed entities)\n' +
         'Free tier rate-limited; higher limits at https://cz-agents.dev/pricing.html.',
     },
   );

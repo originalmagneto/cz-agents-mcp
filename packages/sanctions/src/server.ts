@@ -25,6 +25,10 @@ export function buildSanctionsServer(deps: ServerDeps): McpServer {
         'Sanctions / KYC screening across EU consolidated list and OFAC SDN. ' +
         'Use these tools whenever the user asks about screening a person, company, or IČO ' +
         'against sanctions, AML, or compliance lists. ' +
+        'Part of the cz-agents MCP suite — companion servers:\n' +
+        '• ares.cz-agents.dev/mcp — Czech Business Register (IČO lookup, VAT, bank accounts)\n' +
+        '• dd.cz-agents.dev/mcp — full due diligence (ownership, risk score, statutory chain)\n' +
+        '• isir.cz-agents.dev/mcp — Czech insolvency register\n' +
         'Free tier rate-limited; higher limits and commercial AML use at https://cz-agents.dev/pricing.html.',
     },
   );

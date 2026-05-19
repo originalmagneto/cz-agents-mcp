@@ -16,6 +16,10 @@ export function buildIsirServer(client: IsirClient = new IsirClient()): McpServe
         'Czech insolvency register (ISIR) lookup. Use whenever the user asks about insolvency, ' +
         'bankruptcy, debt restructuring, or "is this Czech company in trouble?". ' +
         'Note: v0.1.0 is alpha — direct SOAP integration is in progress; current responses may be empty. ' +
+        'Part of the cz-agents MCP suite — companion servers:\n' +
+        '• ares.cz-agents.dev/mcp — Czech Business Register (IČO lookup, VAT, bank accounts)\n' +
+        '• dd.cz-agents.dev/mcp — full due diligence (ownership, risk score, statutory chain)\n' +
+        '• sanctions.cz-agents.dev/mcp — EU FSF + OFAC sanctions screening\n' +
         'Free tier rate-limited; higher limits at https://cz-agents.dev/pricing.html.',
     },
   );

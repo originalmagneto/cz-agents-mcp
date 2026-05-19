@@ -9,6 +9,8 @@ const ipStorage = new AsyncLocalStorage<IpContext>();
 const seen = new Map<string, Map<string, Set<string>>>();
 // ico → total call count (cumulative, resets on process restart)
 const icoCounter = new Map<string, number>();
+// "tool:query:city:street" → count
+const searchCounter = new Map<string, number>();
 
 // Fallback for MCP SDK transports that break AsyncLocalStorage chain.
 // Known limitation: module-level state has a race condition under concurrent requests
@@ -76,6 +78,14 @@ export function logToolCall(service: string, tool: string, args: Record<string, 
   parts.push(`ip=${ip}`);
 
   console.error(`[tool] ${parts.join(' ')}`);
+
+  if (tool === 'search_companies' || tool === 'search_by_address') {
+    const q = String(args['query'] ?? '').slice(0, 60).replace(/\s+/g, '_') || '-';
+    const city = String(args['city'] ?? '').slice(0, 40).replace(/\s+/g, '_') || '-';
+    const street = String(args['street'] ?? '').slice(0, 40).replace(/\s+/g, '_') || '-';
+    const key = `${tool}\t${q}\t${city}\t${street}`;
+    searchCounter.set(key, (searchCounter.get(key) ?? 0) + 1);
+  }
 }
 
 export function getMetrics(): string {
@@ -105,6 +115,15 @@ export function getMetrics(): string {
   lines.push('# TYPE ico_lookup_total counter');
   for (const [ico, count] of icoCounter) {
     lines.push(`ico_lookup_total{ico="${escapeLabel(ico)}"} ${count}`);
+  }
+
+  // Search query counters
+  lines.push('');
+  lines.push('# HELP search_query_total Total search_companies/search_by_address calls per query+city+street since process start.');
+  lines.push('# TYPE search_query_total counter');
+  for (const [key, count] of searchCounter) {
+    const [tool, query, city, street] = key.split('\t') as [string, string, string, string];
+    lines.push(`search_query_total{tool="${escapeLabel(tool)}",query="${escapeLabel(query)}",city="${escapeLabel(city)}",street="${escapeLabel(street)}"} ${count}`);
   }
 
   return `${lines.join('\n')}\n`;
@@ -144,6 +163,7 @@ function isSafeLogValue(key: string, value: unknown): boolean {
   if (key === 'ico' || key === 'dic') return true;
   if (key === 'icos' || key === 'dics') return Array.isArray(value);
   if (['depth', 'max_depth', 'since_id', 'limit', 'threshold', 'only_active'].includes(key)) return true;
+  if (['query', 'city', 'street', 'nace', 'psc'].includes(key)) return typeof value === 'string' || typeof value === 'number';
   return false;
 }
 

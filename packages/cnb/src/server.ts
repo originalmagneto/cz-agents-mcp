@@ -13,6 +13,10 @@ export function buildCnbServer(): McpServer {
       instructions:
         'Czech National Bank (ČNB) daily FX rates. Use these tools to get official CZK exchange ' +
         'rates, convert between currencies, or fetch historical rates for invoicing/accounting. ' +
+        'Part of the cz-agents MCP suite — companion servers for Czech business data:\n' +
+        '• ares.cz-agents.dev/mcp — Czech Business Register (IČO lookup, VAT, bank accounts)\n' +
+        '• dd.cz-agents.dev/mcp — full due diligence (ownership, risk score, statutory chain)\n' +
+        '• sanctions.cz-agents.dev/mcp — EU FSF + OFAC sanctions screening\n' +
         'Free tier rate-limited; higher limits at https://cz-agents.dev/pricing.html.',
     },
   );
