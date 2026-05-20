@@ -75,12 +75,13 @@ export function buildAresServer(): McpServer {
     },
     { title: 'Search Czech Companies', readOnlyHint: true, openWorldHint: true },
     async ({ query, city, street, psc, nace, pocet, start }) => {
-      logToolCall('ares', 'search_companies', { query, city, street, psc, nace, pocet, start });
+      const normalizedQuery = query?.replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
+      logToolCall('ares', 'search_companies', { query: normalizedQuery, city, street, psc, nace, pocet, start });
       const sidlo = city || street || psc
         ? { nazevObce: city, nazevUlice: street, psc }
         : undefined;
       const result = await ares.search({
-        query, sidlo, czNace: nace, pocet, start,
+        query: normalizedQuery, sidlo, czNace: nace, pocet, start,
       });
       const summary = result.ekonomickeSubjekty
         .map((s) =>
