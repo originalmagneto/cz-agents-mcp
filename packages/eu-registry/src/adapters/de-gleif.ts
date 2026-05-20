@@ -1,4 +1,6 @@
 import type { Company, CompanySearchResult, CompanyStatus, RegistryAdapter } from '../types.js';
+import { SEARCH_TTL_MS } from '../gleif-cache.js';
+import type { GleifCache } from '../gleif-cache.js';
 
 // GLEIF (Global Legal Entity Identifier Foundation) — free, no auth, ISO 17442.
 // Covers companies with LEIs (mid-large entities). Small firms without LEIs won't appear.
@@ -39,11 +41,18 @@ export class GleifAdapter implements RegistryAdapter {
   constructor(
     private readonly jurisdiction: string,
     private readonly fetchImpl: typeof fetch = globalThis.fetch,
+    private readonly cache?: GleifCache,
   ) {
     this.countryCode = jurisdiction.toLowerCase();
   }
 
   async searchByName(name: string, limit = 10): Promise<CompanySearchResult> {
+    const cacheKey = `search:${this.jurisdiction}:${name}:${limit}`;
+    if (this.cache) {
+      const cached = this.cache.get(cacheKey);
+      if (cached !== null) return cached as CompanySearchResult;
+    }
+
     const url = new URL(`${API_BASE}/lei-records`);
     url.searchParams.set('filter[fulltext]', name);
     url.searchParams.set('filter[entity.jurisdiction]', this.jurisdiction.toUpperCase());
@@ -62,10 +71,12 @@ export class GleifAdapter implements RegistryAdapter {
         .map((r) => mapRecord(r, cc))
         .filter((c): c is Company => c !== null);
 
-      return {
+      const result: CompanySearchResult = {
         companies,
         total_results: payload.meta?.pagination?.total ?? companies.length,
       };
+      this.cache?.set(cacheKey, result, SEARCH_TTL_MS);
+      return result;
     } catch (error) {
       warn('GLEIF search failed', error);
       return { companies: [], total_results: 0 };
@@ -73,6 +84,12 @@ export class GleifAdapter implements RegistryAdapter {
   }
 
   async getById(id: string): Promise<Company | null> {
+    const cacheKey = `lei:${id}`;
+    if (this.cache) {
+      const cached = this.cache.get(cacheKey);
+      if (cached !== null) return cached as Company;
+    }
+
     const url = new URL(`${API_BASE}/lei-records/${encodeURIComponent(id)}`);
 
     try {
@@ -84,7 +101,10 @@ export class GleifAdapter implements RegistryAdapter {
       }
 
       const payload = (await response.json()) as { data?: GleifRecord };
-      return payload.data ? mapRecord(payload.data, this.countryCode) : null;
+      const company = payload.data ? mapRecord(payload.data, this.countryCode) : null;
+      // Don't cache null — company not found yet may be added later.
+      if (company !== null) this.cache?.set(cacheKey, company);
+      return company;
     } catch (error) {
       warn('GLEIF lookup failed', error);
       return null;
@@ -94,8 +114,8 @@ export class GleifAdapter implements RegistryAdapter {
 
 /** Backward-compat alias for DE. */
 export class DeGleifAdapter extends GleifAdapter {
-  constructor(fetchImpl: typeof fetch = globalThis.fetch) {
-    super('DE', fetchImpl);
+  constructor(fetchImpl: typeof fetch = globalThis.fetch, cache?: GleifCache) {
+    super('DE', fetchImpl, cache);
   }
 }
 

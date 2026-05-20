@@ -6,6 +6,7 @@ import { SkOrsrAdapter } from './adapters/sk-orsr.js';
 import { PlKrsAdapter } from './adapters/pl-krs.js';
 import { FrSireneAdapter } from './adapters/fr-sirene.js';
 import { GleifAdapter, DeGleifAdapter } from './adapters/de-gleif.js';
+import { GleifCache } from './gleif-cache.js';
 import { getTierFromEnv, isCountryEnabled, type Tier } from './tier.js';
 import type { Company, RegistryAdapter } from './types.js';
 
@@ -30,12 +31,13 @@ export function buildEuRegistryServer(options: EuRegistryServerOptions = {}): Mc
     },
   );
 
+  const gleifCache = buildGleifCache();
   const adapters = options.adapters ?? {
     gb: new UkCompaniesHouseAdapter(),
     sk: new SkOrsrAdapter(),
     pl: new PlKrsAdapter(),
-    nl: new GleifAdapter('NL'),
-    de: new DeGleifAdapter(),
+    nl: new GleifAdapter('NL', globalThis.fetch, gleifCache),
+    de: new DeGleifAdapter(globalThis.fetch, gleifCache),
     fr: new FrSireneAdapter(),
   };
   const tier = options.tier ?? getTierFromEnv();
@@ -114,4 +116,13 @@ async function getCompany(
   const adapter = adapters[country];
   if (!adapter) return null;
   return adapter.getById(id);
+}
+
+function buildGleifCache(): GleifCache {
+  const dbPath = process.env['GLEIF_CACHE_PATH'];
+  const ttlDays = Number(process.env['GLEIF_CACHE_TTL_DAYS'] ?? 7);
+  const ttlMs = (Number.isFinite(ttlDays) && ttlDays > 0 ? ttlDays : 7) * 24 * 3600 * 1000;
+  const cache = new GleifCache(dbPath, ttlMs);
+  cache.prune();
+  return cache;
 }
