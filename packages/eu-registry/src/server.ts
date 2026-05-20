@@ -5,7 +5,6 @@ import { UkCompaniesHouseAdapter } from './adapters/uk-companies-house.js';
 import { SkOrsrAdapter } from './adapters/sk-orsr.js';
 import { PlKrsAdapter } from './adapters/pl-krs.js';
 import { FrSireneAdapter } from './adapters/fr-sirene.js';
-import { NlKvkAdapter } from './adapters/nl-kvk.js';
 import { DeGleifAdapter } from './adapters/de-gleif.js';
 import { getTierFromEnv, isCountryEnabled, type Tier } from './tier.js';
 import type { Company, RegistryAdapter } from './types.js';
@@ -35,7 +34,6 @@ export function buildEuRegistryServer(options: EuRegistryServerOptions = {}): Mc
     gb: new UkCompaniesHouseAdapter(),
     sk: new SkOrsrAdapter(),
     pl: new PlKrsAdapter(),
-    nl: new NlKvkAdapter(),
     de: new DeGleifAdapter(),
     fr: new FrSireneAdapter(),
   };
@@ -43,7 +41,7 @@ export function buildEuRegistryServer(options: EuRegistryServerOptions = {}): Mc
 
   server.tool(
     'search_company',
-    'Search non-Czech business registries by company name. Free tier: GB (Companies House), SK (RPO), PL (KRS), NL (KvK), DE (GLEIF/LEI). Compliance tier: FR (SIRENE).',
+    'Search non-Czech business registries by company name. Free tier: GB (Companies House), SK (RPO), PL (KRS), DE (GLEIF/LEI). Compliance tier: FR (SIRENE).',
     {
       name: z.string().min(1).describe('Company name or partial company name.'),
       country: z.string().length(2).describe('ISO 3166-1 alpha-2 country code, e.g. "gb".').optional(),
@@ -74,7 +72,7 @@ export function buildEuRegistryServer(options: EuRegistryServerOptions = {}): Mc
 
   server.tool(
     'get_company',
-    'Get a non-Czech company by national ID and country code. Supported: gb (CRN), sk (IČO), pl (KRS number), nl (KvK number), de (LEI), fr (SIREN).',
+    'Get a non-Czech company by national ID and country code. Supported: gb (CRN), sk (IČO), pl (KRS number), de (LEI), fr (SIREN).',
     {
       id: z.string().min(1).describe('National company ID, e.g. UK Companies House CRN "14356670".'),
       country: z.string().length(2).describe('ISO 3166-1 alpha-2 country code, e.g. "gb".'),

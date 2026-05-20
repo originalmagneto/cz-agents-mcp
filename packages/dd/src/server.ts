@@ -7,6 +7,7 @@ import { detectNomineeDirector } from './patterns/nominee-director.js';
 import { buildTimeline } from './patterns/risk-timeline.js';
 import { detectPhoenix } from './patterns/phoenix.js';
 import { detectAddressCrowding } from './patterns/address-crowding.js';
+import { lookupGleifParent } from './gleif-lookup.js';
 import type { DdClients } from './clients.js';
 
 /**
@@ -208,6 +209,37 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
         totalCountAtAddress: searchResult.pocetCelkem,
       });
       return wrap(JSON.stringify(report, null, 2));
+    },
+  );
+
+  server.tool(
+    'get_eu_parent',
+    'Find the EU/international parent company for a Czech IČO. Looks up the company name in ARES, then searches GLEIF (Global LEI Foundation) for a matching LEI-registered entity. Returns LEI, name, country, and confidence level (HIGH/MEDIUM/LOW). Note: GLEIF covers mid/large international firms; SMEs without an LEI will not be found. Pro Compliance tier or higher.',
+    { ico: z.string().describe('Czech IČO — 7 or 8 digits.') },
+    { title: 'Get EU Parent Company (ARES→GLEIF)', readOnlyHint: true, openWorldHint: true },
+    async ({ ico }) => {
+      logToolCall('dd', 'get_eu_parent', { ico });
+      const gate = requireTier(tier, 'compliance', 'get_eu_parent');
+      if (gate) return gate;
+      const clean = validateIcoInput(ico);
+      trackIco(clean);
+
+      const subject = await clients.ares.getByIco(clean);
+      if (!subject) {
+        return wrap(JSON.stringify({ error: 'ico_not_found', ico: clean }));
+      }
+
+      const companyName = subject.obchodniJmeno ?? '';
+      const match = await lookupGleifParent(companyName);
+
+      return wrap(JSON.stringify({
+        ico: clean,
+        czech_name: companyName,
+        eu_parent: match ?? null,
+        ...(match == null && {
+          note: 'No GLEIF-registered entity found. GLEIF coverage is limited to companies with a Legal Entity Identifier (LEI) — typically mid/large firms active in financial markets.',
+        }),
+      }, null, 2));
     },
   );
 

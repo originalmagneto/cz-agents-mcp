@@ -4,7 +4,6 @@ export const COUNTRY_TIERS: Record<string, Tier> = {
   gb: 'free',
   sk: 'free',
   pl: 'free',
-  nl: 'free',
   de: 'free',
   fr: 'compliance',
 };
