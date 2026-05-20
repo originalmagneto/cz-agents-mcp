@@ -191,6 +191,30 @@ services:
       - default
       - apache
 
+  eu-registry:
+    build:
+      context: .
+      dockerfile: packages/eu-registry/Dockerfile
+    image: cz-agents-eu-registry:latest
+    container_name: cz-agents-eu-registry
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3039:3030"
+    environment:
+      - PORT=3030
+      - NODE_ENV=production
+      - RATE_LIMIT_MAX=600
+      - CH_API_KEY=${CH_API_KEY:-}
+      - EU_REGISTRY_TIER=${EU_REGISTRY_TIER:-free}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3030/v1/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    networks:
+      - default
+      - apache
+
 networks:
   default:
   apache:
