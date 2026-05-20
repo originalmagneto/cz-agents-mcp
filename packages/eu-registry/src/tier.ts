@@ -5,8 +5,8 @@ export const COUNTRY_TIERS: Record<string, Tier> = {
   sk: 'free',
   pl: 'free',
   nl: 'free',
+  de: 'free',
   fr: 'compliance',
-  de: 'compliance',
 };
 
 export function isCountryEnabled(country: string, tier: Tier): boolean {
