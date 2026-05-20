@@ -1,6 +1,6 @@
 {
   "name": "@czagents/eu-registry",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP server for EU business registries — GB (Companies House), SK (ORSR), PL (KRS), NL (GLEIF/LEI), DE (GLEIF/LEI), FR (SIRENE)",
   "type": "module",
   "main": "./dist/index.js",
