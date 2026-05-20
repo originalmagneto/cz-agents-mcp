@@ -1,7 +1,7 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
   "name": "dev.cz-agents/eu-registry",
-  "description": "EU business registry lookup — company search and detail across 6 countries via free public APIs: GB (Companies House), SK (ORSR/RPO), PL (KRS), NL (GLEIF/LEI), DE (GLEIF/LEI), FR (SIRENE). Useful for KYC/AML on non-Czech entities, EU parent company identification, and cross-border due diligence.",
+  "description": "EU company lookup — GB, SK, PL, NL, DE, FR via Companies House, GLEIF/LEI and SIRENE.",
   "status": "active",
   "repository": {
     "url": "https://github.com/martinhavel/cz-agents-mcp",
