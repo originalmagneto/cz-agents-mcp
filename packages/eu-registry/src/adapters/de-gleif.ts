@@ -1,8 +1,8 @@
 import type { Company, CompanySearchResult, CompanyStatus, RegistryAdapter } from '../types.js';
 
 // GLEIF (Global Legal Entity Identifier Foundation) — free, no auth, ISO 17442.
-// Covers DE companies with LEIs (mid-large entities). Small GmbHs without LEIs
-// won't appear. Rate limit: 60 req/min.
+// Covers companies with LEIs (mid-large entities). Small firms without LEIs won't appear.
+// Rate limit: 60 req/min. Supports any jurisdiction via filter[entity.jurisdiction].
 const API_BASE = 'https://api.gleif.org/api/v1';
 const REQUEST_TIMEOUT_MS = 10_000;
 
@@ -32,13 +32,21 @@ interface GleifResponse {
   meta?: { pagination?: { total?: number } };
 }
 
-export class DeGleifAdapter implements RegistryAdapter {
-  constructor(private readonly fetchImpl: typeof fetch = globalThis.fetch) {}
+/** Generic GLEIF adapter — pass an ISO 3166-1 alpha-2 jurisdiction (e.g. 'DE', 'NL'). */
+export class GleifAdapter implements RegistryAdapter {
+  private readonly countryCode: string;
+
+  constructor(
+    private readonly jurisdiction: string,
+    private readonly fetchImpl: typeof fetch = globalThis.fetch,
+  ) {
+    this.countryCode = jurisdiction.toLowerCase();
+  }
 
   async searchByName(name: string, limit = 10): Promise<CompanySearchResult> {
     const url = new URL(`${API_BASE}/lei-records`);
     url.searchParams.set('filter[fulltext]', name);
-    url.searchParams.set('filter[entity.jurisdiction]', 'DE');
+    url.searchParams.set('filter[entity.jurisdiction]', this.jurisdiction.toUpperCase());
     url.searchParams.set('page[size]', String(limit));
 
     try {
@@ -49,8 +57,9 @@ export class DeGleifAdapter implements RegistryAdapter {
       }
 
       const payload = (await response.json()) as GleifResponse;
+      const cc = this.countryCode;
       const companies = (payload.data ?? [])
-        .map(mapRecord)
+        .map((r) => mapRecord(r, cc))
         .filter((c): c is Company => c !== null);
 
       return {
@@ -75,7 +84,7 @@ export class DeGleifAdapter implements RegistryAdapter {
       }
 
       const payload = (await response.json()) as { data?: GleifRecord };
-      return payload.data ? mapRecord(payload.data) : null;
+      return payload.data ? mapRecord(payload.data, this.countryCode) : null;
     } catch (error) {
       warn('GLEIF lookup failed', error);
       return null;
@@ -83,7 +92,14 @@ export class DeGleifAdapter implements RegistryAdapter {
   }
 }
 
-function mapRecord(record: GleifRecord): Company | null {
+/** Backward-compat alias for DE. */
+export class DeGleifAdapter extends GleifAdapter {
+  constructor(fetchImpl: typeof fetch = globalThis.fetch) {
+    super('DE', fetchImpl);
+  }
+}
+
+function mapRecord(record: GleifRecord, countryCode: string): Company | null {
   const lei = record.id;
   const entity = record.attributes?.entity;
   const name = entity?.legalName?.name;
@@ -91,7 +107,7 @@ function mapRecord(record: GleifRecord): Company | null {
 
   return {
     id: lei,
-    country: 'de',
+    country: countryCode,
     name,
     status: mapStatus(entity?.status),
     address: formatAddress(entity?.legalAddress),

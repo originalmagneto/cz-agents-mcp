@@ -1,5 +1,17 @@
 const GLEIF_API = 'https://api.gleif.org/api/v1';
 
+export interface GleifFullRecord {
+  lei: string;
+  name: string;
+  status: 'active' | 'dissolved' | 'unknown';
+  country: string;
+  jurisdiction: string;
+  registered_as?: string;
+  address?: string;
+  created_on?: string;
+  source_url: string;
+}
+
 export interface GleifMatch {
   lei: string;
   name: string;
@@ -35,6 +47,55 @@ function computeConfidence(aresName: string, gleifName: string): { confidence: '
   if (score >= 0.66) return { confidence: 'MEDIUM', score };
   if (score >= 0.33) return { confidence: 'LOW', score };
   return { confidence: 'LOW', score };
+}
+
+export async function getByLei(lei: string): Promise<GleifFullRecord | null> {
+  try {
+    const url = new URL(`${GLEIF_API}/lei-records/${encodeURIComponent(lei)}`);
+    const res = await fetch(url.toString(), {
+      headers: { Accept: 'application/vnd.api+json' },
+    });
+    if (!res.ok) return null;
+
+    const json = await res.json() as { data?: Record<string, unknown> };
+    const record = json.data;
+    if (!record) return null;
+
+    const attrs = record.attributes as Record<string, unknown> | undefined;
+    const entity = attrs?.entity as Record<string, unknown> | undefined;
+    const name = (entity?.legalName as Record<string, unknown> | undefined)?.name as string ?? '';
+    const jurisdiction = (entity?.jurisdiction as string) ?? '';
+    if (!name) return null;
+
+    return {
+      lei: record.id as string,
+      name,
+      status: mapGleifStatus(entity?.status as string | undefined),
+      country: jurisdiction.toLowerCase().slice(0, 2),
+      jurisdiction,
+      registered_as: entity?.registeredAs as string | undefined,
+      address: formatGleifAddress(entity?.legalAddress as Record<string, unknown> | undefined),
+      created_on: (entity?.creationDate as string | undefined)?.slice(0, 10),
+      source_url: `https://search.gleif.org/#/record/${record.id}`,
+    };
+  } catch {
+    return null;
+  }
+}
+
+function mapGleifStatus(status: string | undefined): 'active' | 'dissolved' | 'unknown' {
+  const s = status?.toUpperCase();
+  if (s === 'ACTIVE') return 'active';
+  if (s === 'INACTIVE') return 'dissolved';
+  return 'unknown';
+}
+
+function formatGleifAddress(addr: Record<string, unknown> | undefined): string | undefined {
+  if (!addr) return undefined;
+  const lines = (addr.addressLines as string[] | undefined) ?? [];
+  const parts = [...lines, addr.postalCode as string | undefined, addr.city as string | undefined]
+    .filter((p): p is string => Boolean(p));
+  return parts.length > 0 ? parts.join(', ') : undefined;
 }
 
 export async function lookupGleifParent(companyName: string): Promise<GleifMatch | null> {

@@ -7,7 +7,7 @@ import { detectNomineeDirector } from './patterns/nominee-director.js';
 import { buildTimeline } from './patterns/risk-timeline.js';
 import { detectPhoenix } from './patterns/phoenix.js';
 import { detectAddressCrowding } from './patterns/address-crowding.js';
-import { lookupGleifParent } from './gleif-lookup.js';
+import { lookupGleifParent, getByLei } from './gleif-lookup.js';
 import type { DdClients } from './clients.js';
 
 /**
@@ -209,6 +209,72 @@ export function buildDdServer(clients: DdClients, tier: DdTier = 'free'): McpSer
         totalCountAtAddress: searchResult.pocetCelkem,
       });
       return wrap(JSON.stringify(report, null, 2));
+    },
+  );
+
+  server.tool(
+    'get_eu_dd_report',
+    'EU Due-Diligence report for an international company. Input: 20-char LEI code, or company name + optional country. Returns GLEIF entity data (status, address, registration number) plus sanctions screening against EU/OFAC lists. Coverage notes per country included. Note: GLEIF covers mid/large firms with LEI — SMEs may not be found. Pro Compliance tier or higher.',
+    {
+      identifier: z.string().min(1).describe('20-char LEI code (e.g. "W38RGI023J3WT1HWRP32") or company name.'),
+      country: z.string().length(2).optional().describe('ISO 3166-1 alpha-2 country code — helps narrow name search, not needed for LEI lookup.'),
+    },
+    { title: 'EU Due-Diligence Report (GLEIF + Sanctions)', readOnlyHint: true, openWorldHint: true },
+    async ({ identifier, country }) => {
+      logToolCall('dd', 'get_eu_dd_report', { identifier, country });
+      const gate = requireTier(tier, 'compliance', 'get_eu_dd_report');
+      if (gate) return gate;
+
+      const isLei = /^[A-Z0-9]{18}[0-9]{2}$/i.test(identifier);
+
+      let record = null;
+      if (isLei) {
+        record = await getByLei(identifier.toUpperCase());
+      } else {
+        const searchTerm = country ? `${identifier} ${country.toUpperCase()}` : identifier;
+        const match = await lookupGleifParent(searchTerm);
+        if (match) record = await getByLei(match.lei);
+      }
+
+      if (!record) {
+        return wrap(JSON.stringify({
+          error: 'not_found',
+          identifier,
+          message: 'No GLEIF-registered entity found.',
+          coverage_note: 'GLEIF covers companies with a Legal Entity Identifier (LEI) — typically mid/large firms active in financial markets. SMEs are often not registered.',
+        }, null, 2));
+      }
+
+      const sanctionsMatches = clients.sanctions
+        ? clients.sanctions.searchByName(record.name, { typeFilter: 'entity', threshold: 0.8 })
+        : [];
+
+      const riskIndicators: string[] = [];
+      if (record.status === 'dissolved') riskIndicators.push('ENTITY_DISSOLVED');
+      if (sanctionsMatches.length > 0) riskIndicators.push(`SANCTIONS_MATCH(${sanctionsMatches.length})`);
+
+      const coverageNotes: string[] = [
+        'GLEIF: status, address, registration number. No insolvency, VAT, or UBO data.',
+      ];
+      if (record.country === 'de') coverageNotes.push('DE: Full Handelsregister (statutory bodies, filings) not integrated.');
+      if (record.country === 'nl') coverageNotes.push('NL: Full KvK data (filings, directors) requires paid API.');
+      if (record.country === 'pl') coverageNotes.push('PL: KRS full record available via get_company(id, "pl").');
+
+      return wrap(JSON.stringify({
+        identifier,
+        company: record,
+        sanctions: {
+          checked: Boolean(clients.sanctions),
+          matches: sanctionsMatches.slice(0, 5),
+          source: clients.sanctions ? 'eu_fsf+ofac' : 'unavailable',
+        },
+        risk_indicators: riskIndicators,
+        coverage: {
+          registry_data: 'gleif_only',
+          sanctions: clients.sanctions ? 'eu_fsf+ofac' : 'unavailable',
+          notes: coverageNotes,
+        },
+      }, null, 2));
     },
   );
 

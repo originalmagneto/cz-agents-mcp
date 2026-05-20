@@ -1,10 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { lookupGleifParent } from '../gleif-lookup.js';
+import { lookupGleifParent, getByLei } from '../gleif-lookup.js';
 
 type FetchArgs = Parameters<typeof fetch>;
 
 function gleifResponse(records: unknown[], status = 200): Response {
   return new Response(JSON.stringify({ data: records }), {
+    status,
+    headers: { 'Content-Type': 'application/vnd.api+json' },
+  });
+}
+
+function gleifSingleResponse(record: unknown, status = 200): Response {
+  return new Response(JSON.stringify({ data: record }), {
     status,
     headers: { 'Content-Type': 'application/vnd.api+json' },
   });
@@ -84,5 +91,57 @@ describe('lookupGleifParent', () => {
     // "Xyzu" has zero word overlap with "Volkswagen"
     const result = await lookupGleifParent('Xyzu a.s.');
     expect(result).toBeNull();
+  });
+});
+
+describe('getByLei', () => {
+  let fetchSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    fetchSpy = vi.spyOn(globalThis, 'fetch');
+  });
+
+  afterEach(() => {
+    fetchSpy.mockRestore();
+  });
+
+  it('fetches /lei-records/{lei} and maps to GleifFullRecord', async () => {
+    let capturedUrl = '';
+    fetchSpy.mockImplementation((async (...args: Parameters<typeof fetch>) => {
+      capturedUrl = args[0] instanceof URL ? args[0].toString() : String(args[0]);
+      return gleifSingleResponse({
+        id: 'W38RGI023J3WT1HWRP32',
+        attributes: {
+          entity: {
+            legalName: { name: 'Siemens AG' },
+            status: 'ACTIVE',
+            jurisdiction: 'DE',
+            registeredAs: 'HRB 6684',
+            creationDate: '1996-08-27T22:00:00Z',
+            legalAddress: { addressLines: ['Werner-von-Siemens-Str. 1'], city: 'München', postalCode: '80333' },
+          },
+        },
+      });
+    }) as typeof fetch);
+
+    const record = await getByLei('W38RGI023J3WT1HWRP32');
+
+    expect(capturedUrl).toContain('/lei-records/W38RGI023J3WT1HWRP32');
+    expect(record?.lei).toBe('W38RGI023J3WT1HWRP32');
+    expect(record?.name).toBe('Siemens AG');
+    expect(record?.status).toBe('active');
+    expect(record?.country).toBe('de');
+    expect(record?.registered_as).toBe('HRB 6684');
+    expect(record?.created_on).toBe('1996-08-27');
+  });
+
+  it('returns null on non-200 response', async () => {
+    fetchSpy.mockResolvedValue(gleifSingleResponse({}, 404));
+    await expect(getByLei('BADLEI')).resolves.toBeNull();
+  });
+
+  it('returns null on network error', async () => {
+    fetchSpy.mockRejectedValue(new Error('timeout'));
+    await expect(getByLei('ANYLEI')).resolves.toBeNull();
   });
 });
