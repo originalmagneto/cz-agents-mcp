@@ -29,53 +29,23 @@ describe('PlKrsAdapter', () => {
     vi.restoreAllMocks();
   });
 
-  it('searchByName maps KRS odpisy to companies', async () => {
-    let captured: { url: string; init?: RequestInit } | undefined;
-    handler = (url, init) => {
-      captured = { url, init };
-      return jsonResponse({
-        liczbaOdpisow: 1,
-        odpisy: [
-          {
-            numerKRS: '0000123456',
-            nazwa: 'ACME POLSKA SP. Z O.O.',
-            statusPodmiotu: 'czynny',
-            adres: 'ul. Testowa 1, 00-001 Warszawa',
-          },
-        ],
-      });
-    };
-
+  // The WyszukiwanieKRS search endpoint was retired in the 2024 eKRS migration.
+  // searchByName always returns empty without making a network call.
+  it('searchByName returns empty without making a network call', async () => {
     const adapter = new PlKrsAdapter();
     const result = await adapter.searchByName('ACME', 5);
 
-    expect(captured?.url).toBe(
-      'https://api-krs.ms.gov.pl/api/krs/WyszukiwanieKRS/podmiot?nazwaForPodmiotu=ACME&rejestry=P%2CS&strona=1&rekordyNaStronie=5',
-    );
-    expect(captured?.init?.signal).toBeInstanceOf(AbortSignal);
-    expect(result).toEqual({
-      total_results: 1,
-      companies: [
-        {
-          id: '0000123456',
-          country: 'pl',
-          name: 'ACME POLSKA SP. Z O.O.',
-          status: 'active',
-          address: 'ul. Testowa 1, 00-001 Warszawa',
-          registered_on: undefined,
-          source_url: 'https://ekrs.ms.gov.pl/web/wyszukiwarka-krs/strona-glowna/wyszukaj?numer=0000123456',
-        },
-      ],
-    });
+    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(result).toEqual({ companies: [], total_results: 0 });
   });
 
-  it('getById returns company and parses registered_on from nested path', async () => {
-    handler = () =>
-      jsonResponse({
+  it('getById calls correct OdpisAktualny URL and maps company', async () => {
+    let capturedUrl: string | undefined;
+    handler = (url) => {
+      capturedUrl = url;
+      return jsonResponse({
         odpis: {
-          naglowekA: {
-            numerKRS: '0000123456',
-          },
+          naglowekA: { numerKRS: '0000123456' },
           dane: {
             dzial1: {
               danePodmiotu: {
@@ -95,43 +65,50 @@ describe('PlKrsAdapter', () => {
           },
         },
       });
+    };
 
     const adapter = new PlKrsAdapter();
+    const company = await adapter.getById('0000123456');
 
-    await expect(adapter.getById('0000123456')).resolves.toEqual({
+    expect(capturedUrl).toContain(
+      'https://api-krs.ms.gov.pl/api/krs/OdpisAktualny/0000123456',
+    );
+    expect(capturedUrl).not.toContain('/podmiot/');
+    expect(company).toEqual({
       id: '0000123456',
       country: 'pl',
       name: 'ACME POLSKA SP. Z O.O.',
       status: 'active',
       address: 'Testowa, 1, 00-001, Warszawa',
       registered_on: '2021-03-04',
-      source_url: 'https://ekrs.ms.gov.pl/web/wyszukiwarka-krs/strona-glowna/wyszukaj?numer=0000123456',
+      source_url:
+        'https://ekrs.ms.gov.pl/web/wyszukiwarka-krs/strona-glowna/wyszukaj?numer=0000123456',
     });
   });
 
-  it('non-200 from searchByName returns empty results gracefully', async () => {
-    handler = () => jsonResponse({}, 500);
+  it('getById returns null when both rejestr=P and rejestr=S return 404', async () => {
+    handler = () => jsonResponse({}, 404);
     const adapter = new PlKrsAdapter();
 
-    await expect(adapter.searchByName('ACME')).resolves.toEqual({ companies: [], total_results: 0 });
+    await expect(adapter.getById('9999999999')).resolves.toBeNull();
   });
 
-  it('maps statusPodmiotu wykreślony to dissolved', async () => {
+  it('maps statusPodmiotu wykreślony to dissolved in getById', async () => {
     handler = () =>
       jsonResponse({
-        liczbaOdpisow: 1,
-        odpisy: [
-          {
-            numerKRS: '0000654321',
-            nazwa: 'OLD POLSKA SP. Z O.O.',
-            statusPodmiotu: 'wykreślony',
+        odpis: {
+          naglowekA: { numerKRS: '0000654321' },
+          dane: {
+            dzial1: {
+              danePodmiotu: { nazwa: 'OLD POLSKA SP. Z O.O.', statusPodmiotu: 'wykreślony' },
+            },
           },
-        ],
+        },
       });
 
     const adapter = new PlKrsAdapter();
-    const result = await adapter.searchByName('OLD');
+    const company = await adapter.getById('0000654321');
 
-    expect(result.companies[0]?.status).toBe('dissolved');
+    expect(company?.status).toBe('dissolved');
   });
 });
