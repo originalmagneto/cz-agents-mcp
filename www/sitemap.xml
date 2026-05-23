@@ -20,6 +20,14 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://cz-agents.dev/"/>
   </url>
   <url>
+    <loc>https://cz-agents.dev/cs/overeni-firmy/</loc>
+    <lastmod>2026-05-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="cs" href="https://cz-agents.dev/cs/overeni-firmy/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://cz-agents.dev/cs/overeni-firmy/"/>
+  </url>
+  <url>
     <loc>https://cz-agents.dev/privacy</loc>
     <lastmod>2026-04-27</lastmod>
     <changefreq>yearly</changefreq>

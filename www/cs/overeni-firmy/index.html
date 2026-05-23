@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ověření firmy podle IČO — due diligence online | cz-agents</title>
+  <meta name="description" content="Prověřte firmu nebo dodavatele podle IČO zdarma: ARES, sankce EU+OFAC, insolvence ISIR, risk skóre. Výsledek za sekundy, bez registrace.">
+  <meta name="keywords" content="ověření firmy, ověření firmy ičo, prověření dodavatele, due diligence online, kontrola firmy ičo, ověření firmy zdarma, ares ičo, prověření firmy, due diligence česko">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://cz-agents.dev/cs/overeni-firmy/">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png">
+  <link rel="icon" type="image/svg+xml" href="/logo.svg">
+  <link rel="alternate" hreflang="cs" href="https://cz-agents.dev/cs/overeni-firmy/">
+  <link rel="alternate" hreflang="x-default" href="https://cz-agents.dev/cs/overeni-firmy/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Ověření firmy podle IČO — due diligence online | cz-agents">
+  <meta property="og:description" content="Prověřte firmu nebo dodavatele podle IČO zdarma: ARES, sankce EU+OFAC, insolvence ISIR, risk skóre. Výsledek za sekundy, bez registrace.">
+  <meta property="og:url" content="https://cz-agents.dev/cs/overeni-firmy/">
+  <meta property="og:image" content="https://cz-agents.dev/logo.png">
+  <meta property="og:site_name" content="cz-agents">
+  <meta property="og:locale" content="cs_CZ">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "name": "Ověření firmy podle IČO — due diligence online",
+    "description": "Prověřte firmu nebo dodavatele podle IČO: ARES, sankce EU+OFAC, insolvence ISIR, risk skóre.",
+    "url": "https://cz-agents.dev/cs/overeni-firmy/",
+    "inLanguage": "cs",
+    "isPartOf": { "@type": "WebSite", "url": "https://cz-agents.dev/" },
+    "mainEntity": {
+      "@type": "SoftwareApplication",
+      "name": "app.cz-agents.dev",
+      "applicationCategory": "BusinessApplication",
+      "url": "https://app.cz-agents.dev",
+      "description": "Webová aplikace pro due diligence a ověření firem. KYC/AML kontrola českých firem — ARES, sankce, insolvence, risk skóre.",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CZK", "description": "Základní report zdarma" }
+    }
+  }
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0e14;
+      --bg-elev: #131820;
+      --fg: #e6e9ef;
+      --fg-dim: #8a93a6;
+      --fg-ghost: #4a5365;
+      --accent: #ff6b35;
+      --accent-dim: #c94a1a;
+      --border: #1f2630;
+      --green: #6ece58;
+      --yellow: #e4d050;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    nav.topnav {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 48px;
+      flex-wrap: wrap;
+    }
+    .nav-brand {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--fg);
+      text-decoration: none;
+      margin-right: 16px;
+    }
+    .nav-brand span { color: var(--accent); }
+    .nav-links {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .nav-links a {
+      color: var(--fg-dim);
+      text-decoration: none;
+      font-size: 13px;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+    .nav-links a:hover { color: var(--fg); }
+    .nav-links .sep { color: var(--fg-ghost); font-size: 13px; }
+    .nav-links a.cta { color: var(--accent); }
+
+    /* Hero */
+    .hero {
+      text-align: center;
+      padding: 24px 0 40px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 48px;
+    }
+    .hero-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--fg-ghost);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .hero h1 {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      color: var(--fg-dim);
+      font-size: 17px;
+      max-width: 560px;
+      margin: 0 auto 32px;
+    }
+
+    /* IČO form */
+    .ico-form {
+      display: flex;
+      gap: 8px;
+      max-width: 420px;
+      margin: 0 auto 16px;
+    }
+    .ico-input {
+      flex: 1;
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 12px 16px;
+      color: var(--fg);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .ico-input::placeholder { color: var(--fg-ghost); }
+    .ico-input:focus { border-color: var(--accent); }
+    .ico-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 20px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .ico-btn:hover { background: var(--accent-dim); transform: translateY(-1px); }
+    .form-hint {
+      font-size: 13px;
+      color: var(--fg-ghost);
+      text-align: center;
+    }
+
+    /* Checks grid */
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      margin-top: 48px;
+    }
+    .checks {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .check-card {
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+    }
+    .check-card .icon {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .check-card strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .check-card p {
+      font-size: 13px;
+      color: var(--fg-dim);
+    }
+
+    /* Steps */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 8px;
+    }
+    .step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      margin-top: 2px;
+    }
+    .step p { font-size: 15px; color: var(--fg-dim); }
+    .step strong { color: var(--fg); }
+
+    /* Developer aside */
+    .dev-aside {
+      margin-top: 56px;
+      padding: 20px 24px;
+      background: var(--bg-elev);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      color: var(--fg-dim);
+    }
+    .dev-aside strong { color: var(--fg); }
+    .dev-aside a { color: var(--accent); text-decoration: none; }
+    .dev-aside a:hover { text-decoration: underline; }
+
+    /* CTA repeat */
+    .cta-repeat {
+      text-align: center;
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+    }
+    .cta-repeat p { color: var(--fg-dim); margin-bottom: 16px; }
+    .btn-primary {
+      display: inline-block;
+      background: var(--accent);
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 28px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 15px;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-primary:hover { background: var(--accent-dim); transform: translateY(-1px); }
+
+    footer {
+      margin-top: 56px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--fg-ghost);
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    footer a { color: var(--fg-ghost); text-decoration: none; }
+    footer a:hover { color: var(--fg-dim); }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <nav class="topnav" aria-label="Navigace">
+    <a href="/cs/" class="nav-brand">cz-agents<span>.dev</span></a>
+    <div class="nav-links">
+      <a href="https://app.cz-agents.dev" target="_blank" rel="noopener" class="cta">Webová app →</a>
+      <span class="sep">·</span>
+      <a href="/cs/docs/">Docs</a>
+      <span class="sep">·</span>
+      <a href="/cs/pricing.html">Ceník</a>
+      <span class="sep">·</span>
+      <a href="https://github.com/martinhavel/cz-agents-mcp" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <p class="hero-eyebrow">Ověření firmy · Due diligence · KYC/AML</p>
+    <h1>Prověřte firmu nebo dodavatele<br>podle <span>IČO</span></h1>
+    <p>ARES, sankce EU+OFAC, insolvence ISIR, risk skóre — vše na jednom místě.<br>Bez registrace, základní report zdarma.</p>
+
+    <form class="ico-form" onsubmit="submitIco(event)">
+      <input
+        id="ico-input"
+        class="ico-input"
+        type="text"
+        inputmode="numeric"
+        pattern="[0-9]{8}"
+        maxlength="8"
+        placeholder="12345678"
+        autocomplete="off"
+        aria-label="IČO firmy"
+      >
+      <button type="submit" class="ico-btn">Ověřit →</button>
+    </form>
+    <p class="form-hint">Zadejte 8místné IČO · přesměruje na app.cz-agents.dev</p>
+  </section>
+
+  <h2>Co zjistíte</h2>
+  <div class="checks">
+    <div class="check-card">
+      <div class="icon">🏢</div>
+      <strong>Základní údaje (ARES)</strong>
+      <p>Obchodní firma, sídlo, datum vzniku, statutární zástupce, transparentní účty.</p>
+    </div>
+    <div class="check-card">
+      <div class="icon">⚠️</div>
+      <strong>Sankce EU + OFAC</strong>
+      <p>Kontrola firmy i jednatelů vůči EU FSF a US OFAC sankčním listinám (~25 000 záznamů).</p>
+    </div>
+    <div class="check-card">
+      <div class="icon">⚖️</div>
+      <strong>Insolvence (ISIR)</strong>
+      <p>Aktivní insolvenční řízení, věřitelé, stav spisu — přímý přístup do ISIR.</p>
+    </div>
+    <div class="check-card">
+      <div class="icon">🔍</div>
+      <strong>Risk skóre</strong>
+      <p>Agregovaný risk indikátor: nominální jednatelé, phoenix firma, sdílené adresy.</p>
+    </div>
+    <div class="check-card">
+      <div class="icon">🇪🇺</div>
+      <strong>EU mateřská firma</strong>
+      <p>Propojení na EU skupinu přes GLEIF LEI — GB, SK, PL, NL, DE, FR registry.</p>
+    </div>
+    <div class="check-card">
+      <div class="icon">📋</div>
+      <strong>Statutární řetězec</strong>
+      <p>Víceúrovňová struktura vlastnictví a jednatelů, detekce nominálních osob.</p>
+    </div>
+  </div>
+
+  <h2>Jak to funguje</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <p><strong>Zadejte IČO</strong> — 8místné číslo z obchodního rejstříku nebo faktury.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <p><strong>Automatická kontrola</strong> — ARES, sankce EU+OFAC, ISIR, risk indikátory v reálném čase.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <p><strong>Report s vysvětlením</strong> — strojově čitelné i člověkem srozumitelné výsledky, červené vlajky zvýrazněné.</p>
+    </div>
+  </div>
+
+  <div class="cta-repeat">
+    <p>Připraveni ověřit firmu?</p>
+    <a href="https://app.cz-agents.dev" target="_blank" rel="noopener" class="btn-primary">Otevřít webovou aplikaci →</a>
+  </div>
+
+  <div class="dev-aside">
+    <strong>Jste vývojář nebo používáte AI asistenta?</strong><br>
+    Stejná data jsou dostupná jako <a href="/cs/">MCP servery pro Claude, Cursor a další AI agenty</a>
+    nebo přes <a href="/cs/docs/api.html">REST API</a> — open-source, free tier bez registrace.
+  </div>
+
+  <footer>
+    <a href="/cs/">← cz-agents.dev</a>
+    <a href="/cs/pricing.html">Ceník</a>
+    <a href="/cs/docs/">Dokumentace</a>
+    <a href="/privacy">Ochrana dat</a>
+    <a href="/terms">Podmínky</a>
+  </footer>
+
+</div>
+
+<script>
+  function submitIco(e) {
+    e.preventDefault();
+    var ico = document.getElementById('ico-input').value.trim().replace(/\s/g, '');
+    if (!ico) return;
+    window.open('https://app.cz-agents.dev/?ico=' + encodeURIComponent(ico), '_blank');
+  }
+</script>
+</body>
+</html>
