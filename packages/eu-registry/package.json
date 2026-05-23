@@ -1,11 +1,34 @@
 {
   "name": "@czagents/eu-registry",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "MCP server for EU business registries — GB (Companies House), SK (ORSR), PL (KRS), NL (GLEIF/LEI), DE (GLEIF/LEI), FR (SIRENE)",
   "type": "module",
   "main": "./dist/index.js",
   "bin": {
     "cz-agents-eu-registry": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "eu-registry",
+    "eu-business-register",
+    "companies-house",
+    "gleif",
+    "lei",
+    "czech",
+    "claude"
+  ],
+  "license": "MIT",
+  "author": "Martin Havel <martin.havel@gmail.com>",
+  "homepage": "https://cz-agents.dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/martinhavel/cz-agents-mcp.git",
+    "directory": "packages/eu-registry"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json && chmod +x dist/index.js",
@@ -28,9 +51,6 @@
     "vitest": "^4.1.4"
   },
   "mcpName": "dev.cz-agents/eu-registry",
-  "files": [
-    "dist"
-  ],
   "publishConfig": {
     "access": "public"
   }
