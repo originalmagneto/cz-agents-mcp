@@ -12,6 +12,7 @@ services:
       - PORT=3030
       - NODE_ENV=production
       - RATE_LIMIT_MAX=600
+      - SANDBOX_HMAC_SECRET=${SANDBOX_HMAC_SECRET}
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3030/health"]
       interval: 30s

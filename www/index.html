@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>cz-agents — MCP servers for ARES, ISIR, ČNB & EU Business Registry</title>
+  <title>cz-agents — MCP servers for AI agents: Czech ARES, ISIR &amp; due-diligence</title>
   <meta name="description" content="Open-source MCP servers for AI agents: ARES, ISIR, ČNB, sanctions, EU business registries. Free tier included. Also available as no-code web DD app for compliance teams.">
   <meta name="keywords" content="czech mcp server, ares mcp, czech compliance api, due diligence czech ico, mcp czech business data, czech kyc api, czech aml mcp, isir mcp, sanctions screening czech, mcp ares, czech real estate api, czech vat checker">
   <meta name="robots" content="index, follow">
@@ -18,7 +18,7 @@
   <link rel="alternate" hreflang="x-default" href="https://cz-agents.dev/">
 
   <meta property="og:type" content="website">
-  <meta property="og:title" content="cz-agents — MCP servers for ARES, ISIR, ČNB & EU Business Registry">
+  <meta property="og:title" content="cz-agents — MCP servers for AI agents: Czech ARES, ISIR &amp; due-diligence">
   <meta property="og:description" content="Open-source MCP servers for Czech business & government data — ARES, due-diligence (KYC/AML), sanctions, ISIR, real estate. AI agent native access.">
   <meta property="og:url" content="https://cz-agents.dev/">
   <meta property="og:image" content="https://cz-agents.dev/logo.png">
@@ -29,7 +29,7 @@
   <meta property="og:locale:alternate" content="cs_CZ">
 
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="cz-agents — MCP servers for ARES, ISIR, ČNB & EU Business Registry">
+  <meta name="twitter:title" content="cz-agents — MCP servers for AI agents: Czech ARES, ISIR &amp; due-diligence">
   <meta name="twitter:description" content="Open-source MCP servers for AI agents: ARES, ISIR, ČNB, sanctions, EU business registries. Free tier included. Also available as no-code web DD app for compliance teams.">
   <meta name="twitter:image" content="https://cz-agents.dev/logo.png">
 
@@ -405,6 +405,102 @@
       </div>
     </header>
 
+    <section class="sandbox-widget" id="sandbox">
+      <style>
+        .sandbox-widget { margin: 24px 0; padding: 20px; background: var(--bg-card, #111); border: 1px solid var(--border, #333); border-radius: 8px; max-width: 680px; }
+        .sandbox-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+        .sandbox-tab { background: #1a1a1a; border: 1px solid var(--border, #333); color: inherit; padding: 6px 14px; cursor: pointer; border-radius: 4px; font-size: 13px; }
+        .sandbox-tab.active { border-color: var(--accent, #4af); }
+        .sandbox-input-row { display: flex; gap: 8px; }
+        #sandbox-ico { flex: 1; padding: 8px; border: 1px solid var(--border, #333); background: #0a0a0a; color: inherit; border-radius: 4px; font-size: 14px; }
+        #sandbox-btn { padding: 8px 16px; background: var(--accent, #4af); color: #000; border: none; cursor: pointer; border-radius: 4px; font-size: 14px; font-weight: 600; }
+        #sandbox-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        #sandbox-result { max-height: 300px; overflow-y: auto; font-size: 13px; white-space: pre-wrap; word-break: break-all; background: #0a0a0a; border: 1px solid var(--border, #333); border-radius: 4px; padding: 12px; margin-top: 12px; }
+        #sandbox-counter { font-size: 13px; color: var(--fg-dim, #888); margin: 8px 0; }
+        #sandbox-cta a { color: var(--accent, #4af); display: block; margin-top: 12px; font-size: 14px; }
+      </style>
+      <div class="sandbox-tabs">
+        <button class="sandbox-tab active" data-tab="browser">Try it live</button>
+        <button class="sandbox-tab" data-tab="curl">&lt;/&gt; curl</button>
+      </div>
+      <div class="sandbox-panel" data-panel="browser">
+        <div class="sandbox-input-row">
+          <input type="text" id="sandbox-ico" value="60193531" maxlength="8" placeholder="IČO (8 digits)" />
+          <button id="sandbox-btn">Load company data →</button>
+        </div>
+        <div id="sandbox-counter" style="display:none"></div>
+        <pre id="sandbox-result" style="display:none"></pre>
+        <div id="sandbox-cta" style="display:none">
+          <a href="/pricing.html">Get free API key — 30 calls/day →</a>
+        </div>
+      </div>
+      <div class="sandbox-panel" data-panel="curl" style="display:none">
+        <pre>curl https://ares.cz-agents.dev/sandbox/v1/companies/60193531</pre>
+        <p style="font-size:13px; color:var(--fg-dim, #888)">No auth needed. Returns ARES data + <code>_sandbox.token</code> for calls 2–3.</p>
+      </div>
+      <script>
+      (function() {
+        var SANDBOX_URL = 'https://ares.cz-agents.dev/sandbox/v1/companies/';
+        var sandboxToken = null;
+        var callsMade = 0;
+        document.querySelectorAll('.sandbox-tab').forEach(function(tab) {
+          tab.addEventListener('click', function() {
+            document.querySelectorAll('.sandbox-tab').forEach(function(t) { t.classList.remove('active'); });
+            document.querySelectorAll('.sandbox-panel').forEach(function(p) { p.style.display = 'none'; });
+            tab.classList.add('active');
+            document.querySelector('[data-panel="' + tab.dataset.tab + '"]').style.display = '';
+          });
+        });
+        document.getElementById('sandbox-btn').addEventListener('click', async function() {
+          var ico = document.getElementById('sandbox-ico').value.trim();
+          if (!/^[0-9]{7,8}$/.test(ico)) {
+            document.getElementById('sandbox-result').style.display = '';
+            document.getElementById('sandbox-result').textContent = 'Error: IČO must be 7-8 digits.';
+            return;
+          }
+          var btn = document.getElementById('sandbox-btn');
+          btn.disabled = true;
+          btn.textContent = 'Loading…';
+          var headers = {};
+          if (sandboxToken) headers['X-Continue-Token'] = sandboxToken;
+          try {
+            var r = await fetch(SANDBOX_URL + ico, { headers: headers });
+            var json = await r.json();
+            if (r.ok && json._sandbox) {
+              sandboxToken = json._sandbox.token;
+              callsMade++;
+              var remaining = json._sandbox.remaining;
+              var counter = document.getElementById('sandbox-counter');
+              counter.style.display = '';
+              counter.textContent = callsMade + ' / 3 calls used today' + (remaining === 0 ? ' — limit reached' : '');
+              var display = Object.assign({}, json.data, { _sandbox: json._sandbox });
+              document.getElementById('sandbox-result').style.display = '';
+              document.getElementById('sandbox-result').textContent = JSON.stringify(display, null, 2);
+              document.getElementById('sandbox-cta').style.display = '';
+              if (remaining === 0) {
+                btn.textContent = 'Limit reached';
+                btn.disabled = true;
+              } else {
+                btn.disabled = false;
+                btn.textContent = 'Load company data →';
+              }
+            } else {
+              document.getElementById('sandbox-result').style.display = '';
+              document.getElementById('sandbox-result').textContent = JSON.stringify(json, null, 2);
+              btn.disabled = false;
+              btn.textContent = 'Load company data →';
+            }
+          } catch(e) {
+            document.getElementById('sandbox-result').style.display = '';
+            document.getElementById('sandbox-result').textContent = 'Network error: ' + e.message;
+            btn.disabled = false;
+            btn.textContent = 'Load company data →';
+          }
+        });
+      })();
+      </script>
+    </section>
+
     <h2>Available servers</h2>
     <div class="servers">
       <div class="server">
@@ -524,20 +620,20 @@
     <h2 id="rest-api">REST API</h2>
     <p style="color:var(--fg-dim); font-size: 14px;">Same data as MCP, plain GET requests. Free endpoints need no auth — just curl. Paid calls add <code>Authorization: Bearer czat_...</code>. <a class="url" href="/docs/api.html">→ Full REST API reference</a></p>
     <div class="snippet"><button class="copy" type="button" data-copy='# company lookup (free)
-curl https://ares.cz-agents.dev/v1/companies/12345678
+curl https://ares.cz-agents.dev/v1/companies/{ico}
 
 # sanctions screen (free)
-curl "https://sanctions.cz-agents.dev/v1/sanctions/check?ico=12345678"
+curl "https://sanctions.cz-agents.dev/v1/sanctions/check?ico={ico}"
 
 # full DD report (paid)
-curl -H "Authorization: Bearer czat_..." https://dd.cz-agents.dev/v1/dd/12345678'>copy</button><pre class="code"><span class="k"># company lookup (free)</span>
-curl https://ares.cz-agents.dev/v1/companies/<span class="s">12345678</span>
+curl -H "Authorization: Bearer czat_..." https://dd.cz-agents.dev/v1/dd/{ico}'>copy</button><pre class="code"><span class="k"># company lookup (free)</span>
+curl https://ares.cz-agents.dev/v1/companies/<span class="s">{ico}</span>
 
 <span class="k"># sanctions screen (free)</span>
-curl <span class="s">"https://sanctions.cz-agents.dev/v1/sanctions/check?ico=12345678"</span>
+curl <span class="s">"https://sanctions.cz-agents.dev/v1/sanctions/check?ico={ico}"</span>
 
 <span class="k"># full DD report (paid)</span>
-curl -H <span class="s">"Authorization: Bearer czat_..."</span> https://dd.cz-agents.dev/v1/dd/<span class="s">12345678</span></pre></div>
+curl -H <span class="s">"Authorization: Bearer czat_..."</span> https://dd.cz-agents.dev/v1/dd/<span class="s">{ico}</span></pre></div>
     <p style="color:var(--fg-dim); font-size: 13px; margin-top: 6px;">Response envelope: <code>{"data": {...}, "meta": {"fetched_at": "...", "source": "ares"}}</code> — see <a class="url" href="/docs/api.html">all endpoints</a>.</p>
 
     <h2>Data principles</h2>
@@ -612,13 +708,13 @@ curl -H <span class="s">"Authorization: Bearer czat_..."</span> https://dd.cz-ag
 
     <h2>Example</h2>
     <p style="color:var(--fg-ghost); font-size: 12px;">Synthetic data — IČO and details below are fictional, used only to illustrate response shape.</p>
-    <pre class="code">User: <span class="s">Run a due-diligence report on IČO 12345678.</span>
+    <pre class="code">User: <span class="s">Run a due-diligence report on IČO 12345679.</span>
 
-Agent → <span class="k">get_dd_report</span>(ico=<span class="s">"12345678"</span>, depth=<span class="s">"full"</span>)
+Agent → <span class="k">get_dd_report</span>(ico=<span class="s">"12345679"</span>, depth=<span class="s">"full"</span>)
         ↳ ARES + EU/OFAC sanctions + statutory body screen
 
 Acme Imports s.r.o. — Pražská 100, Praha 1, founded 2018.
-VAT-registered (CZ12345678). Statutory: Jan Novák (since 2023-04-12).
+VAT-registered (CZ12345679). Statutory: Jan Novák (since 2023-04-12).
 Sanctions: NO MATCH (0/24,856 records).
 Personal insolvency check on Jan Novák: no match.
 Govt-address check on residence: no match (regular street address).

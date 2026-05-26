@@ -59,6 +59,68 @@ export interface AresVrRecord {
   stavSubjektu?: string;
   datumZapisu?: string;
   zakladniKapital?: unknown;
+  spolecnici?: Array<{
+    spolecnik?: Array<{
+      osoba?: {
+        fyzickaOsoba?: {
+          jmeno?: string;
+          prijmeni?: string;
+          titulPredJmenem?: string;
+          titulZaJmenem?: string;
+          datumNarozeni?: string;
+          adresa?: {
+            kodStatu?: string;
+            nazevStatu?: string;
+            textovaAdresa?: string;
+          };
+        };
+        pravnickaOsoba?: {
+          ico?: string;
+          nazev?: string;
+          obchodniJmeno?: string;
+          adresa?: {
+            kodStatu?: string;
+            nazevStatu?: string;
+            textovaAdresa?: string;
+          };
+        };
+      };
+      podil?: Array<{
+        velikostPodilu?: { hodnota?: string };
+        vklad?: { hodnota?: string };
+      }>;
+      datumZapisu?: string;
+      datumVymazu?: string | null;
+    }>;
+  }>;
+  akcionari?: Array<{
+    clenoveOrganu?: Array<{
+      fyzickaOsoba?: {
+        jmeno?: string;
+        prijmeni?: string;
+        titulPredJmenem?: string;
+        titulZaJmenem?: string;
+        datumNarozeni?: string;
+        adresa?: {
+          kodStatu?: string;
+          nazevStatu?: string;
+          textovaAdresa?: string;
+        };
+      };
+      pravnickaOsoba?: {
+        ico?: string;
+        nazev?: string;
+        obchodniJmeno?: string;
+        adresa?: {
+          kodStatu?: string;
+          nazevStatu?: string;
+          textovaAdresa?: string;
+        };
+      };
+      datumZapisu?: string;
+      datumVymazu?: string | null;
+    }>;
+  }>;
   statutarniOrgany?: Array<{
     nazevOrganu?: string;
     datumZapisu?: string;
@@ -195,7 +257,11 @@ export class AresClient {
         const data = await this.http.getJson<{ zaznamy: AresVrRecord[] }>(
           `${ARES_VR_BASE}/${ico}`,
         );
-        return data.zaznamy?.[0] ?? null;
+        // Prefer AKTIVNI record — companies with historical entries (e.g. former
+        // branch offices, Generali Česká pojišťovna IČO 45272956) have a HISTORICKY
+        // record at index 0 with empty statutarniOrgany; real data is in AKTIVNI.
+        const zaznamy = data.zaznamy ?? [];
+        return zaznamy.find((r) => r.stavSubjektu === 'AKTIVNI') ?? zaznamy[0] ?? null;
       } catch (e: any) {
         if (e?.status === 404) return null;
         throw e;

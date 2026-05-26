@@ -1,6 +1,6 @@
 {
   "name": "@czagents/ares",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "MCP server for ARES (Czech Business Register) — company lookup by IČO, full-text search, history",
   "type": "module",
   "main": "./dist/index.js",

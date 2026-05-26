@@ -23,6 +23,7 @@ import {
   clearRequestIp,
 } from '@czagents/shared';
 import { AresClient } from './client.js';
+import { checkSandboxLimit, getSandboxIp, getSandboxMeta } from './sandbox.js';
 import { buildAresServer } from './server.js';
 
 const PORT = Number(process.env.PORT ?? 3030);
@@ -97,6 +98,19 @@ async function main() {
       res.end(getMetrics());
       return;
     }
+
+    // OPTIONS preflight for sandbox
+    if (req.method === 'OPTIONS' && req.url?.startsWith('/sandbox/')) {
+      res.writeHead(204, {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, X-Continue-Token',
+        'Access-Control-Expose-Headers': 'X-Sandbox-Remaining, X-Sandbox-Reset',
+      });
+      res.end();
+      return;
+    }
+    if (await handleSandboxRest(req, res, client)) return;
 
     if (await handleAresRest(req, res, client, restLimiter)) {
       return;
@@ -189,6 +203,65 @@ async function main() {
       `[cz-agents/ares] Streamable HTTP MCP server listening on :${PORT}${MCP_PATH}`,
     );
   });
+}
+
+async function handleSandboxRest(
+  req: import('node:http').IncomingMessage,
+  res: import('node:http').ServerResponse,
+  client: AresClient,
+): Promise<boolean> {
+  if (!req.url) return false;
+  const url = new URL(req.url, 'http://localhost');
+  if (!url.pathname.startsWith('/sandbox/v1/')) return false;
+
+  if (req.method !== 'GET') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.writeHead(405, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'method_not_allowed', message: 'Use GET.' }));
+    return true;
+  }
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Expose-Headers', 'X-Sandbox-Remaining, X-Sandbox-Reset');
+
+  if (!checkSandboxLimit(req, res)) return true;
+
+  const companyMatch = url.pathname.match(/^\/sandbox\/v1\/companies\/([0-9]{7,8})$/);
+  if (!companyMatch) {
+    jsonErr(res, 404, 'not_found', 'Sandbox endpoint: GET /sandbox/v1/companies/{ico}');
+    return true;
+  }
+
+  const icoRaw = companyMatch[1]!;
+  const clientIp = getSandboxIp(req);
+
+  await runWithIp(clientIp, async () => {
+    try {
+      const result = await client.getByIco(icoRaw);
+      if (!result) {
+        jsonErr(res, 404, 'not_found', 'Company ' + icoRaw + ' was not found.');
+        return;
+      }
+      const meta = getSandboxMeta(clientIp);
+      const responseBody = {
+        data: result,
+        _sandbox: {
+          token: meta.token,
+          remaining: meta.remaining,
+          resets_at: meta.resets_at,
+          note: meta.remaining === 0
+            ? 'Limit reached. Get free API key (30 calls/day): https://cz-agents.dev/pricing.html'
+            : meta.remaining + ' call(s) remaining today. Pass _sandbox.token as X-Continue-Token on next request.',
+        },
+      };
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(responseBody));
+    } catch (e) {
+      jsonErr(res, 500, 'upstream_error', e instanceof Error ? e.message : 'Unexpected error');
+    }
+  });
+
+  return true;
 }
 
 async function handleAresRest(

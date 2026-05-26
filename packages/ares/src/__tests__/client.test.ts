@@ -215,6 +215,24 @@ describe('AresClient', () => {
       expect(await c.getVrRecord('00000000')).toBeNull();
     });
 
+    it('prefers AKTIVNI record over HISTORICKY at index 0', async () => {
+      handler = () =>
+        jsonResponse({
+          zaznamy: [
+            { stavSubjektu: 'HISTORICKY', statutarniOrgany: [] },
+            {
+              stavSubjektu: 'AKTIVNI',
+              ico: '45272956',
+              statutarniOrgany: [{ nazevOrganu: 'představenstvo', clenoveOrganu: [{ fyzickaOsoba: { jmeno: 'Jan', prijmeni: 'Novák' } }] }],
+            },
+          ],
+        });
+      const c = new AresClient();
+      const r = await c.getVrRecord('45272956');
+      expect(r?.stavSubjektu).toBe('AKTIVNI');
+      expect(r?.statutarniOrgany?.[0]?.clenoveOrganu).toHaveLength(1);
+    });
+
     it('targets VR endpoint (not the main subject endpoint)', async () => {
       let capturedUrl = '';
       handler = (url) => {
