@@ -78,4 +78,45 @@ describe('TtlMap', () => {
     expect(c.get('b')).toBe(2);
     expect(c.get('c')).toBe(3);
   });
+
+  it('keeps near-capacity churn bounded', () => {
+    let evictions = 0;
+    const c = new TtlMap<string, number>({
+      ttlMs: 10_000,
+      maxSize: 3,
+      sweepIntervalMs: false,
+      onEvict: () => { evictions += 1; },
+    });
+
+    for (let i = 0; i < 100; i += 1) c.set(`key-${i}`, i);
+
+    expect(c.size).toBe(3);
+    expect(evictions).toBe(97);
+  });
+
+  it('does not re-enter sweep from eviction callbacks', () => {
+    let callbackDepth = 0;
+    let maxCallbackDepth = 0;
+    let c: TtlMap<string, number>;
+    c = new TtlMap<string, number>({
+      ttlMs: 1000,
+      maxSize: 10,
+      sweepIntervalMs: false,
+      onEvict: () => {
+        callbackDepth += 1;
+        maxCallbackDepth = Math.max(maxCallbackDepth, callbackDepth);
+        c.sweep();
+        callbackDepth -= 1;
+      },
+    });
+    c.set('a', 1);
+    c.set('b', 2);
+    c.set('c', 3);
+    vi.advanceTimersByTime(1000);
+
+    c.sweep();
+
+    expect(c.size).toBe(0);
+    expect(maxCallbackDepth).toBe(1);
+  });
 });

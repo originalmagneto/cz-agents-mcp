@@ -66,7 +66,7 @@ function checkSessionLimit(ip: string): boolean {
 }
 export function cleanupSessionTimes(timesByIp: SessionTimesMap = sessionTimes): void {
   const cutoff = Date.now() - SESSION_LIMIT_WINDOW_MS;
-  for (const [ip, times] of timesByIp) {
+  for (const [ip, times] of [...timesByIp]) {
     const fresh = times.filter((t) => t > cutoff);
     if (fresh.length === 0) timesByIp.delete(ip);
     else timesByIp.set(ip, fresh);

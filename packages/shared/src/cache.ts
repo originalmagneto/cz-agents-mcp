@@ -26,6 +26,7 @@ export class TtlMap<K, V> implements Iterable<[K, V]> {
   private readonly ttlMs: number;
   private readonly maxSize: number;
   private readonly onEvict?: (key: K, value: V) => void;
+  private sweeping = false;
 
   constructor(opts: TtlMapOptions<K, V>) {
     this.ttlMs = opts.ttlMs;
@@ -61,7 +62,9 @@ export class TtlMap<K, V> implements Iterable<[K, V]> {
     while (this.map.size >= this.maxSize) {
       const oldest = this.map.entries().next();
       if (oldest.done) break;
+      const sizeBeforeEviction = this.map.size;
       this.evict(oldest.value[0], oldest.value[1]);
+      if (this.map.size >= sizeBeforeEviction) break;
     }
     this.map.set(key, { value, expiresAt: Date.now() + ttlMs });
     return this;
@@ -76,9 +79,15 @@ export class TtlMap<K, V> implements Iterable<[K, V]> {
   }
 
   sweep(): void {
-    const now = Date.now();
-    for (const [key, entry] of this.map) {
-      if (entry.expiresAt <= now) this.evict(key, entry);
+    if (this.sweeping) return;
+    this.sweeping = true;
+    try {
+      const now = Date.now();
+      for (const [key, entry] of this.map) {
+        if (entry.expiresAt <= now) this.evict(key, entry);
+      }
+    } finally {
+      this.sweeping = false;
     }
   }
 
