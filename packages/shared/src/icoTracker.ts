@@ -1,16 +1,36 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { isValidIco } from './ico.js';
+import { TtlMap } from './cache.js';
 
 interface IpContext {
   ip: string;
 }
 
 const ipStorage = new AsyncLocalStorage<IpContext>();
-const seen = new Map<string, Map<string, Set<string>>>();
-// ico → total call count (cumulative, resets on process restart)
-const icoCounter = new Map<string, number>();
+const RETENTION_MS = 3 * 24 * 60 * 60_000;
+const MAX_DATES = 3;
+const MAX_IPS_PER_DATE = 50_000;
+const MAX_ICOS_PER_IP = 5_000;
+const MAX_ICO_COUNTER_ENTRIES = 50_000;
+const MAX_SEARCH_COUNTER_ENTRIES = 5_000;
+
+const seen = new TtlMap<string, TtlMap<string, Set<string>>>({
+  ttlMs: RETENTION_MS,
+  maxSize: MAX_DATES,
+  sweepIntervalMs: 60 * 60_000,
+});
+// ico → recent call count (retained for at most three days)
+const icoCounter = new TtlMap<string, number>({
+  ttlMs: RETENTION_MS,
+  maxSize: MAX_ICO_COUNTER_ENTRIES,
+  sweepIntervalMs: 60 * 60_000,
+});
 // "tool:query:city:street" → count
-const searchCounter = new Map<string, number>();
+const searchCounter = new TtlMap<string, number>({
+  ttlMs: RETENTION_MS,
+  maxSize: MAX_SEARCH_COUNTER_ENTRIES,
+  sweepIntervalMs: 60 * 60_000,
+});
 
 // Fallback for MCP SDK transports that break AsyncLocalStorage chain.
 // Known limitation: module-level state has a race condition under concurrent requests
@@ -44,7 +64,13 @@ export function trackIco(ico: string): void {
   const date = today();
   let byIp = seen.get(date);
   if (!byIp) {
-    byIp = new Map();
+    byIp = new TtlMap({
+      ttlMs: RETENTION_MS,
+      maxSize: MAX_IPS_PER_DATE,
+      // Parent `seen` cleanup sweeps retained days; avoid a timer retaining
+      // nested maps after their day has been evicted.
+      sweepIntervalMs: false,
+    });
     seen.set(date, byIp);
   }
 
@@ -54,7 +80,12 @@ export function trackIco(ico: string): void {
     byIp.set(ip, icos);
   }
 
+  if (icos.size >= MAX_ICOS_PER_IP && !icos.has(ico)) {
+    const oldest = icos.values().next();
+    if (!oldest.done) icos.delete(oldest.value);
+  }
   icos.add(ico);
+  byIp.set(ip, icos);
   icoCounter.set(ico, (icoCounter.get(ico) ?? 0) + 1);
 }
 
@@ -111,7 +142,7 @@ export function getMetrics(): string {
 
   // Top IČO lookup frequency counter
   lines.push('');
-  lines.push('# HELP ico_lookup_total Total tool calls per IČO since process start.');
+  lines.push('# HELP ico_lookup_total Recent tool calls per IČO retained for up to three days.');
   lines.push('# TYPE ico_lookup_total counter');
   for (const [ico, count] of icoCounter) {
     lines.push(`ico_lookup_total{ico="${escapeLabel(ico)}"} ${count}`);
@@ -119,7 +150,7 @@ export function getMetrics(): string {
 
   // Search query counters
   lines.push('');
-  lines.push('# HELP search_query_total Total search_companies/search_by_address calls per query+city+street since process start.');
+  lines.push('# HELP search_query_total Recent search calls per query+city+street retained for up to three days.');
   lines.push('# TYPE search_query_total counter');
   for (const [key, count] of searchCounter) {
     const [tool, query, city, street] = key.split('\t') as [string, string, string, string];
@@ -129,31 +160,18 @@ export function getMetrics(): string {
   return `${lines.join('\n')}\n`;
 }
 
-const MAX_ICO_COUNTER_ENTRIES = 50_000;
-const MAX_SEARCH_COUNTER_ENTRIES = 5_000;
-
 export function cleanup(): void {
   const cutoff = new Date();
   cutoff.setUTCDate(cutoff.getUTCDate() - 2);
   const cutoffDate = cutoff.toISOString().slice(0, 10);
 
-  for (const date of seen.keys()) {
+  for (const [date, byIp] of seen) {
     if (date < cutoffDate) seen.delete(date);
+    else byIp.sweep();
   }
 
-  if (icoCounter.size > MAX_ICO_COUNTER_ENTRIES) {
-    const sorted = [...icoCounter.entries()].sort((a, b) => a[1] - b[1]);
-    for (const [ico] of sorted.slice(0, icoCounter.size - MAX_ICO_COUNTER_ENTRIES)) {
-      icoCounter.delete(ico);
-    }
-  }
-
-  if (searchCounter.size > MAX_SEARCH_COUNTER_ENTRIES) {
-    const sorted = [...searchCounter.entries()].sort((a, b) => a[1] - b[1]);
-    for (const [key] of sorted.slice(0, searchCounter.size - MAX_SEARCH_COUNTER_ENTRIES)) {
-      searchCounter.delete(key);
-    }
-  }
+  icoCounter.sweep();
+  searchCounter.sweep();
 }
 
 const cleanupTimer = setInterval(cleanup, 60 * 60 * 1000);

@@ -2,7 +2,7 @@
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
-import { createRateLimiter, checkBodySize, checkOrigin, runWithIp, setRequestIp, clearRequestIp, getMetrics } from '@czagents/shared';
+import { createRateLimiter, createSessionRegistry, checkBodySize, checkOrigin, runWithIp, setRequestIp, clearRequestIp, getMetrics } from '@czagents/shared';
 import { buildCnbServer } from './server.js';
 
 const PORT = Number(process.env.PORT ?? 3031);
@@ -12,7 +12,7 @@ const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS ?? 60_000);
 const MAX_BODY_BYTES = Number(process.env.MAX_BODY_BYTES ?? 100_000);
 
 async function main() {
-  const transports = new Map<string, StreamableHTTPServerTransport>();
+  const transports = createSessionRegistry<StreamableHTTPServerTransport>();
   const limiter = createRateLimiter({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX, getIp: getClientIp });
 
   const http = createServer(async (req, res) => {

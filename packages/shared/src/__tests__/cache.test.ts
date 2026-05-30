@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { TtlCache } from '../cache.js';
+import { TtlCache, TtlMap } from '../cache.js';
 
 describe('TtlCache', () => {
   beforeEach(() => vi.useFakeTimers());
@@ -55,5 +55,27 @@ describe('TtlCache', () => {
     c.clear();
     expect(c.size).toBe(0);
     expect(c.get('a')).toBeUndefined();
+  });
+});
+
+describe('TtlMap', () => {
+  beforeEach(() => vi.useFakeTimers());
+  afterEach(() => vi.useRealTimers());
+
+  it('actively sweeps expired entries without a read', () => {
+    const c = new TtlMap<string, number>({ ttlMs: 1000, maxSize: 10, sweepIntervalMs: 1000 });
+    c.set('a', 1);
+    vi.advanceTimersByTime(1000);
+    expect(c.size).toBe(0);
+  });
+
+  it('evicts the oldest entry immediately when maxSize is reached', () => {
+    const c = new TtlMap<string, number>({ ttlMs: 10_000, maxSize: 2 });
+    c.set('a', 1);
+    c.set('b', 2);
+    c.set('c', 3);
+    expect(c.get('a')).toBeUndefined();
+    expect(c.get('b')).toBe(2);
+    expect(c.get('c')).toBe(3);
   });
 });

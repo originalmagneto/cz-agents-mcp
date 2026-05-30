@@ -30,6 +30,7 @@ import {
   createQuotaGuard,
   handleStripeWebhook,
   WebhookError,
+  createSessionRegistry,
 } from '@czagents/shared';
 import { SanctionsDb } from './db.js';
 import { SanctionsSearch } from './search.js';
@@ -52,7 +53,7 @@ async function main() {
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
   const quota = createQuotaGuard({ store: tokenStore, service: 'sanctions', allowAnonymous: true });
 
-  const transports = new Map<string, StreamableHTTPServerTransport>();
+  const transports = createSessionRegistry<StreamableHTTPServerTransport>();
   const restLimiter = createRestRateLimiter();
   const limiter = createRateLimiter({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX, getIp: getClientIp });
 

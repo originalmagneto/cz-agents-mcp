@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
+import { TtlMap } from './cache.js';
 
 /**
  * In-memory per-IP rate limiter — token bucket with fixed window.
@@ -13,6 +14,8 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 export interface RateLimiterOptions {
   windowMs?: number;
   max?: number;
+  /** Maximum distinct IP buckets retained in memory. */
+  maxBuckets?: number;
   /** Custom IP extractor — useful when behind CF/Apache */
   getIp?: (req: IncomingMessage) => string;
 }
@@ -26,16 +29,11 @@ export function createRateLimiter(opts: RateLimiterOptions = {}) {
   const windowMs = opts.windowMs ?? 60_000;
   const max = opts.max ?? 60;
   const getIp = opts.getIp ?? defaultGetIp;
-  const buckets = new Map<string, Bucket>();
-
-  // Periodic cleanup of expired buckets (prevent memory leak under churn)
-  const cleanup = setInterval(() => {
-    const now = Date.now();
-    for (const [ip, b] of buckets) {
-      if (b.resetAt < now) buckets.delete(ip);
-    }
-  }, 120_000);
-  cleanup.unref(); // don't block process exit
+  const buckets = new TtlMap<string, Bucket>({
+    ttlMs: windowMs,
+    maxSize: opts.maxBuckets ?? 50_000,
+    sweepIntervalMs: 120_000,
+  });
 
   return function check(req: IncomingMessage, res: ServerResponse): boolean {
     const ip = getIp(req);

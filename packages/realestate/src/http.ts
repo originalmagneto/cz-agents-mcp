@@ -20,6 +20,7 @@ import {
   getMetrics,
   TokenStore,
   createQuotaGuard,
+  createSessionRegistry,
 } from '@czagents/shared';
 import { buildRealEstateServer } from './server.js';
 
@@ -38,7 +39,7 @@ async function main() {
     allowAnonymous: true,
   });
 
-  const transports = new Map<string, StreamableHTTPServerTransport>();
+  const transports = createSessionRegistry<StreamableHTTPServerTransport>();
   const limiter = createRateLimiter({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX, getIp: getClientIp });
 
   const http = createServer(async (req, res) => {

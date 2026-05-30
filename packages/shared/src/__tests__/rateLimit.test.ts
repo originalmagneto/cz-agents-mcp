@@ -110,6 +110,18 @@ describe('createRateLimiter', () => {
     expect(check(mockReq({ remoteAddress: 'a' }), mockRes().res)).toBe(true);
     expect(check(mockReq({ remoteAddress: 'b' }), mockRes().res)).toBe(false);
   });
+
+  it('evicts the oldest IP bucket when maxBuckets is reached', () => {
+    const check = createRateLimiter({ max: 1, maxBuckets: 2 });
+    const reqA = mockReq({ remoteAddress: '10.0.0.1' });
+    const reqB = mockReq({ remoteAddress: '10.0.0.2' });
+    const reqC = mockReq({ remoteAddress: '10.0.0.3' });
+
+    expect(check(reqA, mockRes().res)).toBe(true);
+    expect(check(reqB, mockRes().res)).toBe(true);
+    expect(check(reqC, mockRes().res)).toBe(true);
+    expect(check(reqA, mockRes().res)).toBe(true);
+  });
 });
 
 describe('checkBodySize', () => {

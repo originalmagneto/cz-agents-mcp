@@ -20,6 +20,7 @@ import {
   runWithIp,
   setRequestIp,
   clearRequestIp,
+  createSessionRegistry,
 } from '@czagents/shared';
 import { IsirClient } from './client.js';
 import { buildIsirServer } from './server.js';
@@ -33,7 +34,7 @@ const MAX_BODY_BYTES = Number(process.env.MAX_BODY_BYTES ?? 100_000);
 async function main() {
   const client = new IsirClient();
 
-  const transports = new Map<string, StreamableHTTPServerTransport>();
+  const transports = createSessionRegistry<StreamableHTTPServerTransport>();
   const restLimiter = createRestRateLimiter();
   const limiter = createRateLimiter({
     windowMs: RATE_LIMIT_WINDOW_MS,

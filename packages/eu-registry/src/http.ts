@@ -2,6 +2,7 @@
 import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/streamableHttp.js';
 import { createServer } from 'node:http';
 import { randomUUID } from 'node:crypto';
+import { pathToFileURL } from 'node:url';
 import {
   createRateLimiter,
   createRestRateLimiter,
@@ -13,6 +14,8 @@ import {
   runWithIp,
   setRequestIp,
   clearRequestIp,
+  TtlMap,
+  createSessionRegistry,
 } from '@czagents/shared';
 import { buildEuRegistryServer } from './server.js';
 
@@ -26,8 +29,20 @@ const BLOCKED_IPS = new Set(
   (process.env.BLOCKED_IPS ?? '').split(',').map((s) => s.trim()).filter(Boolean),
 );
 const SESSION_LIMIT_WINDOW_MS = 60_000;
+const SESSION_LIMIT_MAX_IPS = 50_000;
+export const MAX_SESSION_IPS = 10_000;
 
-const sessionTimes = new Map<string, number[]>();
+const sessionTimes = new TtlMap<string, number[]>({
+  ttlMs: SESSION_LIMIT_WINDOW_MS,
+  maxSize: SESSION_LIMIT_MAX_IPS,
+  sweepIntervalMs: 5 * 60_000,
+});
+interface SessionTimesMap extends Iterable<[string, number[]]> {
+  readonly size: number;
+  delete(ip: string): boolean;
+  set(ip: string, times: number[]): unknown;
+}
+
 function checkSessionLimit(ip: string): boolean {
   const now = Date.now();
   const cutoff = now - SESSION_LIMIT_WINDOW_MS;
@@ -38,17 +53,26 @@ function checkSessionLimit(ip: string): boolean {
   return true;
 }
 
-setInterval(() => {
+export function cleanupSessionTimes(timesByIp: SessionTimesMap = sessionTimes): void {
   const cutoff = Date.now() - SESSION_LIMIT_WINDOW_MS;
-  for (const [ip, times] of sessionTimes) {
+  for (const [ip, times] of timesByIp) {
     const fresh = times.filter((t) => t > cutoff);
-    if (fresh.length === 0) sessionTimes.delete(ip);
-    else sessionTimes.set(ip, fresh);
+    if (fresh.length === 0) timesByIp.delete(ip);
+    else timesByIp.set(ip, fresh);
   }
-}, 5 * 60_000).unref();
+
+  if (timesByIp.size > MAX_SESSION_IPS) {
+    const oldestIps = [...timesByIp]
+      .map(([ip, times]) => [ip, Math.max(...times)] as const)
+      .sort(([, a], [, b]) => b - a)
+      .slice(MAX_SESSION_IPS);
+    for (const [ip] of oldestIps) timesByIp.delete(ip);
+  }
+}
+setInterval(cleanupSessionTimes, 5 * 60_000).unref();
 
 async function main() {
-  const transports = new Map<string, StreamableHTTPServerTransport>();
+  const transports = createSessionRegistry<StreamableHTTPServerTransport>();
   const restLimiter = createRestRateLimiter();
 
   const limiter = createRateLimiter({
@@ -209,7 +233,9 @@ function getClientIp(req: import('node:http').IncomingMessage): string {
   return req.socket.remoteAddress ?? 'unknown';
 }
 
-main().catch((err) => {
-  console.error('[cz-agents/eu-registry] fatal:', err);
-  process.exit(1);
-});
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  main().catch((err) => {
+    console.error('[cz-agents/eu-registry] fatal:', err);
+    process.exit(1);
+  });
+}

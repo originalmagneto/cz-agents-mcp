@@ -5,5 +5,6 @@ export * from './rest.js';
 export * from './rateLimit.js';
 export * from './icoTracker.js';
 export * from './cache.js';
+export * from './sessionRegistry.js';
 export * from './origin.js';
 export * from './billing/index.js';

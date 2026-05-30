@@ -30,6 +30,7 @@ import {
   createQuotaGuard,
   handleStripeWebhook,
   WebhookError,
+  createSessionRegistry,
 } from '@czagents/shared';
 import { AresClient } from '@czagents/ares';
 import { SanctionsDb, SanctionsSearch } from '@czagents/sanctions';
@@ -66,7 +67,7 @@ async function main() {
   const quota = createQuotaGuard({ store: tokenStore, service: 'dd', allowAnonymous: true });
   const ddRestLimiter = createRestRateLimiter({ max: 60, windowMs: 60 * 60 * 1000 });
 
-  const transports = new Map<string, StreamableHTTPServerTransport>();
+  const transports = createSessionRegistry<StreamableHTTPServerTransport>();
   const limiter = createRateLimiter({ windowMs: RATE_LIMIT_WINDOW_MS, max: RATE_LIMIT_MAX, getIp: getClientIp });
 
   const http = createServer(async (req, res) => {

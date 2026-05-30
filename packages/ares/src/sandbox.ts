@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import type { IncomingMessage, ServerResponse } from 'node:http';
+import { TtlMap } from '@czagents/shared';
 
 const sandboxHmacSecret = process.env.SANDBOX_HMAC_SECRET;
 if (!sandboxHmacSecret) {
@@ -8,7 +9,11 @@ if (!sandboxHmacSecret) {
 const SANDBOX_HMAC_SECRET: string = sandboxHmacSecret;
 
 const DAILY_LIMIT = 3;
-const sandboxLimits = new Map<string, { count: number; resetAt: number }>();
+const sandboxLimits = new TtlMap<string, { count: number; resetAt: number }>({
+  ttlMs: 24 * 60 * 60_000,
+  maxSize: 50_000,
+  sweepIntervalMs: 60 * 60_000,
+});
 
 function nextMidnightUTC(): number {
   const now = new Date();
@@ -58,17 +63,10 @@ function getOrCreateEntry(ip: string): { count: number; resetAt: number } {
   let entry = sandboxLimits.get(ip);
   if (!entry || entry.resetAt <= now) {
     entry = { count: 0, resetAt: nextMidnightUTC() };
-    sandboxLimits.set(ip, entry);
+    sandboxLimits.set(ip, entry, entry.resetAt - now);
   }
   return entry;
 }
-
-setInterval(() => {
-  const now = Date.now();
-  for (const [ip, entry] of sandboxLimits) {
-    if (entry.resetAt <= now) sandboxLimits.delete(ip);
-  }
-}, 60 * 60_000).unref();
 
 export function signSandboxToken(ip: string, date: string, count: number): string {
   return createHmac('sha256', SANDBOX_HMAC_SECRET)

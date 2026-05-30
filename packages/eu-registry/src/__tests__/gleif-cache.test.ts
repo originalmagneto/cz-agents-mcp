@@ -70,4 +70,13 @@ describe('GleifCache', () => {
       }, 5);
     });
   });
+
+  it('evicts entries above maxEntries in :memory: fallback mode', () => {
+    const cache = new GleifCache(':memory:', 60_000, 2);
+    cache.set('lei:A', { name: 'Alpha' });
+    cache.set('lei:B', { name: 'Beta' });
+    cache.set('lei:C', { name: 'Gamma' });
+    const retained = ['lei:A', 'lei:B', 'lei:C'].filter((key) => cache.get(key) !== null);
+    expect(retained).toHaveLength(2);
+  });
 });

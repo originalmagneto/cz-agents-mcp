@@ -3,6 +3,7 @@ import type { Database as DatabaseType } from 'better-sqlite3';
 
 export const DEFAULT_TTL_MS = 7 * 24 * 3600 * 1000; // 7 days — for stable LEI detail records
 export const SEARCH_TTL_MS = 24 * 3600 * 1000; // 24 hours — search results change as entities are added/removed
+export const DEFAULT_MAX_ENTRIES = 50_000;
 
 interface CacheRow {
   value: string;
@@ -12,9 +13,11 @@ interface CacheRow {
 export class GleifCache {
   private readonly db: DatabaseType;
   private readonly ttlMs: number;
+  private readonly maxEntries: number;
 
-  constructor(dbPath?: string, ttlMs: number = DEFAULT_TTL_MS) {
+  constructor(dbPath?: string, ttlMs: number = DEFAULT_TTL_MS, maxEntries: number = DEFAULT_MAX_ENTRIES) {
     this.ttlMs = ttlMs;
+    this.maxEntries = maxEntries;
     this.db = openDb(dbPath);
     this.db.pragma('journal_mode = WAL');
     this.db.pragma('synchronous = NORMAL');
@@ -56,12 +59,22 @@ export class GleifCache {
         'INSERT OR REPLACE INTO gleif_cache (key, value, expires_at) VALUES (?, ?, ?)',
       )
       .run(key, JSON.stringify(value), expiresAt);
+    this.prune();
   }
 
   prune(): void {
     this.db
       .prepare('DELETE FROM gleif_cache WHERE expires_at <= ?')
       .run(Date.now());
+    this.db
+      .prepare(
+        `DELETE FROM gleif_cache WHERE key IN (
+          SELECT key FROM gleif_cache
+          ORDER BY expires_at ASC
+          LIMIT MAX((SELECT COUNT(*) FROM gleif_cache) - ?, 0)
+        )`,
+      )
+      .run(this.maxEntries);
   }
 }
 
