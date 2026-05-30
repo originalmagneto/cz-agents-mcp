@@ -290,78 +290,52 @@
 
     <!-- PAID / TRIAL PATH -->
     <section id="paid-start">
-      <h2>Paid tier &amp; trial — setup</h2>
+      <h2>Připojení do Claude Desktop</h2>
       <p class="section-note">
-        After subscribing or receiving your trial token, connect it to your MCP client.
+        Po nákupu nebo obdržení trial tokenu připoj cz-agents do Claude Desktop.
       </p>
 
       <div class="steps">
         <div class="step">
           <div class="step-num">1</div>
           <div class="step-body">
-            <div class="step-title">Get your token</div>
+            <div class="step-title">Otevři Claude Desktop → Settings → Connectors → Add custom</div>
             <div class="step-desc">
-              <strong>Paid:</strong> After checkout you'll receive your API token by email and in your
-              <a href="https://app.cz-agents.dev/app/billing">billing dashboard</a>.<br>
-              <strong>Trial:</strong> <a href="/pricing.html#trial">Request a trial</a> — token delivered by email within 1 business day.
+              Token obdržíš emailem po nákupu nebo po aktivaci trial přístupu.
             </div>
           </div>
         </div>
         <div class="step">
           <div class="step-num">2</div>
           <div class="step-body">
-            <div class="step-title">Add the token to your MCP config</div>
-            <div class="step-desc">Replace <code>czat_your_token_here</code> with your actual token:</div>
+            <div class="step-title">URL: https://dd.cz-agents.dev/mcp</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <div class="step-title">Authorization header: Bearer &lt;token&gt; → Ulož, connector se aktivuje okamžitě.</div>
           </div>
         </div>
       </div>
 
       <div class="code-block">
-        <div class="code-label">claude_desktop_config.json — API Compliance tier</div>
+        <div class="code-label">Alternativa přes soubor claude_desktop_config.json</div>
         <button class="copy-btn" onclick="copyCode(this)">Copy</button>
         <pre>{
   "mcpServers": {
-    "ares": {
-      "url": "https://ares.cz-agents.dev/mcp"
-    },
-    "dd": {
-      "url": "https://dd.cz-agents.dev/mcp",
-      "headers": { "Authorization": "Bearer czat_your_token_here" }
-    },
-    "sanctions": {
-      "url": "https://sanctions.cz-agents.dev/mcp",
-      "headers": { "Authorization": "Bearer czat_your_token_here" }
-    },
-    "ddplus": {
-      "url": "https://ddplus.cz-agents.dev/mcp",
-      "headers": { "Authorization": "Bearer czat_your_token_here" }
+    "cz-agents-dd": {
+      "command": "npx",
+      "args": ["mcp-remote", "https://dd.cz-agents.dev/mcp", "--header", "Authorization: Bearer &lt;token&gt;"]
     }
   }
 }</pre>
       </div>
 
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">3</div>
-          <div class="step-body">
-            <div class="step-title">Test your connection</div>
-            <div class="step-desc">
-              Restart your client and ask: <code>"Run a full due diligence report on IČO 12345678."</code><br>
-              You should see nominee check, risk timeline, address crowding, and linked entities.
-            </div>
-          </div>
-        </div>
-        <div class="step">
-          <div class="step-num">4</div>
-          <div class="step-body">
-            <div class="step-title">Manage your subscription</div>
-            <div class="step-desc">
-              View usage, rotate tokens, update billing in your
-              <a href="https://app.cz-agents.dev/app/billing">billing dashboard</a>.
-            </div>
-          </div>
-        </div>
-      </div>
+      <p style="margin-top:16px;font-size:14px;">
+        Kompletní návod včetně Cursoru a Windsurfu:
+        <a href="https://cz-agents.dev/onboard.html">https://cz-agents.dev/onboard.html</a>.
+      </p>
     </section>
 
     <hr class="divider">
