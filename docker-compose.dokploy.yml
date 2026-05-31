@@ -163,6 +163,41 @@ services:
     networks:
       - dokploy-network
 
+  realestate:
+    build:
+      context: .
+      dockerfile: packages/realestate/Dockerfile
+    image: cz-agents-realestate:latest
+    restart: unless-stopped
+    environment:
+      - PORT=3030
+      - NODE_ENV=production
+      - REALESTATE_DB_PATH=/data/webapp.db
+      - RATE_LIMIT_MAX=300
+    volumes:
+      - webapp-data:/data:ro
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3030/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    networks:
+      - dokploy-network
+
+  realestate-ingest:
+    build:
+      context: .
+      dockerfile: packages/realestate-ingest/Dockerfile
+    image: cz-agents-realestate-ingest:latest
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - REALESTATE_DB_PATH=/data/webapp.db
+    volumes:
+      - webapp-data:/data
+    networks:
+      - dokploy-network
+
 networks:
   dokploy-network:
     external: true
@@ -171,3 +206,4 @@ volumes:
   sanctions-data:
   tokens-data:
   gleif-cache:
+  webapp-data:
