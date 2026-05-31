@@ -1,0 +1,143 @@
+[
+  {
+    "id": 70000220,
+    "datum_zalozeni": "2025-04-23T13:37:07.000+02:00",
+    "datum_zverejneni": "2025-04-23T13:37:06.000+02:00",
+    "spisova_znacka": "INS 12503/2024",
+    "typ_udalosti": "1081",
+    "popis_udalosti": "Vyhláška o zpeněžení majetku",
+    "oddil": "B",
+    "cislo_v_oddilu": 7,
+    "dokument_url": "https://isir.justice.cz:8443/isir_public_ws/doc/Document?idDokument=70355048",
+    "poznamka": "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>&lt;ns2:udalost xmlns:ns2=\"http://www.cca.cz/isir/poznamka\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" verzeXsd=\"1_11\" xsi:schemaLocation=\"https://isir.justice.cz:8443/isir_public_ws/xsd/poznamka_1_11.xsd\">&lt;idOsobyPuvodce>KSSTCAB&lt;/idOsobyPuvodce>&lt;vec>&lt;druhStavRizeni>ODDLUŽENÍ&lt;/druhStavRizeni>&lt;/vec>&lt;priznakAnVedlejsiUdalost>F&lt;/priznakAnVedlejsiUdalost>&lt;priznakAnVedlejsiDokument>F&lt;/priznakAnVedlejsiDokument>&lt;priznakPlatnyVeritel>F&lt;/priznakPlatnyVeritel>&lt;priznakMylnyZapisVeritelPohled>F&lt;/priznakMylnyZapisVeritelPohled>&lt;/ns2:udalost>"
+  },
+  {
+    "id": 70000288,
+    "datum_zalozeni": "2025-04-23T13:38:49.000+02:00",
+    "datum_zverejneni": "2025-04-23T13:38:49.000+02:00",
+    "spisova_znacka": "INS 18347/2023",
+    "typ_udalosti": "50",
+    "popis_udalosti": "Zpráva o průběhu zpeněžení",
+    "oddil": "B",
+    "cislo_v_oddilu": 7,
+    "dokument_url": "https://isir.justice.cz:8443/isir_public_ws/doc/Document?idDokument=70355122",
+    "poznamka": "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>&lt;ns2:udalost xmlns:ns2=\"http://www.cca.cz/isir/poznamka\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" verzeXsd=\"1_11\" xsi:schemaLocation=\"https://isir.justice.cz:8443/isir_public_ws/xsd/poznamka_1_11.xsd\">&lt;idOsobyPuvodce>KSZPCPM&lt;/idOsobyPuvodce>&lt;vec>&lt;druhStavRizeni>ODDLUŽENÍ&lt;/druhStavRizeni>&lt;/vec>&lt;priznakAnVedlejsiUdalost>F&lt;/priznakAnVedlejsiUdalost>&lt;priznakAnVedlejsiDokument>F&lt;/priznakAnVedlejsiDokument>&lt;priznakPlatnyVeritel>F&lt;/priznakPlatnyVeritel>&lt;priznakMylnyZapisVeritelPohled>F&lt;/priznakMylnyZapisVeritelPohled>&lt;/ns2:udalost>"
+  },
+  {
+    "id": 70000850,
+    "datum_zalozeni": "2025-04-23T13:57:52.000+02:00",
+    "datum_zverejneni": "2025-04-23T13:57:51.000+02:00",
+    "spisova_znacka": "INS 16194/2023",
+    "typ_udalosti": "335",
+    "popis_udalosti": "Dražební vyhláška",
+    "oddil": "B",
+    "cislo_v_oddilu": 35,
+    "dokument_url": "https://isir.justice.cz:8443/isir_public_ws/doc/Document?idDokument=70355684",
+    "poznamka": "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>&lt;ns2:udalost xmlns:ns2=\"http://www.cca.cz/isir/poznamka\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" verzeXsd=\"1_11\" xsi:schemaLocation=\"https://isir.justice.cz:8443/isir_public_ws/xsd/poznamka_1_11.xsd\">&lt;idOsobyPuvodce>MSPHAAB&lt;/idOsobyPuvodce>&lt;vec>&lt;druhStavRizeni>KONKURS&lt;/druhStavRizeni>&lt;/vec>&lt;priznakAnVedlejsiUdalost>F&lt;/priznakAnVedlejsiUdalost>&lt;priznakAnVedlejsiDokument>F&lt;/priznakAnVedlejsiDokument>&lt;priznakPlatnyVeritel>F&lt;/priznakPlatnyVeritel>&lt;priznakMylnyZapisVeritelPohled>F&lt;/priznakMylnyZapisVeritelPohled>&lt;/ns2:udalost>"
+  },
+  {
+    "id": 70001440,
+    "datum_zalozeni": "2025-04-23T14:19:04.000+02:00",
+    "datum_zverejneni": "2025-04-23T14:19:04.000+02:00",
+    "spisova_znacka": "INS 7918/2025",
+    "typ_udalosti": "829",
+    "popis_udalosti": "Výpis z katastru nemovitostí",
+    "oddil": "A",
+    "cislo_v_oddilu": 5,
+    "dokument_url": "https://isir.justice.cz:8443/isir_public_ws/doc/Document?idDokument=70356277",
+    "poznamka": "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>&lt;ns2:udalost xmlns:ns2=\"http://www.cca.cz/isir/poznamka\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" verzeXsd=\"1_11\" xsi:schemaLocation=\"https://isir.justice.cz:8443/isir_public_ws/xsd/poznamka_1_11.xsd\">&lt;idOsobyPuvodce>KSSEMOSP1&lt;/idOsobyPuvodce>&lt;vec>&lt;druhStavRizeni>NEVYRIZENA&lt;/druhStavRizeni>&lt;/vec>&lt;priznakAnVedlejsiUdalost>F&lt;/priznakAnVedlejsiUdalost>&lt;priznakAnVedlejsiDokument>F&lt;/priznakAnVedlejsiDokument>&lt;priznakPlatnyVeritel>F&lt;/priznakPlatnyVeritel>&lt;priznakMylnyZapisVeritelPohled>F&lt;/priznakMylnyZapisVeritelPohled>&lt;/ns2:udalost>"
+  },
+  {
+    "id": 70001701,
+    "datum_zalozeni": "2025-04-23T14:29:04.000+02:00",
+    "datum_zverejneni": "2025-04-23T14:29:04.000+02:00",
+    "spisova_znacka": "INS 43/2024",
+    "typ_udalosti": "535",
+    "popis_udalosti": "Usnesení o prodeji mimo dražbu",
+    "oddil": "B",
+    "cislo_v_oddilu": 17,
+    "dokument_url": "https://isir.justice.cz:8443/isir_public_ws/doc/Document?idDokument=70356539",
+    "poznamka": "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>&lt;ns2:udalost xmlns:ns2=\"http://www.cca.cz/isir/poznamka\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" verzeXsd=\"1_11\" xsi:schemaLocation=\"https://isir.justice.cz:8443/isir_public_ws/xsd/poznamka_1_11.xsd\">&lt;idOsobyPuvodce>KSSEMOS&lt;/idOsobyPuvodce>&lt;vec>&lt;druhStavRizeni>ODDLUŽENÍ&lt;/druhStavRizeni>&lt;/vec>&lt;priznakAnVedlejsiUdalost>F&lt;/priznakAnVedlejsiUdalost>&lt;priznakAnVedlejsiDokument>F&lt;/priznakAnVedlejsiDokument>&lt;priznakPlatnyVeritel>F&lt;/priznakPlatnyVeritel>&lt;priznakMylnyZapisVeritelPohled>F&lt;/priznakMylnyZapisVeritelPohled>&lt;/ns2:udalost>"
+  },
+  {
+    "id": 70001769,
+    "datum_zalozeni": "2025-04-23T14:31:40.000+02:00",
+    "datum_zverejneni": "2025-04-23T14:31:38.000+02:00",
+    "spisova_znacka": "INS 7612/2025",
+    "typ_udalosti": "829",
+    "popis_udalosti": "Výpis z katastru nemovitostí",
+    "oddil": "A",
+    "cislo_v_oddilu": 6,
+    "dokument_url": "https://isir.justice.cz:8443/isir_public_ws/doc/Document?idDokument=70356609",
+    "poznamka": "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>&lt;ns2:udalost xmlns:ns2=\"http://www.cca.cz/isir/poznamka\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" verzeXsd=\"1_11\" xsi:schemaLocation=\"https://isir.justice.cz:8443/isir_public_ws/xsd/poznamka_1_11.xsd\">&lt;idOsobyPuvodce>KSSEMOS&lt;/idOsobyPuvodce>&lt;vec>&lt;druhStavRizeni>NEVYRIZENA&lt;/druhStavRizeni>&lt;/vec>&lt;priznakAnVedlejsiUdalost>F&lt;/priznakAnVedlejsiUdalost>&lt;priznakAnVedlejsiDokument>F&lt;/priznakAnVedlejsiDokument>&lt;priznakPlatnyVeritel>F&lt;/priznakPlatnyVeritel>&lt;priznakMylnyZapisVeritelPohled>F&lt;/priznakMylnyZapisVeritelPohled>&lt;/ns2:udalost>"
+  },
+  {
+    "id": 70002166,
+    "datum_zalozeni": "2025-04-23T14:42:21.000+02:00",
+    "datum_zverejneni": "2025-04-23T14:42:21.000+02:00",
+    "spisova_znacka": "INS 7001/2024",
+    "typ_udalosti": "1081",
+    "popis_udalosti": "Vyhláška o zpeněžení majetku",
+    "oddil": "B",
+    "cislo_v_oddilu": 11,
+    "dokument_url": "https://isir.justice.cz:8443/isir_public_ws/doc/Document?idDokument=70356997",
+    "poznamka": "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>&lt;ns2:udalost xmlns:ns2=\"http://www.cca.cz/isir/poznamka\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" verzeXsd=\"1_11\" xsi:schemaLocation=\"https://isir.justice.cz:8443/isir_public_ws/xsd/poznamka_1_11.xsd\">&lt;idOsobyPuvodce>KSSTCAB&lt;/idOsobyPuvodce>&lt;vec>&lt;druhStavRizeni>ODDLUŽENÍ&lt;/druhStavRizeni>&lt;/vec>&lt;priznakAnVedlejsiUdalost>F&lt;/priznakAnVedlejsiUdalost>&lt;priznakAnVedlejsiDokument>F&lt;/priznakAnVedlejsiDokument>&lt;priznakPlatnyVeritel>F&lt;/priznakPlatnyVeritel>&lt;priznakMylnyZapisVeritelPohled>F&lt;/priznakMylnyZapisVeritelPohled>&lt;/ns2:udalost>"
+  },
+  {
+    "id": 70002284,
+    "datum_zalozeni": "2025-04-23T14:45:52.000+02:00",
+    "datum_zverejneni": "2025-04-23T14:45:52.000+02:00",
+    "spisova_znacka": "INS 2255/2024",
+    "typ_udalosti": "1081",
+    "popis_udalosti": "Vyhláška o zpeněžení majetku",
+    "oddil": "B",
+    "cislo_v_oddilu": 16,
+    "dokument_url": "https://isir.justice.cz:8443/isir_public_ws/doc/Document?idDokument=70357116",
+    "poznamka": "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>&lt;ns2:udalost xmlns:ns2=\"http://www.cca.cz/isir/poznamka\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" verzeXsd=\"1_11\" xsi:schemaLocation=\"https://isir.justice.cz:8443/isir_public_ws/xsd/poznamka_1_11.xsd\">&lt;idOsobyPuvodce>KSSCEUL&lt;/idOsobyPuvodce>&lt;vec>&lt;druhStavRizeni>ODDLUŽENÍ&lt;/druhStavRizeni>&lt;/vec>&lt;priznakAnVedlejsiUdalost>F&lt;/priznakAnVedlejsiUdalost>&lt;priznakAnVedlejsiDokument>F&lt;/priznakAnVedlejsiDokument>&lt;priznakPlatnyVeritel>F&lt;/priznakPlatnyVeritel>&lt;priznakMylnyZapisVeritelPohled>F&lt;/priznakMylnyZapisVeritelPohled>&lt;/ns2:udalost>"
+  },
+  {
+    "id": 70002589,
+    "datum_zalozeni": "2025-04-23T14:55:34.000+02:00",
+    "datum_zverejneni": "2025-04-23T14:55:34.000+02:00",
+    "spisova_znacka": "INS 11576/2024",
+    "typ_udalosti": "535",
+    "popis_udalosti": "Usnesení o prodeji mimo dražbu",
+    "oddil": "B",
+    "cislo_v_oddilu": 16,
+    "poznamka": "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>&lt;ns2:udalost xmlns:ns2=\"http://www.cca.cz/isir/poznamka\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" verzeXsd=\"1_11\" xsi:schemaLocation=\"https://isir.justice.cz:8443/isir_public_ws/xsd/poznamka_1_11.xsd\">&lt;idOsobyPuvodce>KSVYCHK&lt;/idOsobyPuvodce>&lt;vec>&lt;druhStavRizeni>ODDLUŽENÍ&lt;/druhStavRizeni>&lt;/vec>&lt;datumPravniMoci>2025-03-20+01:00&lt;/datumPravniMoci>&lt;priznakAnVedlejsiUdalost>F&lt;/priznakAnVedlejsiUdalost>&lt;priznakAnVedlejsiDokument>F&lt;/priznakAnVedlejsiDokument>&lt;priznakPlatnyVeritel>F&lt;/priznakPlatnyVeritel>&lt;priznakMylnyZapisVeritelPohled>F&lt;/priznakMylnyZapisVeritelPohled>&lt;datumZverejneniOpraveneUdalosti>2025-04-23+02:00&lt;/datumZverejneniOpraveneUdalosti>&lt;/ns2:udalost>"
+  },
+  {
+    "id": 70004452,
+    "datum_zalozeni": "2025-04-23T20:16:21.000+02:00",
+    "datum_zverejneni": "2025-04-23T20:16:21.000+02:00",
+    "spisova_znacka": "INS 11413/2023",
+    "typ_udalosti": "535",
+    "popis_udalosti": "Usnesení o prodeji mimo dražbu",
+    "oddil": "B",
+    "cislo_v_oddilu": 20,
+    "dokument_url": "https://isir.justice.cz:8443/isir_public_ws/doc/Document?idDokument=70232981",
+    "poznamka": "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>&lt;ns2:udalost xmlns:ns2=\"http://www.cca.cz/isir/poznamka\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" verzeXsd=\"1_11\" xsi:schemaLocation=\"https://isir.justice.cz:8443/isir_public_ws/xsd/poznamka_1_11.xsd\">&lt;idOsobyPuvodce>KSSCEUL&lt;/idOsobyPuvodce>&lt;vec>&lt;druhStavRizeni>ODDLUŽENÍ&lt;/druhStavRizeni>&lt;/vec>&lt;priznakAnVedlejsiUdalost>F&lt;/priznakAnVedlejsiUdalost>&lt;priznakAnVedlejsiDokument>T&lt;/priznakAnVedlejsiDokument>&lt;priznakPlatnyVeritel>F&lt;/priznakPlatnyVeritel>&lt;priznakMylnyZapisVeritelPohled>F&lt;/priznakMylnyZapisVeritelPohled>&lt;datumZverejneniOpraveneUdalosti>2025-04-23+02:00&lt;/datumZverejneniOpraveneUdalosti>&lt;/ns2:udalost>"
+  },
+  {
+    "id": 70016806,
+    "datum_zalozeni": "2025-04-24T10:08:52.000+02:00",
+    "datum_zverejneni": "2025-04-24T10:08:52.000+02:00",
+    "spisova_znacka": "INS 17916/2022",
+    "typ_udalosti": "335",
+    "popis_udalosti": "Dražební vyhláška",
+    "oddil": "B",
+    "cislo_v_oddilu": 48,
+    "poznamka": "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>&lt;ns2:udalost xmlns:ns2=\"http://www.cca.cz/isir/poznamka\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" verzeXsd=\"1_11\" xsi:schemaLocation=\"https://isir.justice.cz:8443/isir_public_ws/xsd/poznamka_1_11.xsd\">&lt;idOsobyPuvodce>KSSTCAB&lt;/idOsobyPuvodce>&lt;vec>&lt;druhStavRizeni>KONKURS&lt;/druhStavRizeni>&lt;/vec>&lt;priznakAnVedlejsiUdalost>T&lt;/priznakAnVedlejsiUdalost>&lt;priznakAnVedlejsiDokument>F&lt;/priznakAnVedlejsiDokument>&lt;priznakPlatnyVeritel>F&lt;/priznakPlatnyVeritel>&lt;priznakMylnyZapisVeritelPohled>F&lt;/priznakMylnyZapisVeritelPohled>&lt;/ns2:udalost>"
+  },
+  {
+    "id": 70021629,
+    "datum_zalozeni": "2025-04-24T12:07:34.000+02:00",
+    "datum_zverejneni": "2025-04-24T12:07:34.000+02:00",
+    "spisova_znacka": "INS 19107/2020",
+    "typ_udalosti": "1028",
+    "popis_udalosti": "Smlouva o prodeji mimo dražbu",
+    "oddil": "B",
+    "cislo_v_oddilu": 33,
+    "poznamka": "&lt;?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>&lt;ns2:udalost xmlns:ns2=\"http://www.cca.cz/isir/poznamka\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" verzeXsd=\"1_11\" xsi:schemaLocation=\"https://isir.justice.cz:8443/isir_public_ws/xsd/poznamka_1_11.xsd\">&lt;idOsobyPuvodce>KSVYCHK&lt;/idOsobyPuvodce>&lt;vec>&lt;druhStavRizeni>KONKURS&lt;/druhStavRizeni>&lt;/vec>&lt;priznakAnVedlejsiUdalost>T&lt;/priznakAnVedlejsiUdalost>&lt;priznakAnVedlejsiDokument>F&lt;/priznakAnVedlejsiDokument>&lt;priznakPlatnyVeritel>F&lt;/priznakPlatnyVeritel>&lt;priznakMylnyZapisVeritelPohled>F&lt;/priznakMylnyZapisVeritelPohled>&lt;/ns2:udalost>"
+  }
+]
