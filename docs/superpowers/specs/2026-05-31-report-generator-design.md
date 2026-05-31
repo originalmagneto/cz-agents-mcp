@@ -15,7 +15,12 @@ A `client-research` skill already exists (SK registers + LinkedIn/OSINT → Mark
 - adds **rich rendering** (mermaid ownership/statutory graphs, risk-timeline, formatted tables, optional Excalidraw) that client-research doesn't produce;
 - reuses client-research's depth-tier and risk-flag conventions for consistency.
 
-Decision needed: extend `client-research` for CZ + rich rendering, OR a new sibling skill `cz-report` that calls the cz-agents MCP. (Recommended: new skill `cz-report`, clearly scoped to CZ subjects + rich output, cross-linking client-research.)
+**User directive (2026-05-31):** SK and CZ research must be UNIFIED under one entry point. On launch the skill **asks whether the subject is Slovak or Czech**, then routes:
+- **SK** → existing `client-research` sources (ORSR, RPVS, Finstat, SK courts, FS VAT, OpenSanctions, LinkedIn/OSINT).
+- **CZ** → the cz-agents MCP servers (ARES, dd, sanctions, ISIR, ADIS, eu-registry, realestate).
+The two branches **complement each other** (shared depth tiers, shared risk-flag vocabulary, shared dossier format/output location, and cross-border links — e.g. a CZ subject's SK parent via eu-registry hands off to the SK branch, and vice versa). So the report generator is best implemented as the **rich-rendering + CZ-register layer integrated into a single SK/CZ research entry point**, not a standalone CZ-only skill.
+
+Decision (updated): integrate with `client-research` as a jurisdiction-branching entry point (ask SK/CZ → route → shared synthesis + rich rendering), rather than a separate CZ-only skill. Open question: extend `client-research` in place vs. a thin orchestrator that calls into both — to be settled in the report-gen brainstorm.
 
 ## Architecture (proposed)
 
@@ -35,7 +40,7 @@ A skill (`SKILL.md` + templates + a small render helper), NOT deployed infra. Fl
 
 ## Scope decisions for the user
 1. Subject types: companies (IČO) only, or also persons? (persons → sanctions/ISIR person search; no ARES record.)
-2. New skill `cz-report` vs extend `client-research`. (Recommended: new skill.)
+2. ~~New skill vs extend client-research~~ — DECIDED: unified SK/CZ entry point that asks jurisdiction and routes (see overlap section). Remaining: extend client-research in place vs. thin orchestrator over both.
 3. Excalidraw: include in v1 (deep tier only) or defer? (Recommended: defer to v1.1; mermaid covers most needs and is inline-renderable in Markdown.)
 4. Output language: Slovak (consistent with the user's other skills) — assume yes.
 
