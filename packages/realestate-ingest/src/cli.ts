@@ -10,7 +10,14 @@ async function main(): Promise<void> {
   const dbPath = process.env.REALESTATE_DB_PATH ?? '/data/webapp.db';
   const now = new Date().toISOString();
   const db = new Database(dbPath);
-  db.pragma('journal_mode = WAL');
+  // Default rollback journal (NOT WAL): realestate reads this DB from a
+  // read-only volume mount, and a WAL-mode database needs a writable -shm/-wal
+  // alongside it — which fails on a :ro mount. With the default journal the
+  // writer leaves no persistent sidecar files, so the read-only reader opens
+  // cleanly. Brief writer locks (every 6h) are absorbed by the reader's
+  // busy_timeout. Also checkpoint/limit memory just in case.
+  db.pragma('journal_mode = DELETE');
+  db.pragma('busy_timeout = 5000');
   ensureSchema(db);
   seedDistricts(db);
   seedPriceIndex(db);
