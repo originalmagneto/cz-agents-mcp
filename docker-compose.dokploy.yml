@@ -1,0 +1,173 @@
+# Dokploy-adapted compose for cz-agents-mcp.
+#
+# Differences vs. the upstream docker-compose.yml (which targets the author's
+# Hetzner + Apache host):
+#   - Attaches every service to the external `dokploy-network` so Dokploy's
+#     Traefik can route the per-service domains (instead of the `apache_default`
+#     external network, which does not exist on this server).
+#   - Drops host port bindings (127.0.0.1:30xx) — routing is done by Traefik
+#     over the network, so no host ports are needed and there are no conflicts
+#     with other compose projects on the server.
+#   - Omits `realestate` (needs the external `cz-agents-webapp_webapp-data`
+#     volume from a different compose project) and the `sanctions-refresh` cron.
+#   - Normalises every service to internal PORT=3030 (each runs in its own
+#     container, so there is no clash) — domains target port 3030.
+#
+# Secrets (SANDBOX_HMAC_SECRET) are injected via Dokploy environment, not
+# committed here.
+
+services:
+  ares:
+    build:
+      context: .
+      dockerfile: packages/ares/Dockerfile
+    image: cz-agents-ares:latest
+    restart: unless-stopped
+    environment:
+      - PORT=3030
+      - NODE_ENV=production
+      - RATE_LIMIT_MAX=600
+      - SANDBOX_HMAC_SECRET=${SANDBOX_HMAC_SECRET}
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3030/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    networks:
+      - dokploy-network
+
+  cnb:
+    build:
+      context: .
+      dockerfile: packages/cnb/Dockerfile
+    image: cz-agents-cnb:latest
+    restart: unless-stopped
+    environment:
+      - PORT=3030
+      - NODE_ENV=production
+      - RATE_LIMIT_MAX=600
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3030/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    networks:
+      - dokploy-network
+
+  sanctions:
+    build:
+      context: .
+      dockerfile: packages/sanctions/Dockerfile
+    image: cz-agents-sanctions:latest
+    restart: unless-stopped
+    environment:
+      - PORT=3030
+      - NODE_ENV=production
+      - SANCTIONS_DB=/var/lib/czagents-sanctions/sanctions.db
+      - TOKEN_DB=/var/lib/czagents-tokens/tokens.db
+      - SANCTIONS_EU_URL=${SANCTIONS_EU_URL:-https://webgate.ec.europa.eu/fsd/fsf/public/files/xmlFullSanctionsList_1_1/content?token=dG9rZW4tMjAxNw}
+      - RATE_LIMIT_MAX=600
+    volumes:
+      - sanctions-data:/var/lib/czagents-sanctions
+      - tokens-data:/var/lib/czagents-tokens
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3030/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    networks:
+      - dokploy-network
+
+  dd:
+    build:
+      context: .
+      dockerfile: packages/dd/Dockerfile
+    image: cz-agents-dd:latest
+    restart: unless-stopped
+    environment:
+      - PORT=3030
+      - NODE_ENV=production
+      - SANCTIONS_DB=/var/lib/czagents-sanctions/sanctions.db
+      - TOKEN_DB=/var/lib/czagents-tokens/tokens.db
+      - ISIR_SOAP_ENABLED=1
+      - RATE_LIMIT_MAX=600
+    volumes:
+      - sanctions-data:/var/lib/czagents-sanctions:ro
+      - tokens-data:/var/lib/czagents-tokens
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3030/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    networks:
+      - dokploy-network
+
+  isir:
+    build:
+      context: .
+      dockerfile: packages/isir/Dockerfile
+    image: cz-agents-isir:latest
+    restart: unless-stopped
+    environment:
+      - PORT=3030
+      - NODE_ENV=production
+      - ISIR_SOAP_ENABLED=1
+      - RATE_LIMIT_MAX=600
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3030/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    networks:
+      - dokploy-network
+
+  adis:
+    build:
+      context: .
+      dockerfile: packages/adis/Dockerfile
+    image: cz-agents-adis:latest
+    restart: unless-stopped
+    environment:
+      - PORT=3030
+      - NODE_ENV=production
+      - ADIS_SOAP_ENABLED=1
+      - RATE_LIMIT_MAX=600
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3030/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    networks:
+      - dokploy-network
+
+  eu-registry:
+    build:
+      context: .
+      dockerfile: packages/eu-registry/Dockerfile
+    image: cz-agents-eu-registry:latest
+    restart: unless-stopped
+    environment:
+      - PORT=3030
+      - NODE_ENV=production
+      - RATE_LIMIT_MAX=600
+      - CH_API_KEY=${CH_API_KEY:-}
+      - GLEIF_CACHE_PATH=/var/lib/czagents-gleif-cache/cache.db
+      - GLEIF_CACHE_TTL_DAYS=7
+    volumes:
+      - gleif-cache:/var/lib/czagents-gleif-cache
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3030/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    networks:
+      - dokploy-network
+
+networks:
+  dokploy-network:
+    external: true
+
+volumes:
+  sanctions-data:
+  tokens-data:
+  gleif-cache:
