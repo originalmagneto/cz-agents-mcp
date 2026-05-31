@@ -1,0 +1,36 @@
+{
+  "_comment": "SYNTHETIC FIXTURE — generated without live network access to portaldrazeb.cz. Field names (id, number, item.okres, detailUrl, auctionStart, status) mirror the accessors in normalizeAuctions() in ../../drazby/fetch.ts. THESE FIELD NAMES AND THE ENDPOINT MUST BE RECONCILED AGAINST THE LIVE portál dražeb response at deploy time (see Task 7 Step 1). Do not treat this shape as authoritative until verified against a recorded live XHR body.",
+  "data": [
+    {
+      "id": "A-123",
+      "number": "030 EX 1/2024",
+      "item": { "okres": "Ostrava-město" },
+      "detailUrl": "/detail/abc",
+      "auctionStart": "2026-07-01T10:00:00.000Z",
+      "status": "active"
+    },
+    {
+      "id": "A-124",
+      "number": "047 EX 88/2025",
+      "item": { "okres": "Brno-město" },
+      "detailUrl": "https://www.portaldrazeb.cz/detail/def",
+      "auctionStart": "2026-08-15T09:30:00.000Z",
+      "status": "upcoming"
+    },
+    {
+      "uuid": "A-125",
+      "number": "012 EX 5/2023",
+      "okresPredmetu": "Praha",
+      "url": "/detail/ghi",
+      "datumZahajeni": "2026-03-02T11:00:00.000Z",
+      "state": "finished_sold"
+    },
+    {
+      "id": "A-126",
+      "spisovaZnacka": "099 EX 9/2025",
+      "county": "Plzeň-město",
+      "auctionStart": null,
+      "status": "neúspěšná"
+    }
+  ]
+}
