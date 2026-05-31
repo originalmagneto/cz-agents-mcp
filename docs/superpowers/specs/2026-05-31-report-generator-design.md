@@ -38,6 +38,14 @@ A skill (`SKILL.md` + templates + a small render helper), NOT deployed infra. Fl
 4. **Depth tiers** scale sections/diagrams: `quick` (identity + risk + flags), `standard` (+ chain + screening tables), `deep` (+ EU parent, RE, Excalidraw, narrative).
 5. **Output** `.md` to a dossiers dir (mirror client-research location), report depth auto-suggested from subject (e.g. holding with deep chain → deeper report) but user-overridable.
 
+## DECISIONS (2026-05-31, confirmed)
+- **Implement as a CZ branch INSIDE the existing `client-research` skill** (source-of-truth `/Users/Magneto/PROJECTS/AI-SKILLS/client-research/`, symlinked to `~/.claude/skills/client-research`). Additive only — must not break the SK flow.
+- Phase-1 intake gains a **jurisdiction step (SK/CZ)**; CZ routes to CZ source playbooks. The existing source-matrix "CZ/EU cross-border" trigger becomes **bidirectional** (SK run finding a CZ owner hands off to CZ sources; CZ run finding an SK owner hands off to SK) — this is how the two complement each other.
+- **CZ v1 = companies + basic persons.** Persons: sanctions `search_person` + ISIR `search_person_insolvency` (ARES has no person register).
+- **CZ v1 sources = full 7** via the deployed cz-agents MCP: ARES, dd (risk + statutory chain), sanctions, ISIR, ADIS, eu-registry (cross-border parent), realestate (conditional). Mapped across modes Ultraquick→Deep like SK.
+- **Access method:** CZ playbooks/agent call the **deployed public HTTP endpoints** `https://cz-<svc>.humanintheloop.sk/mcp` via a small bundled MCP client (Node, like /tmp/mcp.mjs), NOT the local deferred MCP config — so the skill is self-contained and works regardless of local MCP enablement.
+- **Rendering v1 = mermaid** (statutory/ownership graph from dd `get_statutory_chain`, risk timeline) + formatted tables + risk banner, inline in `.md`. **Excalidraw deferred to v1.1** (deep tier).
+
 ## Scope decisions for the user
 1. Subject types: companies (IČO) only, or also persons? (persons → sanctions/ISIR person search; no ARES record.)
 2. ~~New skill vs extend client-research~~ — DECIDED: unified SK/CZ entry point that asks jurisdiction and routes (see overlap section). Remaining: extend client-research in place vs. thin orchestrator over both.
