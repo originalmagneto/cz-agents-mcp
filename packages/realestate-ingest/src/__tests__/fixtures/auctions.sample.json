@@ -1,36 +1,48 @@
 {
-  "_comment": "SYNTHETIC FIXTURE — generated without live network access to portaldrazeb.cz. Field names (id, number, item.okres, detailUrl, auctionStart, status) mirror the accessors in normalizeAuctions() in ../../drazby/fetch.ts. THESE FIELD NAMES AND THE ENDPOINT MUST BE RECONCILED AGAINST THE LIVE portál dražeb response at deploy time (see Task 7 Step 1). Do not treat this shape as authoritative until verified against a recorded live XHR body.",
-  "data": [
-    {
-      "id": "A-123",
-      "number": "030 EX 1/2024",
-      "item": { "okres": "Ostrava-město" },
-      "detailUrl": "/detail/abc",
-      "auctionStart": "2026-07-01T10:00:00.000Z",
-      "status": "active"
+  "0": {
+    "hash": "Ykwdg",
+    "slug": "137ex10413-25-mb-ykwdg",
+    "number": "137EX10413/25-MB",
+    "link": "https://www.portaldrazeb.cz/drazba/137ex10413-25-mb-ykwdg",
+    "start_at": "2026-06-02T08:00:00.000+00:00",
+    "status": "upcoming",
+    "location_district": {
+      "district_code": 40835,
+      "district_name": "Uherské Hradiště",
+      "county": {
+        "county_code": 3131,
+        "county_name": "Zlínský kraj",
+        "slug": "zlinsky-kraj"
+      },
+      "city": {
+        "city_code": 592005,
+        "city_name": "Uherské Hradiště"
+      },
+      "coords": {
+        "points": []
+      },
+      "slug": "okres-uherske-hradiste"
     },
-    {
-      "id": "A-124",
-      "number": "047 EX 88/2025",
-      "item": { "okres": "Brno-město" },
-      "detailUrl": "https://www.portaldrazeb.cz/detail/def",
-      "auctionStart": "2026-08-15T09:30:00.000Z",
-      "status": "upcoming"
-    },
-    {
-      "uuid": "A-125",
-      "number": "012 EX 5/2023",
-      "okresPredmetu": "Praha",
-      "url": "/detail/ghi",
-      "datumZahajeni": "2026-03-02T11:00:00.000Z",
-      "state": "finished_sold"
-    },
-    {
-      "id": "A-126",
-      "spisovaZnacka": "099 EX 9/2025",
-      "county": "Plzeň-město",
-      "auctionStart": null,
-      "status": "neúspěšná"
+    "item": {
+      "title": "Pozemky (orná půda) v Bánově, okr. Uherské Hradiště",
+      "category": {
+        "full_path": "/Nemovitosti/Pozemek"
+      }
     }
-  ]
+  },
+  "1": {
+    "hash": "Jkr77",
+    "slug": "139ex10893-24-139-jkr77",
+    "number": "139EX10893/24-139",
+    "link": "https://www.portaldrazeb.cz/drazba/139ex10893-24-139-jkr77",
+    "start_at": "2026-06-01T06:00:00.000+00:00",
+    "status": "upcoming",
+    "location_district": null,
+    "item": {
+      "title": "TOYOTA AVENSIS",
+      "category": {
+        "full_path": "/Movitosti/Auto-moto"
+      }
+    }
+  }
 }

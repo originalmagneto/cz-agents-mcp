@@ -1,53 +1,87 @@
 // packages/realestate-ingest/src/drazby/fetch.ts
-// Data source: portál dražeb public auction listing JSON (anonymous XHR used
-// by the site frontend). Endpoint pinned 2026-05 — see DRAZBY_API_URL.
-//
-// IMPORTANT (reconcile at deploy time): this module was implemented WITHOUT
-// live network access to portaldrazeb.cz. The fixture
-// (src/__tests__/fixtures/auctions.sample.json) is SYNTHETIC and the JSON
-// field names below (id/uuid/number, item.okres/okresPredmetu/county,
-// detailUrl/url, auctionStart/datumZahajeni/date, status/state) are best-effort
-// guesses that MUST be verified against a recorded live XHR response body
-// (Task 7 Step 1: DevTools → Network on
-// https://www.portaldrazeb.cz/drazby/pripravovane). If the live shape differs,
-// update both the accessors here and the fixture so the normalization test
-// continues to lock the parser contract.
+// Data source: portál dražeb public listing JSON, as used by the site frontend.
+// Endpoint pinned 2026-05 (live-verified):
+//   https://www.portaldrazeb.cz/drazby/pripravovane.json
+// Returns a JSON OBJECT keyed by numeric index ("0","1",…); each value is an
+// auction record. Real-estate auctions carry a populated `location_district`
+// with `district_name` (okres) + `county`; movable-property auctions (cars,
+// furniture) have `location_district: null` and are filtered out. We key okres
+// off `location_district.district_name` (NOT `ruian.district_name`, which is a
+// city-part, not an okres). The shape is locked by the fixture-backed test.
 import type { NormalizedAuction } from './parse.js';
 
 export const DRAZBY_API_URL =
-  process.env.DRAZBY_API_URL ?? 'https://www.portaldrazeb.cz/api/v2/auctions'; // confirm in Step 1
+  process.env.DRAZBY_API_URL ?? 'https://www.portaldrazeb.cz/drazby/pripravovane.json';
 
-interface RawAuction { [k: string]: unknown; }
+function str(v: unknown): string {
+  return v == null ? '' : String(v);
+}
 
-function str(v: unknown): string { return v == null ? '' : String(v); }
+function obj(v: unknown): Record<string, unknown> {
+  return v && typeof v === 'object' ? (v as Record<string, unknown>) : {};
+}
+
+function mapStatus(raw: string): NormalizedAuction['status'] {
+  const s = raw.toLowerCase();
+  if (s.includes('sold') || s.includes('prodáno')) return 'finished_sold';
+  if (s.includes('unsold') || s.includes('neúsp') || s.includes('finished')) return 'finished_unsold';
+  if (s.includes('upcoming') || s.includes('připrav') || s.includes('prepar')) return 'upcoming';
+  return 'active'; // started / running
+}
 
 export function normalizeAuctions(raw: unknown): NormalizedAuction[] {
-  // Upstream returns either an array or { data: [...] } / { auctions: [...] }.
-  const list: RawAuction[] = Array.isArray(raw)
-    ? (raw as RawAuction[])
-    : ((raw as any)?.data ?? (raw as any)?.auctions ?? (raw as any)?.items ?? []);
+  // Upstream is an object keyed "0","1",… — also tolerate a plain array or
+  // a { data: [...] } wrapper for forward-compatibility.
+  const list: unknown[] = Array.isArray(raw)
+    ? raw
+    : Array.isArray((raw as Record<string, unknown>)?.data)
+      ? ((raw as Record<string, unknown>).data as unknown[])
+      : Object.values(obj(raw));
+
   return list
-    .map((r): NormalizedAuction | null => {
-      const externalId = str((r as any).id ?? (r as any).uuid ?? (r as any).number);
+    .map((entry): NormalizedAuction | null => {
+      const r = obj(entry);
+      const item = obj(r.item);
+      const category = obj(item.category);
+      const fullPath = str(category.full_path);
+      // Real estate only.
+      if (!fullPath.startsWith('/Nemovitosti')) return null;
+
+      const district = obj(r.location_district);
+      const okres = str(district.district_name);
+      if (!okres) return null; // no resolvable okres → skip (keeps counts honest)
+
+      const externalId = str(r.hash) || str(r.slug);
       if (!externalId) return null;
-      const okres = str((r as any).item?.okres ?? (r as any).okresPredmetu ?? (r as any).county);
-      const detailPath = str((r as any).detailUrl ?? (r as any).url ?? `/detail/${externalId}`);
-      const detailUrl = detailPath.startsWith('http') ? detailPath : `https://www.portaldrazeb.cz${detailPath}`;
-      const auctionDateRaw = (r as any).auctionStart ?? (r as any).datumZahajeni ?? (r as any).date ?? null;
-      const auctionDateIso = auctionDateRaw ? new Date(String(auctionDateRaw)).toISOString() : null;
-      const rawStatus = str((r as any).status ?? (r as any).state).toLowerCase();
-      const status: NormalizedAuction['status'] =
-        rawStatus.includes('sold') ? 'finished_sold'
-        : rawStatus.includes('unsold') || rawStatus.includes('neúsp') ? 'finished_unsold'
-        : rawStatus.includes('upcom') || rawStatus.includes('připrav') ? 'upcoming'
-        : 'active';
-      return { externalId, spisovaZnacka: str((r as any).number ?? (r as any).spisovaZnacka), okres, detailUrl, auctionDateIso, status };
+
+      const link = str(r.link);
+      const detailUrl = link.startsWith('http')
+        ? link
+        : `https://www.portaldrazeb.cz${link || `/drazba/${externalId}`}`;
+
+      const startAt = r.start_at ?? r.published_at ?? null;
+      const auctionDateIso = startAt ? new Date(String(startAt)).toISOString() : null;
+
+      return {
+        externalId,
+        spisovaZnacka: str(r.number) || externalId,
+        okres,
+        detailUrl,
+        auctionDateIso,
+        status: mapStatus(str(r.status)),
+      };
     })
-    .filter((x): x is NormalizedAuction => x !== null && x.okres !== '');
+    .filter((x): x is NormalizedAuction => x !== null);
 }
 
 export async function fetchAuctions(url = DRAZBY_API_URL): Promise<NormalizedAuction[]> {
-  const res = await fetch(url, { headers: { Accept: 'application/json', 'User-Agent': 'cz-agents-realestate-ingest/0.1' } });
+  const res = await fetch(url, {
+    headers: {
+      Accept: 'application/json',
+      'User-Agent':
+        'Mozilla/5.0 (compatible; cz-agents-realestate-ingest/0.1; +https://cz-agents.dev)',
+    },
+  });
   if (!res.ok) throw new Error(`portál dražeb fetch failed: HTTP ${res.status}`);
   return normalizeAuctions(await res.json());
 }
