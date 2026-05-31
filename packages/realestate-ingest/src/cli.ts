@@ -5,6 +5,7 @@ import { seedDistricts, seedPriceIndex } from './seed.js';
 import { fetchAuctions } from './drazby/fetch.js';
 import { auctionToLead } from './drazby/parse.js';
 import { upsertLeads, archiveStale } from './upsert.js';
+import { runIsirPassLive } from './isir/runtime.js';
 
 async function main(): Promise<void> {
   const dbPath = process.env.REALESTATE_DB_PATH ?? '/data/webapp.db';
@@ -33,6 +34,21 @@ async function main(): Promise<void> {
     db.close();
     process.exit(1);
   }
+
+  // ISIR pass — runs AFTER the portál dražeb pass against the same DB. Bounded
+  // per run (max N events) and fully self-contained: any failure here is logged
+  // and swallowed so it can never corrupt the seeds/auctions already committed
+  // above. Disabled unless the SOAP feed is explicitly enabled.
+  try {
+    const maxEvents = Number(process.env.ISIR_MAX_EVENTS) || undefined;
+    const res = await runIsirPassLive(db, now, maxEvents);
+    console.log(
+      `[realestate-ingest] isir ok — polled=${res.polled} considered=${res.considered} upserted=${res.upserted}`,
+    );
+  } catch (err) {
+    console.error(`[realestate-ingest] isir pass failed (auctions+seed intact): ${(err as Error).message}`);
+  }
+
   db.close();
 }
 
