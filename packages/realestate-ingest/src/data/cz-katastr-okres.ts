@@ -191,7 +191,7 @@ const OBEC_BY_OKRES: Record<string, readonly string[]> = {
 function invert(byOkres: Record<string, readonly string[]>): Record<string, string> {
   const out: Record<string, string> = {};
   for (const okres of Object.keys(byOkres)) {
-    for (const name of byOkres[okres]) out[name] = okres;
+    for (const name of byOkres[okres] ?? []) out[name] = okres;
   }
   return out;
 }
