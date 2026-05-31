@@ -28,6 +28,8 @@ npm install -g @czagents/realestate
 
 - `get_district_aggregate` — distress real-estate statistics for a Czech okres (district): counts by category (insolvency / auction) and average market data. Counts under 5 are suppressed (k-anonymity gate) so individual debtors cannot be identified in low-activity districts. Free tier — no PII exposed.
 
+> **Coverage caveat — `insolvency_count`:** this counter reflects only ISIR insolvency real-estate *sales* (prodej mimo dražbu / sale outside auction) whose source document text parses to a resolvable okres (district). District resolution depends on text extraction (pdftotext → tesseract → optional Mistral OCR) and the RÚIAN okres map, so coverage is **partial**: insolvency sales whose document cannot be text-extracted or whose location cannot be resolved to an okres are not counted. Treat `insolvency_count` as a lower bound, not an exhaustive total.
+
 ## Paid tools (hosted realestate-pro only)
 
 The following tools are **not** included in this package. They are available exclusively through the hosted paid endpoint at `https://realestate-pro.cz-agents.dev/mcp`:
