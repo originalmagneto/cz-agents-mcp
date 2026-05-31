@@ -40,3 +40,37 @@ Extend `@czagents/realestate-ingest` with an ISIR module that runs in the same i
 
 ## Recommendation
 Execute as a **dedicated focused session** (it's multi-day and fragile). Tasks 1–2 (pin event type + RÚIAN dataset) are the de-risking gate — do them first; if document okres extraction proves unreliable, reconsider scope before building the full ingester.
+
+---
+
+## NARROWED v1 (APPROVED 2026-05-31) — type 535/1028 + OCR hybrid
+
+De-risk verdict: blanket okres extraction is unreliable; RÚIAN dataset is DONE
+(`src/data/cz-katastr-okres.ts`). Approved scope:
+
+- **Event filter:** primary `typ_udalosti` 535 (Usnesení o prodeji mimo dražbu)
+  + 1028 (Smlouva o prodeji mimo dražbu) — clean-text, identified-property sales.
+  Also accept 335/1081 ONLY if the content gate (below) passes.
+- **Document text extraction (in-container hybrid):**
+  1. `pdftotext` (poppler-utils) — clean PDFs.
+  2. if output empty/garbage (mojibake heuristic: low ratio of Czech letters) →
+     `tesseract -l ces` (baked into the image) on rasterized pages.
+  3. optional best-effort → **Mistral OCR API** if `MISTRAL_API_KEY` env is set
+     (PDF→markdown). Never hard-required; tesseract is the default.
+  Also handle PDF-Portfolio: extract embedded PDFs (pdfdetach) before step 1.
+- **Content gate (drops movables / negative cadastre):** require tokens
+  `katastrální území` / `obci` / `parc. č.` / `LV` in the text before treating the
+  event as a real-estate lead. No tokens → skip (do NOT write a lead).
+- **Okres:** extract katastrální území / obec from the gated text → `resolveOkres`
+  via `cz-katastr-okres.ts` (k.ú. name preferred; obec only if unambiguous) →
+  `okresSlug` via slugifyCs. Unresolvable → log + skip (never guess).
+- **Lead:** `RealEstateLead` sourceType='isir', okresSlug, spisovaZnacka, dokumentUrl,
+  status, ingestedAt. Reuse upsertLeads/archiveStale.
+- **Coverage caveat (document in tool/README):** counts insolvency real-estate
+  sales (prodej mimo dražbu) whose vyhláška document parses to a resolvable okres —
+  partial, not all insolvencies.
+- **Image:** realestate-ingest Dockerfile adds `poppler-utils tesseract-ocr
+  tesseract-ocr-data-ces` (alpine pkgs).
+- **TDD** against the committed `fixtures/isir/` (clean type-535 text + OCR'd
+  type-335/829 texts + event batch). Live Mistral OCR verified post-deploy if key set.
+- **Deploy:** user adds optional `MISTRAL_API_KEY` to Dokploy env; push → UI Deploy → run ingest → verify insolvency_count for an okres with a known prodej-mimo-dražbu.
