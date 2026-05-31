@@ -193,6 +193,12 @@ services:
     environment:
       - NODE_ENV=production
       - REALESTATE_DB_PATH=/data/webapp.db
+      # ISIR Tier B: enable the live ISIR SOAP feed (else IsirClient is a stub).
+      - ISIR_SOAP_ENABLED=1
+      - ISIR_MAX_EVENTS=2000
+      # Optional OCR fallback for hard PDFs — set MISTRAL_API_KEY in Dokploy env
+      # (left blank here; pdftotext→tesseract works without it).
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY:-}
     volumes:
       - webapp-data:/data
     networks:
