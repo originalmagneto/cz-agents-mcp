@@ -12,7 +12,7 @@ export interface NormalizedAuction {
 
 export interface LeadRow {
   id: string;
-  sourceType: 'portaldrazeb';
+  sourceType: 'portaldrazeb' | 'isir';
   spisovaZnacka: string;
   courtCode: string;
   ingestedAt: string;
