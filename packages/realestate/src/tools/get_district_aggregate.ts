@@ -11,6 +11,7 @@
 
 import { getDb } from '../db.js';
 import type { DistrictAggregate } from '../types.js';
+import { slugifyCs } from '@czagents/shared';
 
 const K_ANONYMITY_THRESHOLD = 3;
 const SOURCE_PRIORITY = ['eurostat_hpi', 'csu_vdb_extrap', 'cnb_arad', 'csu_vdb', 'cuzk_kupni', 'static_fallback'];
@@ -31,15 +32,6 @@ const KRAJ_SLUG_TO_PRICE_INDEX_KEY: Record<string, string> = {
   zlinsky: 'Zlínský',
   moravskoslezsky: 'Moravskoslezský',
 };
-
-function slugifyCs(value: string): string {
-  return value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-}
 
 function sourceRank(source: string): number {
   const index = SOURCE_PRIORITY.indexOf(source);
