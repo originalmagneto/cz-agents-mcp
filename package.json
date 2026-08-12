@@ -39,12 +39,16 @@
   "scripts": {
     "build": "npm run build --workspace=@czagents/shared && npm run build --workspace=@czagents/ares && npm run build --workspace=@czagents/cnb && npm run build --workspace=@czagents/sanctions && npm run build --workspace=@czagents/isir && npm run build --workspace=@czagents/adis && npm run build --workspace=@czagents/dd && npm run build --workspace=@czagents/realestate && npm run build --workspace=@czagents/eu-registry",
     "dev:ares": "npm run dev --workspace=@czagents/ares",
+    "pretest": "npm run build --workspace=@czagents/shared",
     "test": "npm run test --workspaces --if-present",
     "lint": "eslint packages/*/src --ext .ts"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/node": "^20.11.0",
+    "eslint": "^10.8.1",
+    "tsx": "^4.7.0",
     "typescript": "^5.5.0",
-    "tsx": "^4.7.0"
+    "typescript-eslint": "^8.67.0"
   }
 }
