@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:22.23.4-alpine3.23@sha256:6abbcf5dd6b231da109bcde1181db1d92bf78015ae1a9514d9807c1f857869db AS builder
 WORKDIR /app
 
 # better-sqlite3 needs build tools
@@ -17,7 +17,7 @@ RUN npm install --workspaces --include-workspace-root --legacy-peer-deps
 RUN npm run build --workspace=@czagents/shared
 RUN npm run build --workspace=@czagents/realestate
 
-FROM node:20-alpine AS runner
+FROM node:22.23.4-alpine3.23@sha256:6abbcf5dd6b231da109bcde1181db1d92bf78015ae1a9514d9807c1f857869db AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 

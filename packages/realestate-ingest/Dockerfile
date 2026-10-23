@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:22.23.4-alpine3.23@sha256:6abbcf5dd6b231da109bcde1181db1d92bf78015ae1a9514d9807c1f857869db AS builder
 WORKDIR /app
 RUN apk add --no-cache python3 make g++
 COPY package.json package-lock.json* ./
@@ -11,7 +11,7 @@ RUN npm run build --workspace=@czagents/shared
 RUN npm run build --workspace=@czagents/isir
 RUN npm run build --workspace=@czagents/realestate-ingest
 
-FROM node:20-alpine AS runner
+FROM node:22.23.4-alpine3.23@sha256:6abbcf5dd6b231da109bcde1181db1d92bf78015ae1a9514d9807c1f857869db AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 # ISIR Tier-B document text extraction (runtime only): pdftotext (poppler-utils)

@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: ['20', '22']
+        node: ['22.23.4']
 
     steps:
       - uses: actions/checkout@v5
@@ -27,8 +27,42 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Lint
+        run: npm run lint
+
       - name: Build all packages
-        run: npm run build
+        run: npm run build && npm run build --workspace=@czagents/realestate-ingest
 
       - name: Run tests
         run: npm test
+
+  alpine-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build isolated Alpine test image
+        run: docker build -f Dockerfile.ci -t cz-alpine-tests .
+      - name: All workspace tests without external networking
+        shell: bash
+        run: |
+          mounts=()
+          for tests in packages/*/src/__tests__ packages/shared/src/billing/__tests__; do
+            mounts+=(--mount "type=bind,source=$PWD/$tests,target=/app/$tests,readonly")
+          done
+          docker run --rm --network none "${mounts[@]}" cz-alpine-tests npm test
+
+  production-images:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [ares, cnb, sanctions, isir, adis, dd, realestate, eu-registry, realestate-ingest]
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build production image
+        run: docker build -f packages/${{ matrix.service }}/Dockerfile -t cz-runtime-smoke .
+      - name: Native SQLite and synthetic HTTP/MCP smoke
+        run: |
+          docker run --rm --network none \
+            --mount type=bind,source="$PWD/scripts/runtime-smoke.mjs",target=/app/runtime-smoke.mjs,readonly \
+            cz-runtime-smoke node runtime-smoke.mjs '${{ matrix.service }}'
